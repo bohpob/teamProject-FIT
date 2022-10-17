@@ -8,6 +8,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -39,4 +41,16 @@ public class UserService implements UserDetailsService {
 
         return "Saved";
     }
+
+    public User getUser(Long id) throws Exception {
+        User user = userRepository.findById(id).orElse(null);
+        if (user != null)
+            return user;
+        throw new Exception("user doesn't exists(getUser() method in UserService)");
+    }
+
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
+
 }
