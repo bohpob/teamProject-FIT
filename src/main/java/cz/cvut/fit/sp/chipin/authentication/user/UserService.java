@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -15,6 +16,7 @@ public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
 
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final static String USER_NOT_FOUND = "User with email %s not found";
 
     @Override
@@ -27,7 +29,13 @@ public class UserService implements UserDetailsService {
         if (userRepository.findUserByEmail(user.getEmail()).isPresent())
             throw new IllegalStateException("Email already taken");
 
+        String encodedPassword = bCryptPasswordEncoder.encode(user.getPassword());
+
+        user.setPassword(encodedPassword);
+
         userRepository.save(user);
+
+        //TODO: send e-mail
 
         return "Saved";
     }
