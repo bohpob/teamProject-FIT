@@ -1,5 +1,7 @@
 package cz.cvut.fit.sp.chipin.authentication.user;
 
+import cz.cvut.fit.sp.chipin.authentication.email.token.ConfirmationToken;
+import cz.cvut.fit.sp.chipin.authentication.email.token.ConfirmationTokenService;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -18,6 +20,7 @@ public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
 
+    private final ConfirmationTokenService confirmationTokenService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final static String USER_NOT_FOUND = "User with email %s not found";
 
@@ -37,9 +40,19 @@ public class UserService implements UserDetailsService {
 
         userRepository.save(user);
 
+        String token = UUID.randomUUID().toString();
+        ConfirmationToken confirmationToken = new ConfirmationToken(
+                token,
+                LocalDateTime.now(),
+                LocalDateTime.now().plusMinutes(15),
+                user
+        );
+
+        confirmationTokenService.saveConfirmationToken(confirmationToken);
+
         //TODO: send e-mail
 
-        return "Saved";
+        return token;
     }
 
     public User getUser(Long id) throws Exception {
@@ -52,5 +65,11 @@ public class UserService implements UserDetailsService {
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
+
+    public int enableUser(String email) {
+        return userRepository.enableUser(email);
+    }
+
+
 
 }
