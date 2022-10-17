@@ -1,4 +1,4 @@
-package cz.cvut.fit.sp.chipin.registration.user;
+package cz.cvut.fit.sp.chipin.authentication.user;
 
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
