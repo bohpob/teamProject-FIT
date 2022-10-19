@@ -9,7 +9,7 @@ import androidx.fragment.app.FragmentPagerAdapter;
 
 public class LoginAdapter extends FragmentPagerAdapter {
 
-    private Context context;
+    private final Context context;
     int totalTabs;
 
 
@@ -39,5 +39,17 @@ public class LoginAdapter extends FragmentPagerAdapter {
     @Override
     public int getCount() {
         return totalTabs;
+    }
+
+    @Override
+    public CharSequence getPageTitle(int position) {
+        switch (position) {
+            case 0:
+                return "Login";
+            case 1:
+                return "Sign Up";
+            default:
+                return null;
+        }
     }
 }
