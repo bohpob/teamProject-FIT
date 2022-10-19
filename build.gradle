@@ -10,11 +10,6 @@ group = 'cz.cvut.fit.sp'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '17'
 
-repositories {
-	mavenCentral()
-	google()
-}
-
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
