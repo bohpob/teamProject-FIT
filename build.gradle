@@ -1,6 +1,8 @@
 plugins {
 	id 'org.springframework.boot' version '2.7.4'
 	id 'io.spring.dependency-management' version '1.0.14.RELEASE'
+	id 'com.android.application' version '7.2.0' apply false
+	id 'com.android.library' version '7.1.2' apply false
 	id 'java'
 }
 
@@ -10,6 +12,7 @@ sourceCompatibility = '17'
 
 repositories {
 	mavenCentral()
+	google()
 }
 
 dependencies {
