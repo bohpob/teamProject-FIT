@@ -7,8 +7,8 @@ import lombok.*;
 @Getter
 @AllArgsConstructor
 public class DebtDTO {
-    private final Integer id;
-    private UserDTO lender;
-    private UserDTO borrower;
-    private Integer amount;
+    private final Long id;
+    private final UserDTO lender;
+    private final UserDTO borrower;
+    private final Integer amount;
 }

@@ -23,7 +23,7 @@ public class Debt {
             strategy = GenerationType.SEQUENCE,
             generator = "debt_sequence"
     )
-    private Integer id;
+    private Long id;
 
     @ManyToOne()
     @JoinColumn(name = "lender_id")
