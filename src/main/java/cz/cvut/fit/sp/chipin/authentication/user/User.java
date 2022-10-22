@@ -14,7 +14,6 @@ import java.util.Collections;
 @Entity
 @Table(name = "user")
 @NoArgsConstructor
-@EqualsAndHashCode
 @Getter
 @Setter
 public class User implements UserDetails {

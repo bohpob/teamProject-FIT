@@ -1,6 +1,7 @@
 package cz.cvut.fit.sp.chipin.base.debt;
 
 import cz.cvut.fit.sp.chipin.authentication.user.User;
+import cz.cvut.fit.sp.chipin.base.group.Group;
 import lombok.*;
 
 import javax.persistence.*;
@@ -24,6 +25,10 @@ public class Debt {
             generator = "debt_sequence"
     )
     private Long id;
+
+    @ManyToOne()
+    @JoinColumn(name = "group_id")
+    private Group group;
 
     @ManyToOne()
     @JoinColumn(name = "lender_id")
