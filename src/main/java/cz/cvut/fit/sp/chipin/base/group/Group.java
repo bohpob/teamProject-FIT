@@ -1,7 +1,7 @@
 package cz.cvut.fit.sp.chipin.base.group;
 
 import cz.cvut.fit.sp.chipin.base.debt.Debt;
-import lombok.EqualsAndHashCode;
+import cz.cvut.fit.sp.chipin.base.log.Log;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -32,7 +32,7 @@ public class Group {
     private List<Debt> debts = new ArrayList<>();
 
     @OneToMany(mappedBy = "group_id")
-    private List<Debt> logs = new ArrayList<>();
+    private List<Log> logs = new ArrayList<>();
 
     @NotBlank
     @Column(name = "name")
