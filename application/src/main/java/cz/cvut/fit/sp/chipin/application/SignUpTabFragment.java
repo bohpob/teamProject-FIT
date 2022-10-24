@@ -18,7 +18,7 @@ public class SignUpTabFragment extends Fragment {
     TextView email;
     TextView password;
     Button signUp;
-    float v = 0;
+    Float v = 0f;
 
     @Nullable
     @Override

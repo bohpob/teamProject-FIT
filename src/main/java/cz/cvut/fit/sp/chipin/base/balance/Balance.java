@@ -21,12 +21,12 @@ public class Balance {
 
     @ManyToOne
     @MapsId("userId")
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable=false)
     private User user;
 
     @ManyToOne
     @MapsId("groupId")
-    @JoinColumn(name = "group_id")
+    @JoinColumn(name = "group_id", nullable=false)
     private Group group;
 
     @NotBlank

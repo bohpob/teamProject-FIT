@@ -15,7 +15,7 @@ public class LoginActivity extends AppCompatActivity {
     TabLayout tabLayout;
     ViewPager viewPager;
     FloatingActionButton fb, google, twitter;
-    float v = 0;
+    Float v = 0f;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

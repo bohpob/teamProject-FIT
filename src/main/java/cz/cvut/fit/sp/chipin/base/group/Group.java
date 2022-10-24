@@ -1,5 +1,6 @@
 package cz.cvut.fit.sp.chipin.base.group;
 
+import cz.cvut.fit.sp.chipin.base.balance.Balance;
 import cz.cvut.fit.sp.chipin.base.debt.Debt;
 import cz.cvut.fit.sp.chipin.base.log.Log;
 import lombok.Getter;
@@ -28,16 +29,20 @@ public class Group {
     )
     private Long id;
 
-    @OneToMany(mappedBy = "group_id")
+    @OneToMany(mappedBy = "group")
     private List<Debt> debts = new ArrayList<>();
 
-    @OneToMany(mappedBy = "group_id")
+    @OneToMany(mappedBy = "group")
     private List<Log> logs = new ArrayList<>();
+
+    @OneToMany(mappedBy = "group")
+    private List<Balance> balances = new ArrayList<>();
 
     @NotBlank
     @Column(name = "name")
     private String name;
 
+    @NotBlank
     @Enumerated(EnumType.STRING)
     private Currency currency;
 }

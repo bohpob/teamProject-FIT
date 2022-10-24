@@ -19,7 +19,7 @@ public class LoginTabFragment extends Fragment {
     TextView password;
     TextView forgetPassword;
     Button login;
-    float v = 0;
+    Float v = 0f;
 
     @Nullable
     @Override

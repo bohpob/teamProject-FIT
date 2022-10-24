@@ -14,17 +14,9 @@ import javax.validation.constraints.NotBlank;
 @Getter
 @Setter
 public class Debt {
-    @Id
-    @SequenceGenerator(
-            name = "debt_sequence",
-            sequenceName = "debt_sequence",
-            allocationSize = 1
-    )
-    @GeneratedValue(
-            strategy = GenerationType.SEQUENCE,
-            generator = "debt_sequence"
-    )
-    private Long id;
+
+    @EmbeddedId
+    private DebtKey id;
 
     @ManyToOne()
     @JoinColumn(name = "group_id")
@@ -40,5 +32,5 @@ public class Debt {
 
     @NotBlank
     @Column(name = "amount", nullable = false)
-    private float amount;
+    private Float amount;
 }
