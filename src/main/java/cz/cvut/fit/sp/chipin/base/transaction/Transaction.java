@@ -1,10 +1,13 @@
 package cz.cvut.fit.sp.chipin.base.transaction;
 
 import cz.cvut.fit.sp.chipin.authentication.user.User;
+import cz.cvut.fit.sp.chipin.base.amount.Amount;
 import cz.cvut.fit.sp.chipin.base.group.Group;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "transaction")
@@ -33,4 +36,7 @@ public class Transaction {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    @OneToMany(mappedBy = "transaction")
+    private List<Amount> amounts = new ArrayList<>();
 }
