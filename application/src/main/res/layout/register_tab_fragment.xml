@@ -13,11 +13,11 @@
             android:textColor="@color/light_blue"
             android:textSize="36sp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toTopOf="@+id/name"
+            app:layout_constraintBottom_toTopOf="@+id/name_register"
             app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-            android:id="@+id/name"
+            android:id="@+id/name_register"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:layout_constraintWidth_percent=".8"
@@ -34,7 +34,7 @@
             app:layout_constraintEnd_toEndOf="parent"/>
 
     <EditText
-            android:id="@+id/email"
+            android:id="@+id/email_register"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:layout_constraintWidth_percent=".8"
@@ -43,16 +43,17 @@
             android:layout_marginTop="20dp"
             android:background="@drawable/edit_text_bg"
             android:hint="Email"
+            android:inputType="textEmailAddress"
             android:paddingLeft="20dp"
             android:paddingTop="10dp"
             android:paddingBottom="10dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/name"
+            app:layout_constraintTop_toBottomOf="@id/name_register"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
     <EditText
-            android:id="@+id/password"
+            android:id="@+id/password_register"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:layout_constraintWidth_percent=".8"
@@ -61,11 +62,12 @@
             android:layout_marginTop="20dp"
             android:background="@drawable/edit_text_bg"
             android:hint="Password"
+            android:inputType="textPassword"
             android:paddingLeft="20dp"
             android:paddingTop="10dp"
             android:paddingBottom="10dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/email"
+            app:layout_constraintTop_toBottomOf="@id/email_register"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
@@ -80,7 +82,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/password"
+            app:layout_constraintTop_toBottomOf="@id/password_register"
             app:layout_constraintVertical_bias=".7"
             app:layout_constraintWidth_percent=".8" />
 
