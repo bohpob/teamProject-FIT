@@ -2,8 +2,10 @@ package cz.cvut.fit.sp.chipin.application;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +19,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import com.google.android.material.textfield.TextInputEditText;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -62,14 +65,10 @@ public class LoginTabFragment extends Fragment {
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                String message = "Login";
-//                Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
                 try {
                     InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
-                } catch (Exception ignored) {
-
-                }
+                } catch (Exception ignored) {}
                 loginUser();
             }
         });
@@ -83,17 +82,16 @@ public class LoginTabFragment extends Fragment {
         loginRequest.setEmail(email.getText().toString());
         loginRequest.setPassword(password.getText().toString());
 
+
         AuthenticationService authenticationService =
                 ServiceGenerator.createService(AuthenticationService.class);
         Call<LoginResponse> loginResponseCall = authenticationService.loginUser(loginRequest);
 
-//        Call<LoginResponse> loginResponseCall = ApiClient.getService().loginUser(loginRequest);
         loginResponseCall.enqueue(new Callback<LoginResponse>() {
             @Override
             public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
 
                 if (response.isSuccessful()) {
-//                    Toast.makeText(getActivity(), "Login succsessful", Toast.LENGTH_SHORT).show();
                     LoginResponse loginResponse = response.body();
                     AuthenticationService updateAuthInterceptor = ServiceGenerator.createService(AuthenticationService.class, loginRequest.getEmail(), loginRequest.getPassword());
 
