@@ -1,6 +1,7 @@
 package cz.cvut.fit.sp.chipin.application;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.View;
@@ -18,10 +19,10 @@ import retrofit2.Response;
 
 public class LoginActivity extends AppCompatActivity {
 
-    TabLayout tabLayout;
-    ViewPager viewPager;
-    FloatingActionButton fb, google, twitter;
-    Button loginButton, signupButton;
+    private TabLayout tabLayout;
+    private ViewPager viewPager;
+    private FloatingActionButton fb, google, twitter;
+    private boolean isBackPressed = false;
     float v = 0;
 
     @Override
@@ -43,8 +44,6 @@ public class LoginActivity extends AppCompatActivity {
         final LoginAdapter adapter = new LoginAdapter(getSupportFragmentManager(), this, tabLayout.getTabCount());
         viewPager.setAdapter(adapter);
         tabLayout.setupWithViewPager(viewPager);
-
-//        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
 
         fb.setTranslationY(300);
         google.setTranslationY(300);
@@ -88,4 +87,17 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onBackPressed() {
+        if (isBackPressed) {
+            super.onBackPressed();
+            return;
+        }
+
+        Toast.makeText(LoginActivity.this, "Click again to exit", Toast.LENGTH_SHORT).show();
+        isBackPressed = true;
+
+        new Handler().postDelayed(() -> isBackPressed = false, 2000);
+
+    }
 }
