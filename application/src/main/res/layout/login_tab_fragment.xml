@@ -35,8 +35,8 @@
             app:boxCornerRadiusTopEnd="30dp"
             app:boxCornerRadiusTopStart="30dp"
             app:boxStrokeWidthFocused="1dp"
-            app:startIconDrawable="@drawable/ic_person_24"
-            app:startIconTint="@drawable/person_icon_tint"
+            app:startIconDrawable="@drawable/custom_email_icon"
+            app:startIconTint="@drawable/input_text_icon_tint"
             android:inputType="textEmailAddress"
             >
 
@@ -61,7 +61,7 @@
             app:layout_constraintVertical_bias="0"
             app:layout_constraintHorizontal_bias=".5"
             app:endIconMode="password_toggle"
-            app:endIconTint="@drawable/password_toggle_icon_tint"
+            app:endIconTint="@drawable/input_text_icon_tint"
             android:hint="@string/password_hint"
             app:endIconDrawable="@drawable/custom_password_toggle"
             app:boxCornerRadiusBottomEnd="30dp"
@@ -70,8 +70,8 @@
             app:boxCornerRadiusTopStart="30dp"
             app:boxStrokeWidthFocused="1dp"
             app:startIconDrawable="@drawable/ic_lock_24"
-            app:startIconTint="@drawable/person_icon_tint"
-            android:inputType="textEmailAddress"
+            app:startIconTint="@drawable/input_text_icon_tint"
+            android:inputType="textPassword"
             android:layout_marginTop="20dp">
 
         <com.google.android.material.textfield.TextInputEditText
