@@ -37,10 +37,14 @@ public class LoginTabFragment extends Fragment {
     Button login;
     float v = 0;
 
+    AuthDataValidator authDataValidator;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         ViewGroup root = (ViewGroup) inflater.inflate(R.layout.login_tab_fragment, container, false);
+
+        authDataValidator = new AuthDataValidator();
 
         loginText = root.findViewById(R.id.loginText);
         email = root.findViewById(R.id.email_login);
@@ -68,18 +72,48 @@ public class LoginTabFragment extends Fragment {
         forgetPassword.animate().translationX(0).alpha(1).setDuration(500).setStartDelay(200).start();
         login.animate().translationX(0).alpha(1).setDuration(500).setStartDelay(250).start();
 
-        login.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                try {
-                    InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
-                } catch (Exception ignored) {}
-                loginUser();
+        login.setOnClickListener(v -> {
+            try {
+                InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
+            } catch (Exception ignored) {}
+
+            boolean err = false;
+
+            if (TextUtils.isEmpty(email.getText().toString().trim()))
+            {
+                err = true;
+                email_layout.setError("Field is required");
             }
+            else if (!authDataValidator.isValidEmail(email.getText().toString()))
+            {
+                err = true;
+                email_layout.setError("Invalid email");
+            }
+
+            if (TextUtils.isEmpty(password.getText().toString().trim()))
+            {
+                err = true;
+                password_layout.setError("Field is required");
+            }
+            else if (authDataValidator.containsWhitespaces(password.getText().toString()) ||
+                     authDataValidator.containsColon(password.getText().toString()))
+            {
+                err = true;
+                password_layout.setError("Invalid password format");
+            }
+
+            if (!err)
+                loginUser();
         });
 
+        email.setOnClickListener(v -> email_layout.setError(null));
 
+        password.setOnClickListener(v -> password_layout.setError(null));
+
+        email.setOnFocusChangeListener((v, hasFocus) -> email_layout.setError(null));
+
+        password.setOnFocusChangeListener((v, hasFocus) -> password_layout.setError(null));
 
         return root;
     }

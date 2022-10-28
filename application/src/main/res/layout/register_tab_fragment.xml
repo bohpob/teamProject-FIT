@@ -104,7 +104,8 @@
             app:endIconMode="password_toggle"
             app:endIconTint="@drawable/input_text_icon_tint"
             app:endIconDrawable="@drawable/custom_password_toggle"
-
+            app:errorEnabled="true"
+            app:errorIconDrawable="@null"
             android:layout_marginTop="20dp"
             app:boxCornerRadiusBottomEnd="30dp"
             app:boxCornerRadiusBottomStart="30dp"
@@ -135,6 +136,8 @@
             android:text="@string/sign_up_button_text"
             android:textSize="16sp"
             android:textStyle="bold"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="10dp"
             android:background="@drawable/button_bg"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
