@@ -38,13 +38,12 @@
             app:startIconDrawable="@drawable/custom_email_icon"
             app:startIconTint="@drawable/input_text_icon_tint"
             android:inputType="textEmailAddress"
-            >
+            app:errorIconDrawable="@null" >
 
         <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/email_login"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-               />
+                android:layout_height="wrap_content" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -72,13 +71,14 @@
             app:startIconDrawable="@drawable/ic_lock_24"
             app:startIconTint="@drawable/input_text_icon_tint"
             android:inputType="textPassword"
-            android:layout_marginTop="20dp">
+            android:layout_marginTop="20dp"
+            app:errorIconDrawable="@null" >
 
         <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/password_login"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textPassword"/>
+                android:inputType="textPassword" />
 
 
     </com.google.android.material.textfield.TextInputLayout>

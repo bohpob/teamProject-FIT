@@ -34,6 +34,7 @@
             app:layout_constraintVertical_bias=".3"
             app:layout_constraintHorizontal_bias=".5"
             android:hint="@string/name_hint"
+            app:errorIconDrawable="@null"
             app:boxCornerRadiusBottomEnd="30dp"
             app:boxCornerRadiusBottomStart="30dp"
             app:boxCornerRadiusTopEnd="30dp"
@@ -41,13 +42,12 @@
             app:boxStrokeWidthFocused="1dp"
             app:startIconDrawable="@drawable/ic_person_24"
             app:startIconTint="@drawable/input_text_icon_tint"
-            android:inputType="textEmailAddress"
-    >
+            android:inputType="textEmailAddress" >
 
         <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/name_register"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent" >
 
         </com.google.android.material.textfield.TextInputEditText>
 
@@ -66,6 +66,7 @@
             app:layout_constraintVertical_bias="0"
             app:layout_constraintHorizontal_bias=".5"
             android:hint="@string/email_hint"
+            app:errorIconDrawable="@null"
             android:layout_marginTop="20dp"
             app:boxCornerRadiusBottomEnd="30dp"
             app:boxCornerRadiusBottomStart="30dp"
@@ -74,14 +75,12 @@
             app:boxStrokeWidthFocused="1dp"
             app:startIconDrawable="@drawable/ic_email_24"
             app:startIconTint="@drawable/input_text_icon_tint"
-            android:inputType="textEmailAddress"
-    >
+            android:inputType="textEmailAddress" >
 
         <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/email_register"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-        >
+                android:layout_height="match_parent" >
 
         </com.google.android.material.textfield.TextInputEditText>
 
@@ -114,15 +113,13 @@
             app:boxStrokeWidthFocused="1dp"
             app:startIconDrawable="@drawable/ic_lock_24"
             app:startIconTint="@drawable/input_text_icon_tint"
-            android:inputType="textPassword"
-    >
+            android:inputType="textPassword" >
 
         <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/password_register"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:inputType="textPassword"
-        >
+                android:inputType="textPassword" >
 
         </com.google.android.material.textfield.TextInputEditText>
 
