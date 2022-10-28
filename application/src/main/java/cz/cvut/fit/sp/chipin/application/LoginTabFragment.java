@@ -20,6 +20,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -27,7 +28,10 @@ import retrofit2.Response;
 public class LoginTabFragment extends Fragment {
 
     TextView loginText;
-    EditText email;
+    TextInputLayout email_layout;
+    TextInputLayout password_layout;
+
+    TextInputEditText email;
     EditText password;
     TextView forgetPassword;
     Button login;
@@ -40,25 +44,27 @@ public class LoginTabFragment extends Fragment {
 
         loginText = root.findViewById(R.id.loginText);
         email = root.findViewById(R.id.email_login);
+        email_layout = root.findViewById(R.id.email_login_outer);
         password = root.findViewById(R.id.password_login);
+        password_layout = root.findViewById(R.id.password_login_outer);
         forgetPassword = root.findViewById(R.id.forgotPassword);
         login = root.findViewById(R.id.loginButton);
 
         loginText.setTranslationX(800);
-        email.setTranslationX(800);
-        password.setTranslationX(800);
+        email_layout.setTranslationX(800);
+        password_layout.setTranslationX(800);
         forgetPassword.setTranslationX(800);
         login.setTranslationX(800);
 
         loginText.setAlpha(v);
-        email.setAlpha(v);
-        password.setAlpha(v);
+        email_layout.setAlpha(v);
+        password_layout.setAlpha(v);
         forgetPassword.setAlpha(v);
         login.setAlpha(v);
 
         loginText.animate().translationX(0).alpha(1).setDuration(500).setStartDelay(50).start();
-        email.animate().translationX(0).alpha(1).setDuration(500).setStartDelay(100).start();
-        password.animate().translationX(0).alpha(1).setDuration(500).setStartDelay(150).start();
+        email_layout.animate().translationX(0).alpha(1).setDuration(500).setStartDelay(100).start();
+        password_layout.animate().translationX(0).alpha(1).setDuration(500).setStartDelay(150).start();
         forgetPassword.animate().translationX(0).alpha(1).setDuration(500).setStartDelay(200).start();
         login.animate().translationX(0).alpha(1).setDuration(500).setStartDelay(250).start();
 
@@ -72,6 +78,8 @@ public class LoginTabFragment extends Fragment {
                 loginUser();
             }
         });
+
+
 
         return root;
     }
