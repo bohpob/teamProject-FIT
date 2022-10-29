@@ -25,18 +25,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.cors().configurationSource(request -> new CorsConfiguration().applyPermitDefaultValues());
         http.csrf().disable()
                 .authorizeRequests()
-                    .antMatchers("/api/v*/registration/**", "/resources/**")
+                    .antMatchers("/api/v*/registration/**", "/api/v*/login/**", "/resources/**")
                     .permitAll()
                     .anyRequest().authenticated()
                     .and()
+                    .httpBasic();
 //                .anyRequest().permitAll().and()
-                .formLogin()
-                    .loginPage("/login")
-                    .usernameParameter("email")
-                    .permitAll()
-                    .and()
-                .logout()
-                    .permitAll();
+//                .formLogin()
+//                    .loginPage("/login")
+//                    .usernameParameter("email")
+//                    .permitAll()
+//                    .and()
     }
 
 
