@@ -20,15 +20,21 @@ public class Amount {
 
     @ManyToOne
     @MapsId("userId")
-    @JoinColumn(name = "user_id", nullable=false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @ManyToOne
     @MapsId("transactionId")
-    @JoinColumn(name = "transaction_id", nullable=false)
+    @JoinColumn(name = "transaction_id", nullable = false)
     private Transaction transaction;
 
     @NotBlank
     @Column
     private Float amount = 0f;
+
+    public Amount(User user, Transaction transaction, Float amount) {
+        this.user = user;
+        this.transaction = transaction;
+        this.amount = amount;
+    }
 }
