@@ -7,11 +7,13 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 @Entity
 @Table(name = "transaction")
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
 public class Transaction {
@@ -28,6 +30,7 @@ public class Transaction {
     private Long id;
     private String name;
     private Float amount;
+    private Calendar date;
 
     @ManyToOne
     @JoinColumn(name = "group_id")
@@ -35,8 +38,20 @@ public class Transaction {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private User user;
+    private User payer;
 
     @OneToMany(mappedBy = "transaction")
     private List<Amount> amounts = new ArrayList<>();
+
+    public Transaction(String name, Float amount, Calendar date, Group group, User payer) {
+        this.name = name;
+        this.amount = amount;
+        this.date = date;
+        this.group = group;
+        this.payer = payer;
+    }
+
+    public void addAmount(Amount amount) {
+        amounts.add(amount);
+    }
 }
