@@ -135,10 +135,16 @@ public class LoginTabFragment extends Fragment {
 
                 if (response.isSuccessful()) {
                     LoginResponse loginResponse = response.body();
-                    AuthenticationService updateAuthInterceptor = ServiceGenerator.createService(AuthenticationService.class, loginRequest.getEmail(), loginRequest.getPassword());
-
-                    new Handler().postDelayed(() -> startActivity(new Intent(getActivity(), DashboardActivity.class).putExtra("name", loginResponse.getName())), 0);
-                    getActivity().finish();
+                    if (loginResponse != null) {
+                        if (loginResponse.isEnabled()) {
+                            AuthenticationService updateAuthInterceptor = ServiceGenerator.createService(AuthenticationService.class, loginRequest.getEmail(), loginRequest.getPassword());
+                            new Handler().postDelayed(() -> startActivity(new Intent(getActivity(), DashboardActivity.class).putExtra("name", loginResponse.getName())), 0);
+                            getActivity().finish();
+                        }
+                        else{
+                            Toast.makeText(getActivity(), "Confirm your email first", Toast.LENGTH_SHORT).show();
+                        }
+                    }
                 } else {
                     Toast.makeText(getActivity(), "Login failed", Toast.LENGTH_SHORT).show();
                 }

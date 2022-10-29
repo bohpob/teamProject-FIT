@@ -1,6 +1,7 @@
 package cz.cvut.fit.sp.chipin.application;
 
 import android.text.TextUtils;
+import com.google.gson.GsonBuilder;
 import okhttp3.Credentials;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
@@ -8,14 +9,14 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ServiceGenerator {
 
-    public static final String API_BASE_URL = "https://928e-2001-718-7-204-6805-603d-391d-4004.eu.ngrok.io/api/v1/";
+    public static final String API_BASE_URL = "https://4d5d-195-113-65-21.eu.ngrok.io/api/v1/";
 
     private static final OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
 
     private static final Retrofit.Builder builder =
             new Retrofit.Builder()
                     .baseUrl(API_BASE_URL)
-                    .addConverterFactory(GsonConverterFactory.create());
+                    .addConverterFactory(GsonConverterFactory.create(new GsonBuilder().setLenient().create()));
 
     private static Retrofit retrofit = builder.build();
 

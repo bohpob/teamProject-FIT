@@ -8,4 +8,5 @@
     <string name="sign_up_button_text">Sign Up</string>
     <string name="repeat_password_hint">Repeat Password</string>
     <string name="sign_up_text">Sign Up</string>
+    <string name="confirm_email_text">Please, confirm your email to activate your account</string>
 </resources>
