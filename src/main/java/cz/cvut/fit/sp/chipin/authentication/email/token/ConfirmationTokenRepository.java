@@ -3,6 +3,7 @@ package cz.cvut.fit.sp.chipin.authentication.email.token;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -10,4 +11,5 @@ public interface ConfirmationTokenRepository extends JpaRepository<ConfirmationT
 
     Optional<ConfirmationToken> findByToken(String token);
 
+    List<ConfirmationToken> findAllByUserId(Long id);
 }

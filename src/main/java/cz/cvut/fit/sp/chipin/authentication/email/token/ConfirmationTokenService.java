@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -27,5 +28,9 @@ public class ConfirmationTokenService {
         ConfirmationToken confirmationToken = confirmationTokenRepository.findByToken(token).get();
         confirmationToken.setConfirmedAt(LocalDateTime.now());
         confirmationTokenRepository.save(confirmationToken);
+    }
+
+    public List<ConfirmationToken> getAllTokensByUserId(Long id) {
+        return confirmationTokenRepository.findAllByUserId(id);
     }
 }

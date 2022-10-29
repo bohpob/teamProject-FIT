@@ -1,6 +1,8 @@
 package cz.cvut.fit.sp.chipin.application;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -174,11 +176,12 @@ public class SignUpTabFragment extends Fragment {
             public void onResponse(@NotNull Call<String> call, @NotNull Response<String> response) {
                 String message;
                 if (response.isSuccessful()){
-                    message = "Successful...";
+                    new Handler().postDelayed(() -> startActivity(new Intent(getActivity(), ConfirmEmailInfoActivity.class)), 0);
+                    getActivity().finish();
                 } else {
                     message = "Ann error occurred, please try again later...";
+                    Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
                 }
-                Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
             }
 
             @Override

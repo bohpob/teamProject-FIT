@@ -5,6 +5,8 @@ public class LoginResponse {
     private String name;
     private String email;
 
+    private boolean enabled;
+
     public String getId() {
         return id;
     }
@@ -27,5 +29,9 @@ public class LoginResponse {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
     }
 }

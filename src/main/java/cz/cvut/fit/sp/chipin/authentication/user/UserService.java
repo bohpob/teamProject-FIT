@@ -71,5 +71,12 @@ public class UserService implements UserDetailsService {
     }
 
 
-
+    public boolean userHasActiveToken(Long id) {
+        for (ConfirmationToken token :
+                confirmationTokenService.getAllTokensByUserId(id)) {
+            if (token.getExpiresAt().isAfter(LocalDateTime.now()))
+                return true;
+        }
+        return false;
+    }
 }
