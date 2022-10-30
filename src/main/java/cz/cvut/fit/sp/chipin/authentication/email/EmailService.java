@@ -29,7 +29,7 @@ public class EmailService implements EmailSender{
     @Async
     public void sendConfirmation(String to, String name, String token) {
         try {
-            String link = "https://4d5d-195-113-65-21.eu.ngrok.io/api/v1/registration/confirm?token=" + token;
+            String link = "https://89cc-195-113-65-21.eu.ngrok.io/api/v1/registration/confirm?token=" + token;
 
             MimeMessage mimeMessage = mailSender.createMimeMessage();
             MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, "utf-8");

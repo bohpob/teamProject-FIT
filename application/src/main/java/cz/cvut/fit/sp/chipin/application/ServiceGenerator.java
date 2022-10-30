@@ -9,7 +9,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ServiceGenerator {
 
-    public static final String API_BASE_URL = "https://4d5d-195-113-65-21.eu.ngrok.io/api/v1/";
+    public static final String API_BASE_URL = "https://89cc-195-113-65-21.eu.ngrok.io/api/v1/";
 
     private static final OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
 
@@ -48,6 +48,12 @@ public class ServiceGenerator {
             }
         }
         return retrofit.create(serviceClass);
+    }
+
+    public static void logout(){
+        httpClient.interceptors().clear();
+        builder.client(httpClient.build());
+        retrofit = builder.build();
     }
 
 }

@@ -2,9 +2,9 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item android:state_focused="false"
-          android:drawable="@drawable/ic_eye" />
+          android:drawable="@drawable/auth_ic_email_24" />
 
     <item
-            android:drawable="@drawable/ic_eye_focused" />
+            android:drawable="@drawable/auth_ic_email_focused_24" />
 
 </selector>

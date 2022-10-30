@@ -2,9 +2,11 @@ package cz.cvut.fit.sp.chipin.application;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -138,7 +140,15 @@ public class LoginTabFragment extends Fragment {
                     if (loginResponse != null) {
                         if (loginResponse.isEnabled()) {
                             AuthenticationService updateAuthInterceptor = ServiceGenerator.createService(AuthenticationService.class, loginRequest.getEmail(), loginRequest.getPassword());
-                            new Handler().postDelayed(() -> startActivity(new Intent(getActivity(), DashboardActivity.class).putExtra("name", loginResponse.getName())), 0);
+                            new Handler().postDelayed(() -> startActivity(new Intent(getActivity(), MenuActivity.class)
+                                    .putExtra("name", loginResponse.getName())
+                                    .putExtra("email", loginResponse.getEmail())
+                                    .putExtra("id", loginResponse.getId())), 0);
+                            SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+                            sharedPrefs.edit().putBoolean("isLoggedIn", true).apply();
+                            sharedPrefs.edit().putString("name", loginResponse.getName()).apply();
+                            sharedPrefs.edit().putString("email", loginResponse.getEmail()).apply();
+                            sharedPrefs.edit().putString("id", loginResponse.getId()).apply();
                             getActivity().finish();
                         }
                         else{

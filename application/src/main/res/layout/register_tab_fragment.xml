@@ -40,8 +40,8 @@
             app:boxCornerRadiusTopEnd="30dp"
             app:boxCornerRadiusTopStart="30dp"
             app:boxStrokeWidthFocused="1dp"
-            app:startIconDrawable="@drawable/ic_person_24"
-            app:startIconTint="@drawable/input_text_icon_tint"
+            app:startIconDrawable="@drawable/auth_ic_person_24"
+            app:startIconTint="@drawable/auth_input_text_icon_tint"
             android:inputType="textEmailAddress" >
 
         <com.google.android.material.textfield.TextInputEditText
@@ -73,8 +73,8 @@
             app:boxCornerRadiusTopEnd="30dp"
             app:boxCornerRadiusTopStart="30dp"
             app:boxStrokeWidthFocused="1dp"
-            app:startIconDrawable="@drawable/ic_email_24"
-            app:startIconTint="@drawable/input_text_icon_tint"
+            app:startIconDrawable="@drawable/auth_ic_email_24"
+            app:startIconTint="@drawable/auth_input_text_icon_tint"
             android:inputType="textEmailAddress" >
 
         <com.google.android.material.textfield.TextInputEditText
@@ -101,8 +101,8 @@
             app:layout_constraintHorizontal_bias=".5"
             android:hint="@string/password_hint"
             app:endIconMode="password_toggle"
-            app:endIconTint="@drawable/input_text_icon_tint"
-            app:endIconDrawable="@drawable/custom_password_toggle"
+            app:endIconTint="@drawable/auth_input_text_icon_tint"
+            app:endIconDrawable="@drawable/auth_custom_password_toggle"
             app:errorEnabled="true"
             app:errorIconDrawable="@null"
             android:layout_marginTop="20dp"
@@ -111,8 +111,8 @@
             app:boxCornerRadiusTopEnd="30dp"
             app:boxCornerRadiusTopStart="30dp"
             app:boxStrokeWidthFocused="1dp"
-            app:startIconDrawable="@drawable/ic_lock_24"
-            app:startIconTint="@drawable/input_text_icon_tint"
+            app:startIconDrawable="@drawable/auth_ic_lock_24"
+            app:startIconTint="@drawable/auth_input_text_icon_tint"
             android:inputType="textPassword" >
 
         <com.google.android.material.textfield.TextInputEditText
@@ -135,7 +135,7 @@
             android:textStyle="bold"
             android:layout_marginTop="20dp"
             android:layout_marginBottom="10dp"
-            android:background="@drawable/button_bg"
+            android:background="@drawable/auth_button_bg"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
