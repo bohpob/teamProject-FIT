@@ -10,7 +10,7 @@ import java.util.List;
 public class DebtService {
 
     public void recalculate() throws Exception {
-    // TODO:
+
     }
 
     public List<DebtDTO> getAllFromUser() throws Exception {
