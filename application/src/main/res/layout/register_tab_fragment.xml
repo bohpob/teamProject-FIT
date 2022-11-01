@@ -42,12 +42,14 @@
             app:boxStrokeWidthFocused="1dp"
             app:startIconDrawable="@drawable/auth_ic_person_24"
             app:startIconTint="@drawable/auth_input_text_icon_tint"
-            android:inputType="textEmailAddress" >
+            android:inputType="textPersonName" >
 
         <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/name_register"
+                android:imeOptions="actionNext"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" >
+                android:layout_height="match_parent"
+                android:inputType="textPersonName" >
 
         </com.google.android.material.textfield.TextInputEditText>
 
@@ -79,8 +81,10 @@
 
         <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/email_register"
+                android:imeOptions="actionNext"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" >
+                android:layout_height="match_parent"
+                android:inputType="textEmailAddress" >
 
         </com.google.android.material.textfield.TextInputEditText>
 
@@ -117,6 +121,7 @@
 
         <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/password_register"
+                android:imeOptions="actionDone"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:inputType="textPassword" >
@@ -144,5 +149,5 @@
             app:layout_constraintWidth_percent=".8" />
 
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
 

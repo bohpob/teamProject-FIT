@@ -1,5 +1,7 @@
 package cz.cvut.fit.sp.chipin.application;
 
+import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -9,6 +11,7 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -37,6 +40,7 @@ public class SignUpTabFragment extends Fragment {
     float v = 0;
     private AuthDataValidator authDataValidator;
 
+    @SuppressLint("ClickableViewAccessibility")
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -71,7 +75,18 @@ public class SignUpTabFragment extends Fragment {
         password_layout.animate().translationX(0).alpha(1).setDuration(800).setStartDelay(700).start();
         signUp.animate().translationX(0).alpha(1).setDuration(800).setStartDelay(900).start();
 
-
+        root.setOnTouchListener((v, event) -> {
+            InputMethodManager inputMethodManager =
+                    (InputMethodManager) getActivity().getSystemService(
+                            Activity.INPUT_METHOD_SERVICE);
+            if(inputMethodManager.isAcceptingText()){
+                inputMethodManager.hideSoftInputFromWindow(
+                        getActivity().getCurrentFocus().getWindowToken(),
+                        0
+                );
+            }
+            return false;
+        });
         password.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {

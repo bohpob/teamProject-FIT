@@ -1,5 +1,7 @@
 package cz.cvut.fit.sp.chipin.application;
 
+import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -9,6 +11,7 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
@@ -41,6 +44,7 @@ public class LoginTabFragment extends Fragment {
 
     AuthDataValidator authDataValidator;
 
+    @SuppressLint("ClickableViewAccessibility")
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -107,6 +111,19 @@ public class LoginTabFragment extends Fragment {
 
             if (!err)
                 loginUser();
+        });
+
+        root.setOnTouchListener((v, event) -> {
+            InputMethodManager inputMethodManager =
+                    (InputMethodManager) getActivity().getSystemService(
+                            Activity.INPUT_METHOD_SERVICE);
+            if(inputMethodManager.isAcceptingText()){
+                inputMethodManager.hideSoftInputFromWindow(
+                        getActivity().getCurrentFocus().getWindowToken(),
+                        0
+                );
+            }
+            return false;
         });
 
         email.setOnClickListener(v -> email_layout.setError(null));
