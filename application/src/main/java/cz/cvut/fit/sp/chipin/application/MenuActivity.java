@@ -17,6 +17,7 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import com.google.android.material.navigation.NavigationView;
 
+import java.util.HashMap;
 import java.util.Objects;
 
 public class MenuActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -31,6 +32,8 @@ public class MenuActivity extends AppCompatActivity implements NavigationView.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
+
+        SessionManager sessionManager = new SessionManager(this);
 
         drawerLayout = findViewById(R.id.nav_view);
         toolbar = findViewById(R.id.toolbar);
@@ -48,8 +51,8 @@ public class MenuActivity extends AppCompatActivity implements NavigationView.On
         TextView email = navView.getHeaderView(0).findViewById(R.id.nav_header_email);
         TextView name = navView.getHeaderView(0).findViewById(R.id.nav_header_name);
 
-        name.setText(getIntent().getStringExtra("name"));
-        email.setText(getIntent().getStringExtra("email"));
+        name.setText(sessionManager.getName());
+        email.setText(sessionManager.getEmail());
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ProfileItem()).commit();
@@ -89,11 +92,8 @@ public class MenuActivity extends AppCompatActivity implements NavigationView.On
             case R.id.logout:
                 ServiceGenerator.logout();
                 new Handler().postDelayed(() -> startActivity(new Intent(MenuActivity.this, LoginActivity.class)), 0);
-                SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(MenuActivity.this);
-                sharedPrefs.edit().putBoolean("isLoggedIn", false).apply();
-                sharedPrefs.edit().remove("name").apply();
-                sharedPrefs.edit().remove("email").apply();
-                sharedPrefs.edit().remove("id").apply();
+                SessionManager sessionManager = new SessionManager(MenuActivity.this);
+                sessionManager.clearSession();
                 finish();
                 break;
         }

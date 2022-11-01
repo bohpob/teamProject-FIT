@@ -22,10 +22,12 @@ public class ProfileItem extends Fragment {
         name = root.findViewById(R.id.profile_item_name);
         email = root.findViewById(R.id.profile_item_email);
 
-        String id_text = "Id: " + getActivity().getIntent().getStringExtra("id");
+        SessionManager sessionManager = new SessionManager(getActivity());
+
+        String id_text = "Id: " + sessionManager.getId();
         id.setText(id_text);
-        name.setText(getActivity().getIntent().getStringExtra("name"));
-        email.setText(getActivity().getIntent().getStringExtra("email"));
+        name.setText(sessionManager.getName());
+        email.setText(sessionManager.getEmail());
 
         return root;
     }

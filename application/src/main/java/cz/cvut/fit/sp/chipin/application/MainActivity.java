@@ -15,15 +15,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
-        boolean isLoggedIn = sharedPrefs.getBoolean("isLoggedIn", false);
+        SessionManager sessionManager = new SessionManager(this);
 
         Intent intent;
-        if (isLoggedIn) {
-            intent = new Intent(MainActivity.this, MenuActivity.class)
-                    .putExtra("name", sharedPrefs.getString("name", null))
-                    .putExtra("email", sharedPrefs.getString("email", null))
-                    .putExtra("id", sharedPrefs.getString("id", null));
+        if (sessionManager.isLoggedIn()) {
+            intent = new Intent(MainActivity.this, MenuActivity.class);
         } else {
             intent = new Intent(MainActivity.this, LoginActivity.class);
         }

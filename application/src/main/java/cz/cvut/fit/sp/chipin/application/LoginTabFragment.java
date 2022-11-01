@@ -157,15 +157,9 @@ public class LoginTabFragment extends Fragment {
                     if (loginResponse != null) {
                         if (loginResponse.isEnabled()) {
                             AuthenticationService updateAuthInterceptor = ServiceGenerator.createService(AuthenticationService.class, loginRequest.getEmail(), loginRequest.getPassword());
-                            new Handler().postDelayed(() -> startActivity(new Intent(getActivity(), MenuActivity.class)
-                                    .putExtra("name", loginResponse.getName())
-                                    .putExtra("email", loginResponse.getEmail())
-                                    .putExtra("id", loginResponse.getId())), 0);
-                            SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-                            sharedPrefs.edit().putBoolean("isLoggedIn", true).apply();
-                            sharedPrefs.edit().putString("name", loginResponse.getName()).apply();
-                            sharedPrefs.edit().putString("email", loginResponse.getEmail()).apply();
-                            sharedPrefs.edit().putString("id", loginResponse.getId()).apply();
+                            new Handler().postDelayed(() -> startActivity(new Intent(getActivity(), MenuActivity.class)), 0);
+                            SessionManager sessionManager = new SessionManager(getActivity());
+                            sessionManager.createSession(loginResponse.getId(), loginResponse.getName(), loginResponse.getEmail(), loginResponse.isEnabled());
                             getActivity().finish();
                         }
                         else{
