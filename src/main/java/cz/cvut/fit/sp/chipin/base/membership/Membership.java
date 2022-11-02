@@ -1,4 +1,4 @@
-package cz.cvut.fit.sp.chipin.base.balance;
+package cz.cvut.fit.sp.chipin.base.membership;
 
 import cz.cvut.fit.sp.chipin.authentication.user.User;
 import cz.cvut.fit.sp.chipin.base.group.Group;
@@ -14,10 +14,10 @@ import javax.validation.constraints.NotBlank;
 @Getter
 @Setter
 @EqualsAndHashCode
-public class Balance {
+public class Membership {
 
     @EmbeddedId
-    private BalanceKey id;
+    private MembershipKey id;
 
     @ManyToOne
     @MapsId("userId")
@@ -31,6 +31,10 @@ public class Balance {
 
     @NotBlank
     @Column
+    private GroupRole role;
+
+    @NotBlank
+    @Column
     private Float paid = 0f;
 
     @NotBlank
@@ -40,4 +44,13 @@ public class Balance {
     @NotBlank
     @Column
     private Float balance = 0f;
+
+    public Membership(User user, Group group, GroupRole role, Float paid, Float spent, Float balance) {
+        this.user = user;
+        this.group = group;
+        this.role = role;
+        this.paid = paid;
+        this.spent = spent;
+        this.balance = balance;
+    }
 }

@@ -1,4 +1,4 @@
-package cz.cvut.fit.sp.chipin.base.balance;
+package cz.cvut.fit.sp.chipin.base.membership;
 
 import lombok.*;
 
@@ -13,7 +13,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @EqualsAndHashCode
-public class BalanceKey implements Serializable {
+public class MembershipKey implements Serializable {
 
     @NotBlank
     @Column(name = "user_id")

@@ -1,7 +1,7 @@
 package cz.cvut.fit.sp.chipin.authentication.user;
 
 import cz.cvut.fit.sp.chipin.base.amount.Amount;
-import cz.cvut.fit.sp.chipin.base.balance.Balance;
+import cz.cvut.fit.sp.chipin.base.membership.Membership;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -35,7 +35,7 @@ public class User implements UserDetails {
     private Long id;
 
     @OneToMany(mappedBy = "user")
-    private List<Balance> balances = new ArrayList<>();
+    private List<Membership> memberships = new ArrayList<>();
 
     @OneToMany(mappedBy = "user")
     private List<Amount> amounts = new ArrayList<>();
@@ -105,5 +105,9 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return enabled;
+    }
+
+    public void addMembership(Membership membership) {
+        memberships.add(membership);
     }
 }
