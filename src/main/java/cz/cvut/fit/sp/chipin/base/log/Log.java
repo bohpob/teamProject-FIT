@@ -25,7 +25,7 @@ public class Log {
             strategy = GenerationType.SEQUENCE,
             generator = "log_sequence"
     )
-    private Integer id;
+    private Long id;
     private String action;
     private Calendar date;
 
