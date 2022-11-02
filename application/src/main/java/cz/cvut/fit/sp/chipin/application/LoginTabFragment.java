@@ -1,21 +1,17 @@
 package cz.cvut.fit.sp.chipin.application;
 
+import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
-
-import android.widget.Toast;
+import android.widget.*;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -34,15 +30,23 @@ public class LoginTabFragment extends Fragment {
     TextInputEditText email;
     EditText password;
     TextView forgetPassword;
-    Button login;
+    View login;
     float v = 0;
+
+    ProgressBar progressBar;
+    TextView progressButtonName;
 
     AuthDataValidator authDataValidator;
 
+    @SuppressLint("ClickableViewAccessibility")
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         ViewGroup root = (ViewGroup) inflater.inflate(R.layout.login_tab_fragment, container, false);
+
+        progressBar = root.findViewById(R.id.progressBar);
+        progressButtonName = root.findViewById(R.id.buttonName);
+        progressButtonName.setText(R.string.login_button_text);
 
         authDataValidator = new AuthDataValidator();
 
@@ -73,6 +77,12 @@ public class LoginTabFragment extends Fragment {
         login.animate().translationX(0).alpha(1).setDuration(500).setStartDelay(250).start();
 
         login.setOnClickListener(v -> {
+
+            login.setClickable(false);
+
+            ProgressButton pb = new ProgressButton(v);
+            pb.buttonActivated();
+
             try {
                 InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
@@ -97,14 +107,32 @@ public class LoginTabFragment extends Fragment {
                 password_layout.setError("Field is required");
             }
             else if (authDataValidator.containsWhitespaces(password.getText().toString()) ||
-                     authDataValidator.containsColon(password.getText().toString()))
+                    authDataValidator.containsColon(password.getText().toString()))
             {
                 err = true;
                 password_layout.setError("Invalid password format");
             }
 
             if (!err)
-                loginUser();
+                loginUser(pb::buttonFinished);
+            else {
+                pb.buttonFinished();
+                login.setClickable(true);
+            }
+
+        });
+
+        root.setOnTouchListener((v, event) -> {
+            InputMethodManager inputMethodManager =
+                    (InputMethodManager) getActivity().getSystemService(
+                            Activity.INPUT_METHOD_SERVICE);
+            if(inputMethodManager.isAcceptingText()){
+                inputMethodManager.hideSoftInputFromWindow(
+                        getActivity().getCurrentFocus().getWindowToken(),
+                        0
+                );
+            }
+            return false;
         });
 
         email.setOnClickListener(v -> email_layout.setError(null));
@@ -118,7 +146,7 @@ public class LoginTabFragment extends Fragment {
         return root;
     }
 
-    private void loginUser() {
+    private void loginUser(@NonNull Runnable pb_runnable) {
 
         LoginRequest loginRequest = new LoginRequest();
         loginRequest.setEmail(email.getText().toString());
@@ -137,8 +165,10 @@ public class LoginTabFragment extends Fragment {
                     LoginResponse loginResponse = response.body();
                     if (loginResponse != null) {
                         if (loginResponse.isEnabled()) {
-                            AuthenticationService updateAuthInterceptor = ServiceGenerator.createService(AuthenticationService.class, loginRequest.getEmail(), loginRequest.getPassword());
-                            new Handler().postDelayed(() -> startActivity(new Intent(getActivity(), DashboardActivity.class).putExtra("name", loginResponse.getName())), 0);
+                            ServiceGenerator.createService(AuthenticationService.class, loginRequest.getEmail(), loginRequest.getPassword());
+                            new Handler().postDelayed(() -> startActivity(new Intent(getActivity(), MenuActivity.class)), 0);
+                            SessionManager sessionManager = new SessionManager(getActivity());
+                            sessionManager.createSession(loginResponse.getId(), loginResponse.getName(), loginResponse.getEmail(), loginResponse.isEnabled());
                             getActivity().finish();
                         }
                         else{
@@ -148,11 +178,16 @@ public class LoginTabFragment extends Fragment {
                 } else {
                     Toast.makeText(getActivity(), "Login failed", Toast.LENGTH_SHORT).show();
                 }
+
+                pb_runnable.run();
+                login.setClickable(true);
             }
 
             @Override
             public void onFailure(Call<LoginResponse> call, Throwable t) {
                 Toast.makeText(getActivity(), "Throwable" + t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                pb_runnable.run();
+                login.setClickable(true);
             }
         });
     }

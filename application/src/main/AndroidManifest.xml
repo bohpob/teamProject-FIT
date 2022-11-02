@@ -29,12 +29,13 @@
             </intent-filter>
         </activity>
         <activity
-                android:name=".DashboardActivity"
+                android:name=".MenuActivity"
+                android:theme="@style/Theme.Chipin"
                 android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
-                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.DEFAUT"/>
             </intent-filter>
         </activity>
         <activity

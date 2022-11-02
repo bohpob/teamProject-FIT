@@ -35,15 +35,17 @@
             app:boxCornerRadiusTopEnd="30dp"
             app:boxCornerRadiusTopStart="30dp"
             app:boxStrokeWidthFocused="1dp"
-            app:startIconDrawable="@drawable/custom_email_icon"
-            app:startIconTint="@drawable/input_text_icon_tint"
+            app:startIconDrawable="@drawable/auth_custom_email_icon"
+            app:startIconTint="@drawable/auth_input_text_icon_tint"
             android:inputType="textEmailAddress"
             app:errorIconDrawable="@null" >
 
         <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/email_login"
+                android:imeOptions="actionNext"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:inputType="textEmailAddress"/>
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -60,22 +62,23 @@
             app:layout_constraintVertical_bias="0"
             app:layout_constraintHorizontal_bias=".5"
             app:endIconMode="password_toggle"
-            app:endIconTint="@drawable/input_text_icon_tint"
+            app:endIconTint="@drawable/auth_input_text_icon_tint"
             android:hint="@string/password_hint"
-            app:endIconDrawable="@drawable/custom_password_toggle"
+            app:endIconDrawable="@drawable/auth_custom_password_toggle"
             app:boxCornerRadiusBottomEnd="30dp"
             app:boxCornerRadiusBottomStart="30dp"
             app:boxCornerRadiusTopEnd="30dp"
             app:boxCornerRadiusTopStart="30dp"
             app:boxStrokeWidthFocused="1dp"
-            app:startIconDrawable="@drawable/ic_lock_24"
-            app:startIconTint="@drawable/input_text_icon_tint"
+            app:startIconDrawable="@drawable/auth_ic_lock_24"
+            app:startIconTint="@drawable/auth_input_text_icon_tint"
             android:inputType="textPassword"
             android:layout_marginTop="20dp"
             app:errorIconDrawable="@null" >
 
         <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/password_login"
+                android:imeOptions="actionDone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textPassword" />
@@ -84,14 +87,11 @@
     </com.google.android.material.textfield.TextInputLayout>
 
 
-    <Button
+    <include
+            layout="@layout/progress_button"
             android:id="@+id/loginButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@string/login_button_text"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:background="@drawable/button_bg"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

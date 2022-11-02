@@ -2,9 +2,9 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item android:state_focused="false"
-          android:drawable="@drawable/ic_eye_closed" />
+          android:drawable="@drawable/auth_ic_person_24" />
 
     <item
-            android:drawable="@drawable/ic_eye_closed_focused" />
-
+          android:drawable="@drawable/auth_ic_person_focused_24" />
+    
 </selector>
