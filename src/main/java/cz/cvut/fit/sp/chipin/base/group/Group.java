@@ -44,9 +44,6 @@ public class Group {
     @OneToMany(mappedBy = "group")
     private List<Membership> memberships = new ArrayList<>();
 
-    @OneToMany(mappedBy = "group")
-    private List<Transaction> transactions = new ArrayList<>();
-
     @NotBlank
     @Column(name = "name")
     private String name;
