@@ -12,13 +12,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
+import android.widget.*;
 
-import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
@@ -36,15 +34,21 @@ public class SignUpTabFragment extends Fragment {
     TextInputLayout name_layout;
     TextInputLayout email_layout;
     TextInputLayout password_layout;
-    Button signUp;
+    ConstraintLayout signUp;
     float v = 0;
     private AuthDataValidator authDataValidator;
+    ProgressBar progressBar;
+    TextView progressButtonName;
 
     @SuppressLint("ClickableViewAccessibility")
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         ViewGroup root = (ViewGroup) inflater.inflate(R.layout.register_tab_fragment, container, false);
+
+        progressBar = root.findViewById(R.id.progressBar);
+        progressButtonName = root.findViewById(R.id.buttonName);
+        progressButtonName.setText(R.string.sign_up_button_text);
 
         authDataValidator = new AuthDataValidator();
 
@@ -151,6 +155,12 @@ public class SignUpTabFragment extends Fragment {
 
 
         signUp.setOnClickListener(v -> {
+
+            signUp.setClickable(false);
+
+            ProgressButton pb = new ProgressButton(v);
+            pb.buttonActivated();
+
             boolean err = false;
             if (!authDataValidator.isValidName(name.getText().toString())) {
                 name_layout.setError("Field is required");
@@ -172,13 +182,17 @@ public class SignUpTabFragment extends Fragment {
                 password_layout.setError("Weak password");
             }
             if (!err)
-                registerUser();
+                registerUser(pb::buttonFinished);
+            else {
+                pb.buttonFinished();
+                signUp.setClickable(true);
+            }
         });
 
         return root;
     }
 
-    public void registerUser() {
+    public void registerUser(@NonNull Runnable r) {
         RegisterRequest registerRequest = new RegisterRequest();
         registerRequest.setName(name.getText().toString());
         registerRequest.setEmail(email.getText().toString());
@@ -197,12 +211,16 @@ public class SignUpTabFragment extends Fragment {
                     message = "Ann error occurred, please try again later...";
                     Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
                 }
+                r.run();
+                signUp.setClickable(true);
             }
 
             @Override
             public void onFailure(@NotNull Call<String> call, @NotNull Throwable t) {
                 String message = t.getLocalizedMessage();
                 Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
+                r.run();
+                signUp.setClickable(true);
             }
         });
     }
