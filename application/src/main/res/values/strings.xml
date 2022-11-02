@@ -1,3 +1,16 @@
 <resources>
     <string name="app_name">Chipin</string>
+    <string name="email_hint">Email</string>
+    <string name="password_hint">Password</string>
+    <string name="forgot_password">Forgot password?</string>
+    <string name="login_button_text">Login</string>
+    <string name="name_hint">Name</string>
+    <string name="sign_up_button_text">Sign Up</string>
+    <string name="repeat_password_hint">Repeat Password</string>
+    <string name="sign_up_text">Sign Up</string>
+    <string name="confirm_email_text">Please, confirm your email to activate your account</string>
+    <string name="open">open</string>
+    <string name="close">close</string>
+    <string name="go_to_login">Go to Login</string>
+    <string name="progress_button_text">Please wait...</string>
 </resources>

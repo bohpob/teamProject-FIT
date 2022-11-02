@@ -1,5 +1,5 @@
 package cz.cvut.fit.sp.chipin.authentication.email;
 
 public interface EmailSender {
-    void send(String to, String email);
+    void sendConfirmation(String to, String name, String token);
 }

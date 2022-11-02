@@ -22,8 +22,25 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation 'org.springframework.boot:spring-boot-gradle-plugin:2.7.5'
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+jar {
+	manifest {
+		attributes('Main-Class': 'cz.cvut.fit.sp.chipin.ChipinApplication')
+	}
+}
+
+task customFatJar(type: Jar) {
+	manifest {
+		attributes 'Main-Class': 'cz.cvut.fit.sp.chipin.ChipinApplication'
+	}
+	baseName = 'all-in-one-jar'
+	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+	from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+	with jar
 }

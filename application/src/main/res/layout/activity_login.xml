@@ -11,7 +11,7 @@
             android:id="@+id/imageView"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:src="@drawable/new_login_background"
+            android:src="@drawable/auth_new_login_background"
             app:layout_constraintHeight_percent="1"
             android:scaleType="centerCrop"
             app:layout_constraintVertical_bias="0"
@@ -28,7 +28,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:background="@drawable/view_bg"
+            android:background="@drawable/auth_view_bg"
             app:layout_constraintHeight_percent=".78"
             app:layout_constraintVertical_bias="1">
 
@@ -41,7 +41,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tab_layout"
                 app:layout_constraintVertical_bias="0"
-                app:layout_constraintHeight_percent=".7" />
+                app:layout_constraintHeight_percent=".78" />
 
         <com.google.android.material.tabs.TabLayout
                 android:id="@+id/tab_layout"
@@ -61,7 +61,7 @@
                 android:backgroundTint="@color/white"
                 app:tint="@null"
                 android:elevation="35dp"
-                app:srcCompat="@drawable/google"
+                app:srcCompat="@drawable/auth_google"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -74,7 +74,7 @@
                 android:backgroundTint="@color/white"
                 app:tint="@null"
                 android:elevation="35dp"
-                app:srcCompat="@drawable/facebook"
+                app:srcCompat="@drawable/auth_facebook"
                 android:layout_marginRight="20dp"
                 app:layout_constraintHorizontal_bias="1"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -89,7 +89,7 @@
                 android:backgroundTint="@color/white"
                 app:tint="@null"
                 android:elevation="35dp"
-                app:srcCompat="@drawable/twitter"
+                app:srcCompat="@drawable/auth_twitter"
                 android:layout_marginLeft="20dp"
                 app:layout_constraintHorizontal_bias="0"
                 app:layout_constraintBottom_toBottomOf="parent"

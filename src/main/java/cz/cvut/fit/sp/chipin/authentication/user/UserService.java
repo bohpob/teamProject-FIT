@@ -25,7 +25,7 @@ public class UserService implements UserDetailsService {
     private final static String USER_NOT_FOUND = "User with email %s not found";
 
     @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+    public User loadUserByUsername(String email) throws UsernameNotFoundException {
         return userRepository.findUserByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException(String.format(USER_NOT_FOUND, email)));
     }
@@ -71,5 +71,12 @@ public class UserService implements UserDetailsService {
     }
 
 
-
+    public boolean userHasActiveToken(Long id) {
+        for (ConfirmationToken token :
+                confirmationTokenService.getAllTokensByUserId(id)) {
+            if (token.getExpiresAt().isAfter(LocalDateTime.now()))
+                return true;
+        }
+        return false;
+    }
 }
