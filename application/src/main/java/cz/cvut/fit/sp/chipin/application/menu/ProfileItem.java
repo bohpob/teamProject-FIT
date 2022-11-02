@@ -1,4 +1,4 @@
-package cz.cvut.fit.sp.chipin.application;
+package cz.cvut.fit.sp.chipin.application.menu;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -8,6 +8,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import cz.cvut.fit.sp.chipin.application.R;
+import cz.cvut.fit.sp.chipin.application.SessionManager;
 
 public class ProfileItem extends Fragment {
 

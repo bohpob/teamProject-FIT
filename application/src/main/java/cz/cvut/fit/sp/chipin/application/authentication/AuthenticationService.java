@@ -1,9 +1,7 @@
-package cz.cvut.fit.sp.chipin.application;
+package cz.cvut.fit.sp.chipin.application.authentication;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
-import retrofit2.http.GET;
-import retrofit2.http.HTTP;
 import retrofit2.http.POST;
 
 public interface AuthenticationService {

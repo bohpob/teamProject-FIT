@@ -1,4 +1,4 @@
-package cz.cvut.fit.sp.chipin.application;
+package cz.cvut.fit.sp.chipin.application.authentication;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -17,6 +17,10 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+import cz.cvut.fit.sp.chipin.application.menu.MenuActivity;
+import cz.cvut.fit.sp.chipin.application.R;
+import cz.cvut.fit.sp.chipin.application.ServiceGenerator;
+import cz.cvut.fit.sp.chipin.application.SessionManager;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;

@@ -1,4 +1,4 @@
-package cz.cvut.fit.sp.chipin.application;
+package cz.cvut.fit.sp.chipin.application.authentication;
 
 public class LoginResponse {
     private String id;

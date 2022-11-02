@@ -1,4 +1,4 @@
-package cz.cvut.fit.sp.chipin.application;
+package cz.cvut.fit.sp.chipin.application.authentication;
 
 import okhttp3.Interceptor;
 import okhttp3.Request;

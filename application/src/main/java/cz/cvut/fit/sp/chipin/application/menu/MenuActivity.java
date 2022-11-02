@@ -1,11 +1,8 @@
-package cz.cvut.fit.sp.chipin.application;
+package cz.cvut.fit.sp.chipin.application.menu;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Handler;
-import android.preference.PreferenceManager;
-import android.view.ViewGroup;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
@@ -16,8 +13,11 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import com.google.android.material.navigation.NavigationView;
+import cz.cvut.fit.sp.chipin.application.R;
+import cz.cvut.fit.sp.chipin.application.ServiceGenerator;
+import cz.cvut.fit.sp.chipin.application.SessionManager;
+import cz.cvut.fit.sp.chipin.application.authentication.LoginActivity;
 
-import java.util.HashMap;
 import java.util.Objects;
 
 public class MenuActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {

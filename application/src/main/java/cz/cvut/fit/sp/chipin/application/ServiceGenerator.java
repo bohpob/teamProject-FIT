@@ -2,6 +2,7 @@ package cz.cvut.fit.sp.chipin.application;
 
 import android.text.TextUtils;
 import com.google.gson.GsonBuilder;
+import cz.cvut.fit.sp.chipin.application.authentication.AuthenticationInterceptor;
 import okhttp3.Credentials;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;

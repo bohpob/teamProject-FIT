@@ -20,7 +20,7 @@
             </intent-filter>
         </activity>
         <activity
-                android:name=".LoginActivity"
+                android:name=".authentication.LoginActivity"
                 android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -29,7 +29,7 @@
             </intent-filter>
         </activity>
         <activity
-                android:name=".MenuActivity"
+                android:name=".menu.MenuActivity"
                 android:theme="@style/Theme.Chipin"
                 android:exported="true">
             <intent-filter>
@@ -39,7 +39,7 @@
             </intent-filter>
         </activity>
         <activity
-                android:name=".ConfirmEmailInfoActivity"
+                android:name=".authentication.ConfirmEmailInfoActivity"
                 android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>

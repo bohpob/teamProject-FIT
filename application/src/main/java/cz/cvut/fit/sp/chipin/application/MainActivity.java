@@ -1,12 +1,11 @@
 package cz.cvut.fit.sp.chipin.application;
 
-import android.content.SharedPreferences;
-import android.os.Handler;
-import android.preference.PreferenceManager;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import cz.cvut.fit.sp.chipin.application.authentication.LoginActivity;
+import cz.cvut.fit.sp.chipin.application.menu.MenuActivity;
 
 public class MainActivity extends AppCompatActivity {
 
