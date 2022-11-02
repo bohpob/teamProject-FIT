@@ -2,10 +2,7 @@ package cz.cvut.fit.sp.chipin.base.group;
 
 import cz.cvut.fit.sp.chipin.authentication.registration.RegistrationRequest;
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/groups")
@@ -17,6 +14,11 @@ public class GroupController {
     @PostMapping
     public String create(@RequestBody GroupCreateRequest request) throws Exception {
         return groupService.create(request);
+    }
+
+    @PatchMapping("/{group_id}/join")
+    public String addMember(@RequestBody Long user_id, @PathVariable Long group_id) throws Exception {
+        return groupService.addMember(user_id, group_id);
     }
 
 

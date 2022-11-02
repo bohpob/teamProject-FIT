@@ -21,30 +21,47 @@ public class GroupService {
     private final MembershipRepository membershipRepository;
 
     public String create(GroupCreateRequest request) throws Exception {
-        try {
-            User user = userService.getUser(request.getUserId());
+        User user = userService.getUser(request.getUserId());
 
-            if (request.getName() == null || request.getCurrency() == null)
-                throw new Exception("Name and Currency fields cannot be empty");
+        if (request.getName() == null || request.getCurrency() == null)
+            throw new Exception("Name and Currency fields cannot be empty");
 
-            Group group = new Group();
-            group.setName(request.getName());
-            group.setCurrency(Currency.valueOf(request.getCurrency()));
+        Group group = new Group();
+        group.setName(request.getName());
+        group.setCurrency(Currency.valueOf(request.getCurrency()));
 
-            Membership membership = new Membership(user, group, GroupRole.ADMIN, 0f, 0f, 0f);
+        Membership membership = new Membership(user, group, GroupRole.ADMIN, 0f, 0f, 0f);
 
-            group.addMembership(membership);
+        group.addMembership(membership);
 
-            user.addMembership(membership);
+        user.addMembership(membership);
 
-            membershipRepository.save(membership);
-            userRepository.save(user);
-            groupRepository.save(group);
+        membershipRepository.save(membership);
+        userRepository.save(user);
+        groupRepository.save(group);
 
-            return "Created";
-        } catch (Exception e) {
-            throw new Exception(e.getMessage());
+        return "Created";
+    }
+
+    public String addMember(Long user_id, Long group_id) throws Exception {
+
+        User user = userService.getUser(user_id);
+        Group group = groupRepository.findById(group_id).orElseThrow(() -> new Exception("Group not found"));
+
+        for (Membership membership: group.getMemberships()) {
+            if (membership.getUser().equals(user))
+                return "User already member of this group";
         }
+
+        Membership membership = new Membership(user, group, GroupRole.USER, 0f, 0f, 0f);
+        group.addMembership(membership);
+        user.addMembership(membership);
+
+        membershipRepository.save(membership);
+        userRepository.save(user);
+        groupRepository.save(group);
+
+        return "User joined";
 
     }
 }
