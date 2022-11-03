@@ -6,6 +6,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "debt")
@@ -33,7 +34,7 @@ public class Debt {
     @JoinColumn(name = "borrower_id", nullable=false)
     User borrower;
 
-    @NotBlank
+    @NotNull
     @Column(name = "amount", nullable = false)
     private Float amount;
 }

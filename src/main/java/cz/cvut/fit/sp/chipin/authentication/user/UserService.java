@@ -2,6 +2,8 @@ package cz.cvut.fit.sp.chipin.authentication.user;
 
 import cz.cvut.fit.sp.chipin.authentication.email.token.ConfirmationToken;
 import cz.cvut.fit.sp.chipin.authentication.email.token.ConfirmationTokenService;
+import cz.cvut.fit.sp.chipin.base.membership.Membership;
+import cz.cvut.fit.sp.chipin.base.membership.MembershipDTO;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -78,5 +80,22 @@ public class UserService implements UserDetailsService {
                 return true;
         }
         return false;
+    }
+
+    public List<MembershipDTO> getMemberships(Long id) throws Exception {
+        User user = getUser(id);
+
+        List<MembershipDTO> memberships = new ArrayList<>();
+
+        for (Membership membership : user.getMemberships()){
+            memberships.add(new MembershipDTO(
+                    membership.getId().getGroupId(),
+                    membership.getRole().name(),
+                    membership.getPaid(),
+                    membership.getSpent(),
+                    membership.getBalance()));
+        }
+
+        return memberships;
     }
 }

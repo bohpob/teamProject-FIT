@@ -1,6 +1,7 @@
 package cz.cvut.fit.sp.chipin.base.amount;
 
 import cz.cvut.fit.sp.chipin.authentication.user.User;
+import cz.cvut.fit.sp.chipin.base.group.Group;
 import cz.cvut.fit.sp.chipin.base.transaction.Transaction;
 import lombok.*;
 

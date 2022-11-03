@@ -42,6 +42,7 @@ public class TransactionService {
         }
 
         //group.recalculate(spent, transaction.getPayer().getId(), transaction.getAmount());
+
         return ResponseEntity.ok(transactionDTO);
     }
 

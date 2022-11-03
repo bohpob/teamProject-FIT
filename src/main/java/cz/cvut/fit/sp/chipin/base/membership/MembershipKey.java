@@ -1,10 +1,10 @@
-package cz.cvut.fit.sp.chipin.base.balance;
+package cz.cvut.fit.sp.chipin.base.membership;
 
 import lombok.*;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 @Embeddable
@@ -13,13 +13,13 @@ import java.io.Serializable;
 @Getter
 @Setter
 @EqualsAndHashCode
-public class BalanceKey implements Serializable {
+public class MembershipKey implements Serializable {
 
-    @NotBlank
+    @NotNull
     @Column(name = "user_id")
     private Long userId;
 
-    @NotBlank
+    @NotNull
     @Column(name = "group_id")
     private Long groupId;
 }
