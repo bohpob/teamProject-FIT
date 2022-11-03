@@ -48,8 +48,6 @@ public class Membership {
 
     public Membership(User user, Group group, GroupRole role, Float paid, Float spent, Float balance) {
         id = new MembershipKey(user.getId(), group.getId());
-//        id.setUserId(user.getId());
-//        id.setGroupId(group.getId());
         this.user = user;
         this.group = group;
         this.role = role;

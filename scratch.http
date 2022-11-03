@@ -17,3 +17,13 @@ Authorization: Basic tanush2233@gmail.com Tanush2233!
   "name": "First Group",
   "currency": "CZECH_KORUNA"
 }
+
+###
+PATCH http://localhost:8080/api/v1/groups/10/join
+Content-Type: application/json
+Authorization: Basic donyvpvl@gmail.com alik123!
+
+{
+  "id": "4",
+  "name": "Alisher"
+}
