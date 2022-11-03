@@ -33,6 +33,9 @@ public class Group {
     private Long id;
 
     @OneToMany(mappedBy = "group")
+    private List<Transaction> transactions = new ArrayList<>();
+
+    @OneToMany(mappedBy = "group")
     private List<Debt> debts = new ArrayList<>();
 
     @OneToMany(mappedBy = "group")
