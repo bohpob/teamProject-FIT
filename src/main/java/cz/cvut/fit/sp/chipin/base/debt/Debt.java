@@ -18,17 +18,20 @@ public class Debt {
     @EmbeddedId
     private DebtKey id;
 
-    @ManyToOne()
-    @JoinColumn(name = "group_id")
-    private Group group;
+    @ManyToOne
+    @MapsId("groupId")
+    @JoinColumn(name = "group_id", nullable=false)
+    Group group;
 
-    @ManyToOne()
-    @JoinColumn(name = "lender_id")
-    private User lender;
+    @ManyToOne
+    @MapsId("lenderId")
+    @JoinColumn(name = "lender_id", nullable=false)
+    User lender;
 
-    @ManyToOne()
-    @JoinColumn(name = "borrower_id")
-    private User borrower;
+    @ManyToOne
+    @MapsId("borrowerId")
+    @JoinColumn(name = "borrower_id", nullable=false)
+    User borrower;
 
     @NotBlank
     @Column(name = "amount", nullable = false)

@@ -12,7 +12,7 @@ import javax.validation.constraints.NotBlank;
 import java.util.*;
 
 @Entity
-@Table(name = "group")
+@Table(name = "[group]")
 @NoArgsConstructor
 @Getter
 @Setter
