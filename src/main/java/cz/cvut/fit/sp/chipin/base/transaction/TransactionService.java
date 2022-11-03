@@ -41,7 +41,7 @@ public class TransactionService {
             throw new Exception(e.getMessage());
         }
 
-        group.recalculate(spent, transaction.getPayer().getId(), transaction.getAmount());
+        //group.recalculate(spent, transaction.getPayer().getId(), transaction.getAmount());
         return ResponseEntity.ok(transactionDTO);
     }
 
