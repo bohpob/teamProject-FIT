@@ -29,16 +29,16 @@ public class GroupService {
         Group group = new Group();
         group.setName(request.getName());
         group.setCurrency(Currency.valueOf(request.getCurrency()));
+        groupRepository.save(group);
 
         Membership membership = new Membership(user, group, GroupRole.ADMIN, 0f, 0f, 0f);
+        membershipRepository.save(membership);
 
         group.addMembership(membership);
-
         user.addMembership(membership);
 
-        membershipRepository.save(membership);
-        userRepository.save(user);
         groupRepository.save(group);
+        userRepository.save(user);
 
         return "Created";
     }

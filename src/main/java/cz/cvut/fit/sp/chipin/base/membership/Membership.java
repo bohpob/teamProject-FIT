@@ -6,9 +6,10 @@ import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Entity
-@Table(name = "user")
+@Table(name = "membership")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -29,23 +30,26 @@ public class Membership {
     @JoinColumn(name = "group_id", nullable=false)
     private Group group;
 
-    @NotBlank
+    @NotNull
     @Column
     private GroupRole role;
 
-    @NotBlank
+    @NotNull
     @Column
     private Float paid = 0f;
 
-    @NotBlank
+    @NotNull
     @Column
     private Float spent = 0f;
 
-    @NotBlank
+    @NotNull
     @Column
     private Float balance = 0f;
 
     public Membership(User user, Group group, GroupRole role, Float paid, Float spent, Float balance) {
+        id = new MembershipKey(user.getId(), group.getId());
+//        id.setUserId(user.getId());
+//        id.setGroupId(group.getId());
         this.user = user;
         this.group = group;
         this.role = role;
