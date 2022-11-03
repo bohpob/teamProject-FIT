@@ -33,6 +33,7 @@ public class Debt {
     @JoinColumn(name = "borrower_id", nullable=false)
     User borrower;
 
+
     @NotBlank
     @Column(name = "amount", nullable = false)
     private Float amount;
