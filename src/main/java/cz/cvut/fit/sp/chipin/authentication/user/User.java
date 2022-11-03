@@ -2,6 +2,7 @@ package cz.cvut.fit.sp.chipin.authentication.user;
 
 import cz.cvut.fit.sp.chipin.base.amount.Amount;
 import cz.cvut.fit.sp.chipin.base.balance.Balance;
+import cz.cvut.fit.sp.chipin.base.debt.Debt;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -39,6 +40,12 @@ public class User implements UserDetails {
 
     @OneToMany(mappedBy = "user")
     private List<Amount> amounts = new ArrayList<>();
+
+    @OneToMany(mappedBy = "lender")
+    private List<Debt> lendDebts = new ArrayList<>();
+
+    @OneToMany(mappedBy = "borrower")
+    private List<Debt> borrowDebts = new ArrayList<>();
 
     @NotBlank
     @Column(name = "name")

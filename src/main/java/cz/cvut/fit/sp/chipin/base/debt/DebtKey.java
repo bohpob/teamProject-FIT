@@ -16,14 +16,14 @@ import java.io.Serializable;
 public class DebtKey implements Serializable {
 
     @NotBlank
+    @Column(name = "group_id")
+    private Long groupId;
+
+    @NotBlank
     @Column(name = "lender_id")
     private Long lenderId;
 
     @NotBlank
     @Column(name = "borrower_id")
     private Long borrowerId;
-
-    @NotBlank
-    @Column(name = "group_id")
-    private Long groupId;
 }
