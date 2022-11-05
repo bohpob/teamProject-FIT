@@ -49,6 +49,7 @@ public class GroupService {
         groupRepository.save(group);
         userRepository.save(user);
 
+        logService.create("created the group.", group, user);
         return "Created";
     }
 
@@ -70,6 +71,7 @@ public class GroupService {
         userRepository.save(user);
         groupRepository.save(group);
 
+        logService.create("joined the group.", group, user);
         return "User joined";
     }
 
@@ -87,6 +89,6 @@ public class GroupService {
         }
 
 //        debtService.recalculate();
-        logService.create("created transaction: ", transaction.getGroup(), transaction.getPayer());
+        logService.create("created transaction: " + transaction.getAmount(), transaction.getGroup(), transaction.getPayer());
     }
 }
