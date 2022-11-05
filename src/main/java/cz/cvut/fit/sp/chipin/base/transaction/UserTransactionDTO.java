@@ -1,4 +1,4 @@
-package cz.cvut.fit.sp.chipin.base.log;
+package cz.cvut.fit.sp.chipin.base.transaction;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -8,14 +8,10 @@ import javax.validation.constraints.NotNull;
 
 @Getter
 @AllArgsConstructor
-public class LogDTO {
+public class UserTransactionDTO {
     @NotNull
     @NotBlank
-    private String action;
+    private String name;
     @NotNull
-    @NotBlank
-    private String date;
-    @NotNull
-    @NotBlank
-    private String userName;
+    private Float amount;
 }

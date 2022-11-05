@@ -7,7 +7,10 @@ import cz.cvut.fit.sp.chipin.base.amount.AmountRepository;
 import cz.cvut.fit.sp.chipin.base.group.Group;
 import cz.cvut.fit.sp.chipin.base.group.GroupRepository;
 import cz.cvut.fit.sp.chipin.base.group.GroupService;
+import cz.cvut.fit.sp.chipin.base.membership.MembershipKey;
+import cz.cvut.fit.sp.chipin.base.membership.MembershipRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -27,7 +30,7 @@ public class TransactionService {
 
     private final AmountRepository amountRepository;
 
-    public ResponseEntity<TransactionDTO> create(TransactionDTO transactionDTO, Long group_id) throws Exception {
+    public ResponseEntity<TransactionDetailDTO> create(TransactionDTO transactionDTO, Long group_id) throws Exception {
         Optional<Group> group = groupRepository.findById(group_id);
         if (group.isEmpty())
             throw new Exception("Group not found.");
@@ -46,7 +49,7 @@ public class TransactionService {
 
         groupService.acceptTxCreate(transaction);
 
-        return ResponseEntity.ok(transactionDTO);
+        return ResponseEntity.ok(TransactionConverter.toDto(transaction));
     }
 
     private Map<User, Float> setAmountsAndSpent(List<Long> userIds, Long payerId, Transaction transaction) throws Exception {
@@ -73,7 +76,7 @@ public class TransactionService {
         return spent;
     }
 
-    public ResponseEntity<TransactionDTO> read(Long transaction_id, Long group_id) throws Exception {
+    public ResponseEntity<TransactionDetailDTO> read(Long transaction_id, Long group_id) throws Exception {
         Optional<Transaction> transaction = transactionRepository.findById(transaction_id);
         if (transaction.isEmpty())
             throw new Exception("Transaction not found.");

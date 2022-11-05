@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.Calendar;
 
 @Entity
 @Table(name = "log")
@@ -27,7 +26,7 @@ public class Log {
     )
     private Long id;
     private String action;
-    private Calendar date;
+    private String date;
 
     @ManyToOne
     @JoinColumn(name = "group_id")
@@ -37,7 +36,7 @@ public class Log {
     @JoinColumn(name = "user_id")
     private User user;
 
-    public Log(String action, Calendar date, Group group, User user) {
+    public Log(String action, String date, Group group, User user) {
         this.action = action;
         this.date = date;
         this.group = group;
