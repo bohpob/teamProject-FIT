@@ -3,16 +3,20 @@ package cz.cvut.fit.sp.chipin.base.transaction;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import java.util.Calendar;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Getter
 @AllArgsConstructor
 public class TransactionDTO {
+    @NotNull
+    @NotBlank
     private String name;
+    @NotNull
     private Float amount;
-    private Calendar date;
-    private String payerName;
+    @NotNull
     private Long payerId;
+    @NotNull
     private List<Long> userIds;
 }

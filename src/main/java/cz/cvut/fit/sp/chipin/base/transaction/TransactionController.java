@@ -14,7 +14,7 @@ public class TransactionController {
 
     @PostMapping("/{group_id}/transactions")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<TransactionDTO> create(@RequestBody TransactionDTO transactionDTO, @PathVariable Long group_id) throws Exception {
+    public ResponseEntity<TransactionDetailDTO> create(@RequestBody TransactionDTO transactionDTO, @PathVariable Long group_id) throws Exception {
         try {
             return transactionService.create(transactionDTO, group_id);
         } catch (Exception e) {
@@ -24,7 +24,7 @@ public class TransactionController {
 
     @GetMapping("/{group_id}/transactions/{transaction_id}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<TransactionDTO> read(@PathVariable Long group_id, @PathVariable Long transaction_id) throws Exception {
+    public ResponseEntity<TransactionDetailDTO> read(@PathVariable Long group_id, @PathVariable Long transaction_id) throws Exception {
         try {
             return transactionService.read(transaction_id, group_id);
         } catch (Exception e) {

@@ -6,8 +6,9 @@ import cz.cvut.fit.sp.chipin.base.group.Group;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 @Entity
@@ -30,7 +31,7 @@ public class Transaction {
     private Long id;
     private String name;
     private Float amount;
-    private Calendar date;
+    private String date;
 
     @ManyToOne
     @JoinColumn(name = "group_id")
@@ -43,15 +44,14 @@ public class Transaction {
     @OneToMany(mappedBy = "transaction")
     private List<Amount> amounts = new ArrayList<>();
 
-    public Transaction(String name, Float amount, Calendar date, Group group, User payer) {
+    public Transaction(String name, Float amount, Group group, User payer) {
         this.name = name;
         this.amount = amount;
-        this.date = date;
+        LocalDateTime currentDate = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d MMM yyyy, HH:mm");
+        this.date = currentDate.format(formatter);
         this.group = group;
         this.payer = payer;
     }
 
-    public void addAmount(Amount amount) {
-        amounts.add(amount);
-    }
 }
