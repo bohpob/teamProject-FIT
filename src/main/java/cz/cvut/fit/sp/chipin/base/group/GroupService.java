@@ -16,6 +16,7 @@ import org.apache.catalina.realm.UserDatabaseRealm;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
+import java.util.Objects;
 
 @Service
 @AllArgsConstructor
@@ -73,12 +74,14 @@ public class GroupService {
     }
 
     public void acceptTxCreate(Transaction transaction) throws Exception {
-        Membership payerMembership = membershipRepository.findByUserId(transaction.getPayer().getId()).orElseThrow(() -> new Exception("Payer is not found"));
+        Membership payerMembership = membershipRepository.findByUserIdAndGroupId(transaction.getPayer().getId(),
+                transaction.getGroup().getId()).orElseThrow(() -> new Exception("Payer is not found"));
         payerMembership.setPaid(payerMembership.getPaid() + transaction.getAmount());
         membershipRepository.save(payerMembership);
 
-        for (Amount amount: transaction.getAmounts()) {
-            Membership membership  = membershipRepository.findByUserId(amount.getUser().getId()).orElseThrow(() -> new Exception("Transaction participant is not found"));
+        for (Amount amount : transaction.getAmounts()) {
+            Membership membership = membershipRepository.findByUserIdAndGroupId(amount.getUser().getId(),
+                    transaction.getGroup().getId()).orElseThrow(() -> new Exception("Transaction participant is not found"));
             membership.setSpent(membership.getSpent() + amount.getAmount());
             membershipRepository.save(membership);
         }

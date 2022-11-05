@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface MembershipRepository extends JpaRepository<Membership, Long> {
-    Optional<Membership> findByUserId(Long id);
+public interface MembershipRepository extends JpaRepository<Membership, MembershipKey> {
+    Optional<Membership> findByUserIdAndGroupId(Long userId, Long groupId);
 }
