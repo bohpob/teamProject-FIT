@@ -44,6 +44,7 @@ public class Membership {
 
     @NotNull
     @Column
+    @Setter(AccessLevel.NONE)
     private Float balance = 0f;
 
     public Membership(User user, Group group, GroupRole role, Float paid, Float spent, Float balance) {
@@ -54,5 +55,15 @@ public class Membership {
         this.paid = paid;
         this.spent = spent;
         this.balance = balance;
+    }
+
+    public void setPaid(Float paid) {
+        this.paid = paid;
+        this.balance = paid - spent;
+    }
+
+    public void setSpent(Float spent) {
+        this.spent = spent;
+        this.balance = paid - spent;
     }
 }
