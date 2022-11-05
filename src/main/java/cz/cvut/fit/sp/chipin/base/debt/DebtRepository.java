@@ -8,5 +8,5 @@ import java.util.Optional;
 @Repository
 public interface DebtRepository extends JpaRepository<Debt, DebtKey> {
 
-    Optional<Debt> findById(DebtKey id);
+    Optional<Debt> findByGroupIdAndLenderIdAndBorrowerId(Long groupId, Long lenderId, Long borrowerId);
 }

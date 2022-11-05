@@ -15,6 +15,7 @@ import lombok.AllArgsConstructor;
 import org.apache.catalina.realm.UserDatabaseRealm;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -81,14 +82,18 @@ public class GroupService {
         payerMembership.setPaid(payerMembership.getPaid() + transaction.getAmount());
         membershipRepository.save(payerMembership);
 
+        Map<User, Float> spent = new HashMap<>();
+
         for (Amount amount : transaction.getAmounts()) {
             Membership membership = membershipRepository.findByUserIdAndGroupId(amount.getUser().getId(),
                     transaction.getGroup().getId()).orElseThrow(() -> new Exception("Transaction participant is not found"));
             membership.setSpent(membership.getSpent() + amount.getAmount());
             membershipRepository.save(membership);
+
+            spent.put(amount.getUser(), amount.getAmount());
         }
 
-//        debtService.recalculate();
-        logService.create("created transaction: " + transaction.getAmount(), transaction.getGroup(), transaction.getPayer());
+        debtService.recalculate(spent, transaction.getPayer(), transaction.getGroup());
+        logService.create("made a payment: " + transaction.getAmount(), transaction.getGroup(), transaction.getPayer());
     }
 }
