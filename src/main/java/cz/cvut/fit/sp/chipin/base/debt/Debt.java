@@ -5,7 +5,6 @@ import cz.cvut.fit.sp.chipin.base.group.Group;
 import lombok.*;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @Entity
@@ -37,4 +36,12 @@ public class Debt {
     @NotNull
     @Column(name = "amount", nullable = false)
     private Float amount;
+
+    public Debt(Group group, User lender, User borrower, Float amount) {
+        id = new DebtKey(group.getId(), lender.getId(), borrower.getId());
+        this.group = group;
+        this.lender = lender;
+        this.borrower = borrower;
+        this.amount = amount;
+    }
 }

@@ -6,6 +6,7 @@ import cz.cvut.fit.sp.chipin.base.amount.Amount;
 import cz.cvut.fit.sp.chipin.base.amount.AmountRepository;
 import cz.cvut.fit.sp.chipin.base.group.Group;
 import cz.cvut.fit.sp.chipin.base.group.GroupRepository;
+import cz.cvut.fit.sp.chipin.base.group.GroupService;
 import cz.cvut.fit.sp.chipin.base.membership.MembershipKey;
 import cz.cvut.fit.sp.chipin.base.membership.MembershipRepository;
 import lombok.AllArgsConstructor;
@@ -18,6 +19,8 @@ import java.util.*;
 @Service
 @AllArgsConstructor
 public class TransactionService {
+
+    private final GroupService groupService;
 
     private final TransactionRepository transactionRepository;
 
@@ -44,7 +47,7 @@ public class TransactionService {
             throw new Exception(e.getMessage());
         }
 
-        //group.recalculate(spent, transaction.getPayer().getId(), transaction.getAmount());
+        groupService.acceptTxCreate(transaction);
 
         return ResponseEntity.ok(TransactionConverter.toDto(transaction));
     }
