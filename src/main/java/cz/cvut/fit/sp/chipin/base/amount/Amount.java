@@ -1,12 +1,11 @@
 package cz.cvut.fit.sp.chipin.base.amount;
 
 import cz.cvut.fit.sp.chipin.authentication.user.User;
-import cz.cvut.fit.sp.chipin.base.group.Group;
 import cz.cvut.fit.sp.chipin.base.transaction.Transaction;
 import lombok.*;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "amount")
@@ -21,19 +20,20 @@ public class Amount {
 
     @ManyToOne
     @MapsId("userId")
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id", nullable=false)
     private User user;
 
     @ManyToOne
     @MapsId("transactionId")
-    @JoinColumn(name = "transaction_id", nullable = false)
+    @JoinColumn(name = "transaction_id", nullable=false)
     private Transaction transaction;
 
-    @NotBlank
+    @NotNull
     @Column
     private Float amount = 0f;
 
     public Amount(User user, Transaction transaction, Float amount) {
+        id = new AmountKey(user.getId(), transaction.getId());
         this.user = user;
         this.transaction = transaction;
         this.amount = amount;

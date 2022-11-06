@@ -4,7 +4,7 @@ import lombok.*;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 @Embeddable
@@ -14,11 +14,11 @@ import java.io.Serializable;
 @Setter
 @EqualsAndHashCode
 public class AmountKey implements Serializable {
-    @NotBlank
+    @NotNull
     @Column(name = "user_id")
     private Long userId;
 
-    @NotBlank
+    @NotNull
     @Column(name = "transaction_id")
     private Long transactionId;
 }
