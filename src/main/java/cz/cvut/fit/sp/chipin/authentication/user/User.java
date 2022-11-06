@@ -42,8 +42,8 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user")
     private List<Amount> amounts = new ArrayList<>();
 
-//    @OneToMany(mappedBy = "payer")
-//    private List<Transaction> transactions = new ArrayList<>();
+    @OneToMany(mappedBy = "payer")
+    private List<Transaction> transactions = new ArrayList<>();
 
     @OneToMany(mappedBy = "lender")
     private List<Debt> lendDebts = new ArrayList<>();
