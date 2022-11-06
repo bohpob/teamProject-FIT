@@ -1,5 +1,6 @@
 package cz.cvut.fit.sp.chipin.base.transaction;
 
+import cz.cvut.fit.sp.chipin.authentication.user.UserDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -11,12 +12,17 @@ import java.util.List;
 @AllArgsConstructor
 public class TransactionDTO {
     @NotNull
+    private Long id;
+    @NotNull
     @NotBlank
     private String name;
     @NotNull
     private Float amount;
     @NotNull
-    private Long payerId;
+    @NotBlank
+    private String date;
     @NotNull
-    private List<Long> userIds;
+    private UserDTO payer;
+    @NotNull
+    private List<UserTransactionDTO> listOfUsers;
 }

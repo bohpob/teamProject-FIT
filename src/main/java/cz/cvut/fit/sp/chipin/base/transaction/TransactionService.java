@@ -7,10 +7,7 @@ import cz.cvut.fit.sp.chipin.base.amount.AmountRepository;
 import cz.cvut.fit.sp.chipin.base.group.Group;
 import cz.cvut.fit.sp.chipin.base.group.GroupRepository;
 import cz.cvut.fit.sp.chipin.base.group.GroupService;
-import cz.cvut.fit.sp.chipin.base.membership.MembershipKey;
-import cz.cvut.fit.sp.chipin.base.membership.MembershipRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -27,10 +24,9 @@ public class TransactionService {
     private final GroupRepository groupRepository;
 
     private final UserRepository userRepository;
-
     private final AmountRepository amountRepository;
 
-    public ResponseEntity<TransactionDetailDTO> create(TransactionDTO transactionDTO, Long group_id) throws Exception {
+    public ResponseEntity<TransactionDTO> create(TransactionCreateRequest transactionDTO, Long group_id) throws Exception {
         Optional<Group> group = groupRepository.findById(group_id);
         if (group.isEmpty())
             throw new Exception("Group not found.");
@@ -39,10 +35,9 @@ public class TransactionService {
             throw new Exception("Payer not found.");
 
         Transaction transaction = TransactionConverter.fromDto(transactionDTO, group.get(), payer.get());
-        Map<User, Float> spent;
 
         try {
-            spent = setAmountsAndSpent(transactionDTO.getUserIds(), transaction.getPayer().getId(), transaction);
+            setAmounts(transactionDTO.getUserIds(), transaction);
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
@@ -52,31 +47,27 @@ public class TransactionService {
         return ResponseEntity.ok(TransactionConverter.toDto(transaction));
     }
 
-    private Map<User, Float> setAmountsAndSpent(List<Long> userIds, Long payerId, Transaction transaction) throws Exception {
+    private void setAmounts(List<Long> userIds, Transaction transaction) throws Exception {
         if (userIds.isEmpty())
             throw new Exception("Users not found.");
 
         List<Amount> amounts = new ArrayList<>();
-        Map<User, Float> spent = new HashMap<>();
-        Float spentPerUser = transaction.getAmount() / userIds.size();
+        Float spent = transaction.getAmount() / userIds.size();
 
         for (Long id : userIds) {
             Optional<User> user = userRepository.findById(id);
             if (user.isPresent()) {
-                Float userAmount = ((Objects.equals(id, payerId)) ? transaction.getAmount() : 0f);
-                amounts.add(new Amount(user.get(), transaction, userAmount));
-                spent.put(user.get(), spentPerUser);
+                amounts.add(new Amount(user.get(), transaction, spent));
             } else {
                 throw new Exception("User not found.");
             }
         }
-
+        transaction.setAmounts(amounts);
         transactionRepository.save(transaction);
         amountRepository.saveAll(amounts);
-        return spent;
     }
 
-    public ResponseEntity<TransactionDetailDTO> read(Long transaction_id, Long group_id) throws Exception {
+    public ResponseEntity<TransactionDTO> read(Long transaction_id, Long group_id) throws Exception {
         Optional<Transaction> transaction = transactionRepository.findById(transaction_id);
         if (transaction.isEmpty())
             throw new Exception("Transaction not found.");
