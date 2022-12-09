@@ -1,6 +1,5 @@
 package cz.cvut.fit.sp.chipin.base.group;
 
-import cz.cvut.fit.sp.chipin.authentication.registration.RegistrationRequest;
 import cz.cvut.fit.sp.chipin.authentication.user.User;
 import cz.cvut.fit.sp.chipin.authentication.user.UserRepository;
 import cz.cvut.fit.sp.chipin.authentication.user.UserService;
@@ -12,12 +11,10 @@ import cz.cvut.fit.sp.chipin.base.membership.Membership;
 import cz.cvut.fit.sp.chipin.base.membership.MembershipRepository;
 import cz.cvut.fit.sp.chipin.base.transaction.Transaction;
 import lombok.AllArgsConstructor;
-import org.apache.catalina.realm.UserDatabaseRealm;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 @Service
 @AllArgsConstructor
@@ -30,7 +27,7 @@ public class GroupService {
     private final UserRepository userRepository;
     private final MembershipRepository membershipRepository;
 
-    public String create(GroupCreateRequest request) throws Exception {
+    public String create(GroupCreateDTO request) throws Exception {
         User user = userService.getUser(request.getUserId());
 
         if (request.getName() == null || request.getCurrency() == null)

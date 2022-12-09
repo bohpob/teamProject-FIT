@@ -10,7 +10,7 @@ import javax.validation.constraints.NotNull;
 @Getter
 @Setter
 @AllArgsConstructor
-public class GroupCreateRequest {
+public class GroupCreateDTO {
     @NotNull
     private Long userId;
     @NotNull
