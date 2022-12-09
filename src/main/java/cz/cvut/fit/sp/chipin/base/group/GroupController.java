@@ -1,6 +1,5 @@
 package cz.cvut.fit.sp.chipin.base.group;
 
-import cz.cvut.fit.sp.chipin.authentication.registration.RegistrationRequest;
 import cz.cvut.fit.sp.chipin.base.membership.MembershipRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -13,7 +12,7 @@ public class GroupController {
     private final GroupService groupService;
 
     @PostMapping
-    public String create(@RequestBody GroupCreateRequest request) throws Exception {
+    public String create(@RequestBody GroupCreateDTO request) throws Exception {
         return groupService.create(request);
     }
 
