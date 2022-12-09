@@ -6,12 +6,9 @@ import cz.cvut.fit.sp.chipin.authentication.email.token.ConfirmationTokenService
 import cz.cvut.fit.sp.chipin.authentication.user.User;
 import cz.cvut.fit.sp.chipin.authentication.user.UserService;
 import lombok.AllArgsConstructor;
-import org.aspectj.weaver.patterns.IToken;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.imageio.spi.RegisterableService;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
