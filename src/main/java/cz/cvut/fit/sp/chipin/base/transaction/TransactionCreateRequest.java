@@ -18,5 +18,5 @@ public class TransactionCreateRequest {
     @NotNull
     private Long payerId;
     @NotNull
-    private List<Long> userIds;
+    private List<Long> spenderIds;
 }
