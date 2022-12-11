@@ -1,6 +1,7 @@
 package cz.cvut.fit.sp.chipin.base.transaction;
 
 import cz.cvut.fit.sp.chipin.authentication.user.UserDTO;
+import cz.cvut.fit.sp.chipin.base.amount.AmountDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -24,5 +25,5 @@ public class TransactionDTO {
     @NotNull
     private UserDTO payer;
     @NotNull
-    private List<UserTransactionDTO> listOfUsers;
+    private List<AmountDTO> amounts;
 }
