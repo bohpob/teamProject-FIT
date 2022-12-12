@@ -5,7 +5,6 @@ import cz.cvut.fit.sp.chipin.base.group.Group;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -34,18 +33,16 @@ public class DebtService {
                 debt.get().setAmount(debt.get().getAmount() - entry.getValue());
                 if (debt.get().getAmount() == 0) {
                     debtRepository.deleteById(debt.get().getId());
-                    continue;
                 } else if (debt.get().getAmount() < 0) {
                     Float newAmount = debt.get().getAmount() * (-1);
                     debtRepository.deleteById(debt.get().getId());
 
                     Debt newDebt = new Debt(group, payer, spender, newAmount);
                     debtRepository.save(newDebt);
-                    continue;
                 }
+            } else {
+                debt.get().setAmount(debt.get().getAmount() + entry.getValue());
             }
-
-            debt.get().setAmount(debt.get().getAmount() + entry.getValue());
         }
     }
 }
