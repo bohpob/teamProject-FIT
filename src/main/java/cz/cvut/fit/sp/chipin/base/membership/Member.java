@@ -2,23 +2,25 @@ package cz.cvut.fit.sp.chipin.base.membership;
 
 import cz.cvut.fit.sp.chipin.authentication.user.User;
 import cz.cvut.fit.sp.chipin.base.group.Group;
+import cz.cvut.fit.sp.chipin.base.transaction.Transaction;
 import lombok.*;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
-@Table(name = "membership")
+@Table(name = "member")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 @EqualsAndHashCode
-public class Membership {
+public class Member {
 
     @EmbeddedId
-    private MembershipKey id;
+    private MemberKey id;
 
     @ManyToOne
     @MapsId("userId")
@@ -29,6 +31,9 @@ public class Membership {
     @MapsId("groupId")
     @JoinColumn(name = "group_id", nullable=false)
     private Group group;
+
+    @OneToMany(mappedBy = "payer")
+    private List<Transaction> transactions = new ArrayList<>();
 
     @NotNull
     @Column
@@ -47,8 +52,8 @@ public class Membership {
     @Setter(AccessLevel.NONE)
     private Float balance = 0f;
 
-    public Membership(User user, Group group, GroupRole role, Float paid, Float spent, Float balance) {
-        id = new MembershipKey(user.getId(), group.getId());
+    public Member(User user, Group group, GroupRole role, Float paid, Float spent, Float balance) {
+        id = new MemberKey(user.getId(), group.getId());
         this.user = user;
         this.group = group;
         this.role = role;

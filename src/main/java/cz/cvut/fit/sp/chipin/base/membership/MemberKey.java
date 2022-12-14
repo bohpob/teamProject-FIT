@@ -13,7 +13,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @EqualsAndHashCode
-public class MembershipKey implements Serializable {
+public class MemberKey implements Serializable {
 
     @NotNull
     @Column(name = "user_id")

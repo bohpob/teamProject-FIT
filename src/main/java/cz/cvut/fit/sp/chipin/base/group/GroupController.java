@@ -1,6 +1,6 @@
 package cz.cvut.fit.sp.chipin.base.group;
 
-import cz.cvut.fit.sp.chipin.base.membership.MembershipRequest;
+import cz.cvut.fit.sp.chipin.base.membership.MemberRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,7 +17,7 @@ public class GroupController {
     }
 
     @PatchMapping("/{group_id}/join")
-    public String addMember(@RequestBody MembershipRequest request, @PathVariable Long group_id) throws Exception {
+    public String addMember(@RequestBody MemberRequest request, @PathVariable Long group_id) throws Exception {
         return groupService.addMember(request.getId(), group_id);
     }
 

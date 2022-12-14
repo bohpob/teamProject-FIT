@@ -2,10 +2,9 @@ package cz.cvut.fit.sp.chipin.authentication.user;
 
 import cz.cvut.fit.sp.chipin.authentication.email.token.ConfirmationToken;
 import cz.cvut.fit.sp.chipin.authentication.email.token.ConfirmationTokenService;
-import cz.cvut.fit.sp.chipin.base.membership.Membership;
-import cz.cvut.fit.sp.chipin.base.membership.MembershipDTO;
+import cz.cvut.fit.sp.chipin.base.membership.Member;
+import cz.cvut.fit.sp.chipin.base.membership.MemberDTO;
 import lombok.AllArgsConstructor;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -82,18 +81,18 @@ public class UserService implements UserDetailsService {
         return false;
     }
 
-    public List<MembershipDTO> getMemberships(Long id) throws Exception {
+    public List<MemberDTO> getMemberships(Long id) throws Exception {
         User user = getUser(id);
 
-        List<MembershipDTO> memberships = new ArrayList<>();
+        List<MemberDTO> memberships = new ArrayList<>();
 
-        for (Membership membership : user.getMemberships()){
-            memberships.add(new MembershipDTO(
-                    membership.getId().getGroupId(),
-                    membership.getRole().name(),
-                    membership.getPaid(),
-                    membership.getSpent(),
-                    membership.getBalance()));
+        for (Member member : user.getMembers()){
+            memberships.add(new MemberDTO(
+                    member.getId().getGroupId(),
+                    member.getRole().name(),
+                    member.getPaid(),
+                    member.getSpent(),
+                    member.getBalance()));
         }
 
         return memberships;

@@ -7,8 +7,8 @@ import cz.cvut.fit.sp.chipin.base.amount.Amount;
 import cz.cvut.fit.sp.chipin.base.debt.DebtService;
 import cz.cvut.fit.sp.chipin.base.log.LogService;
 import cz.cvut.fit.sp.chipin.base.membership.GroupRole;
-import cz.cvut.fit.sp.chipin.base.membership.Membership;
-import cz.cvut.fit.sp.chipin.base.membership.MembershipRepository;
+import cz.cvut.fit.sp.chipin.base.membership.Member;
+import cz.cvut.fit.sp.chipin.base.membership.MemberRepository;
 import cz.cvut.fit.sp.chipin.base.transaction.Transaction;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,7 +25,7 @@ public class GroupService {
     private final LogService logService;
     private final GroupRepository groupRepository;
     private final UserRepository userRepository;
-    private final MembershipRepository membershipRepository;
+    private final MemberRepository memberRepository;
 
     public String create(GroupCreateDTO request) throws Exception {
         User user = userService.getUser(request.getUserId());
@@ -38,11 +38,11 @@ public class GroupService {
         group.setCurrency(Currency.valueOf(request.getCurrency()));
         groupRepository.save(group);
 
-        Membership membership = new Membership(user, group, GroupRole.ADMIN, 0f, 0f, 0f);
-        membershipRepository.save(membership);
+        Member member = new Member(user, group, GroupRole.ADMIN, 0f, 0f, 0f);
+        memberRepository.save(member);
 
-        group.addMembership(membership);
-        user.addMembership(membership);
+        group.addMembership(member);
+        user.addMembership(member);
 
         groupRepository.save(group);
         userRepository.save(user);
@@ -56,16 +56,16 @@ public class GroupService {
         User user = userService.getUser(userId);
         Group group = groupRepository.findById(groupId).orElseThrow(() -> new Exception("Group not found"));
 
-        for (Membership membership : group.getMemberships()) {
-            if (membership.getUser().equals(user))
+        for (Member member : group.getMembers()) {
+            if (member.getUser().equals(user))
                 return "User already member of this group";
         }
 
-        Membership membership = new Membership(user, group, GroupRole.USER, 0f, 0f, 0f);
-        group.addMembership(membership);
-        user.addMembership(membership);
+        Member member = new Member(user, group, GroupRole.USER, 0f, 0f, 0f);
+        group.addMembership(member);
+        user.addMembership(member);
 
-        membershipRepository.save(membership);
+        memberRepository.save(member);
         userRepository.save(user);
         groupRepository.save(group);
 
@@ -74,23 +74,23 @@ public class GroupService {
     }
 
     public void acceptTxCreate(Transaction transaction) throws Exception {
-        Membership payerMembership = membershipRepository.findByUserIdAndGroupId(transaction.getPayer().getId(),
-                transaction.getGroup().getId()).orElseThrow(() -> new Exception("Payer is not found"));
-        payerMembership.setPaid(payerMembership.getPaid() + transaction.getAmount());
-        membershipRepository.save(payerMembership);
+        Member payerMember = memberRepository.findByUserIdAndGroupId(transaction.getPayer().getUser().getId(),
+                transaction.getPayer().getGroup().getId()).orElseThrow(() -> new Exception("Payer is not found"));
+        payerMember.setPaid(payerMember.getPaid() + transaction.getAmount());
+        memberRepository.save(payerMember);
 
         Map<User, Float> spent = new HashMap<>();
 
         for (Amount amount : transaction.getAmounts()) {
-            Membership membership = membershipRepository.findByUserIdAndGroupId(amount.getUser().getId(),
-                    transaction.getGroup().getId()).orElseThrow(() -> new Exception("Transaction participant is not found"));
-            membership.setSpent(membership.getSpent() + amount.getAmount());
-            membershipRepository.save(membership);
+            Member member = memberRepository.findByUserIdAndGroupId(amount.getUser().getId(),
+                    transaction.getPayer().getGroup().getId()).orElseThrow(() -> new Exception("Transaction participant is not found"));
+            member.setSpent(member.getSpent() + amount.getAmount());
+            memberRepository.save(member);
 
             spent.put(amount.getUser(), amount.getAmount());
         }
 
-        debtService.recalculate(spent, transaction.getPayer(), transaction.getGroup());
-        logService.create("made a payment: " + transaction.getAmount(), transaction.getGroup(), transaction.getPayer());
+        debtService.recalculate(spent, transaction.getPayer().getUser(), transaction.getPayer().getGroup());
+        logService.create("made a payment: " + transaction.getAmount(), transaction.getPayer().getGroup(), transaction.getPayer().getUser());
     }
 }

@@ -1,11 +1,10 @@
 package cz.cvut.fit.sp.chipin.base.transaction;
 
-import cz.cvut.fit.sp.chipin.authentication.user.User;
 import cz.cvut.fit.sp.chipin.authentication.user.UserDTO;
 import cz.cvut.fit.sp.chipin.base.amount.Amount;
 import cz.cvut.fit.sp.chipin.base.amount.AmountConverter;
 import cz.cvut.fit.sp.chipin.base.amount.AmountDTO;
-import cz.cvut.fit.sp.chipin.base.group.Group;
+import cz.cvut.fit.sp.chipin.base.membership.Member;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +14,7 @@ public class TransactionConverter {
     public static TransactionDTO toDto(Transaction transaction) {
         return new TransactionDTO(transaction.getId(), transaction.getName(),
                 Float.valueOf(String.format(Locale.getDefault(), "%.2f", transaction.getAmount())), transaction.getDate(),
-                new UserDTO(transaction.getPayer().getName()), getAmounts(transaction.getAmounts()));
+                new UserDTO(transaction.getPayer().getUser().getName()), getAmounts(transaction.getAmounts()));
     }
 
     private static List<AmountDTO> getAmounts(List<Amount> amounts) {
@@ -26,7 +25,7 @@ public class TransactionConverter {
         return result;
     }
 
-    public static Transaction fromDto(TransactionCreateRequest transactionDTO, Group group, User payer) {
-        return new Transaction(transactionDTO.getName(), transactionDTO.getAmount(), group, payer);
+    public static Transaction fromDto(TransactionCreateRequest transactionDTO, Member payer) {
+        return new Transaction(transactionDTO.getName(), transactionDTO.getAmount(), payer);
     }
 }

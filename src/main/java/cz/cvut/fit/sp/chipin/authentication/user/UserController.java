@@ -1,16 +1,12 @@
 package cz.cvut.fit.sp.chipin.authentication.user;
 
-import cz.cvut.fit.sp.chipin.authentication.user.User;
-import cz.cvut.fit.sp.chipin.authentication.user.UserService;
-import cz.cvut.fit.sp.chipin.base.membership.MembershipDTO;
+import cz.cvut.fit.sp.chipin.base.membership.MemberDTO;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 @RestController
@@ -38,7 +34,7 @@ public class UserController {
 
 
     @GetMapping("{id}/memberships")
-    List<MembershipDTO> getMemberships(@PathVariable Long id) throws Exception {
+    List<MemberDTO> getMemberships(@PathVariable Long id) throws Exception {
         return userService.getMemberships(id);
     }
 
