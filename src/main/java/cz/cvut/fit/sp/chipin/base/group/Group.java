@@ -1,12 +1,10 @@
 package cz.cvut.fit.sp.chipin.base.group;
 
-import cz.cvut.fit.sp.chipin.base.membership.Membership;
+import cz.cvut.fit.sp.chipin.base.membership.Member;
 import cz.cvut.fit.sp.chipin.base.debt.Debt;
 import cz.cvut.fit.sp.chipin.base.log.Log;
-import cz.cvut.fit.sp.chipin.base.transaction.Transaction;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -33,16 +31,13 @@ public class Group {
     private Long id;
 
     @OneToMany(mappedBy = "group")
-    private List<Transaction> transactions = new ArrayList<>();
-
-    @OneToMany(mappedBy = "group")
     private List<Debt> debts = new ArrayList<>();
 
     @OneToMany(mappedBy = "group")
     private List<Log> logs = new ArrayList<>();
 
     @OneToMany(mappedBy = "group")
-    private List<Membership> memberships = new ArrayList<>();
+    private List<Member> members = new ArrayList<>();
 
     @NotBlank
     @Column(name = "name")
@@ -52,7 +47,7 @@ public class Group {
     @Enumerated(EnumType.STRING)
     private Currency currency;
 
-    public void addMembership(Membership membership) {
-        memberships.add(membership);
+    public void addMembership(Member member) {
+        members.add(member);
     }
 }

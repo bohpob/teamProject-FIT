@@ -7,7 +7,8 @@ import cz.cvut.fit.sp.chipin.base.amount.AmountRepository;
 import cz.cvut.fit.sp.chipin.base.group.Group;
 import cz.cvut.fit.sp.chipin.base.group.GroupRepository;
 import cz.cvut.fit.sp.chipin.base.group.GroupService;
-import cz.cvut.fit.sp.chipin.base.membership.MembershipRepository;
+import cz.cvut.fit.sp.chipin.base.membership.Member;
+import cz.cvut.fit.sp.chipin.base.membership.MemberRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -22,17 +23,17 @@ public class TransactionService {
     private final GroupRepository groupRepository;
     private final UserRepository userRepository;
     private final AmountRepository amountRepository;
-    private final MembershipRepository membershipRepository;
+    private final MemberRepository memberRepository;
 
     public ResponseEntity<TransactionDTO> create(TransactionCreateRequest transactionDTO, Long group_id) throws Exception {
         Optional<Group> group = groupRepository.findById(group_id);
         if (group.isEmpty())
             throw new Exception("Group not found.");
-        Optional<User> payer = userRepository.findById(transactionDTO.getPayerId());
+        Optional<Member> payer = memberRepository.findByUserIdAndGroupId(transactionDTO.getPayerId(), group_id);
         if (payer.isEmpty())
             throw new Exception("Payer not found.");
 
-        Transaction transaction = TransactionConverter.fromDto(transactionDTO, group.get(), payer.get());
+        Transaction transaction = TransactionConverter.fromDto(transactionDTO, payer.get());
 
         try {
             setAmounts(transactionDTO.getSpenderIds(), transaction, group_id);
@@ -53,7 +54,7 @@ public class TransactionService {
         Float spent = transaction.getAmount() / spenderIds.size();
 
         for (Long id : spenderIds) {
-            if (membershipRepository.findByUserIdAndGroupId(id, groupId).isPresent()) {
+            if (memberRepository.findByUserIdAndGroupId(id, groupId).isPresent()) {
                 Optional<User> user = userRepository.findById(id);
                 if (user.isPresent()) {
                     amounts.add(new Amount(user.get(), transaction, spent));
@@ -73,7 +74,7 @@ public class TransactionService {
         Optional<Transaction> transaction = transactionRepository.findById(transaction_id);
         if (transaction.isEmpty())
             throw new Exception("Transaction not found.");
-        if (!Objects.equals(transaction.get().getGroup().getId(), group_id))
+        if (!Objects.equals(transaction.get().getPayer().getGroup().getId(), group_id))
             throw new Exception("Transaction does not belong to this group.");
         return ResponseEntity.ok(TransactionConverter.toDto(transaction.get()));
     }
@@ -82,7 +83,7 @@ public class TransactionService {
         Optional<Transaction> transaction = transactionRepository.findById(transaction_id);
         if (transaction.isEmpty())
             throw new Exception("Transaction not found.");
-        if (!Objects.equals(transaction.get().getGroup().getId(), group_id))
+        if (!Objects.equals(transaction.get().getPayer().getGroup().getId(), group_id))
             throw new Exception("Transaction does not belong to this group.");
         transactionRepository.deleteById(transaction_id);
     }
