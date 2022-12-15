@@ -4,9 +4,12 @@ import cz.cvut.fit.sp.chipin.authentication.user.User;
 import cz.cvut.fit.sp.chipin.authentication.user.UserRepository;
 import cz.cvut.fit.sp.chipin.base.amount.Amount;
 import cz.cvut.fit.sp.chipin.base.amount.AmountRepository;
+import cz.cvut.fit.sp.chipin.base.debt.DebtService;
 import cz.cvut.fit.sp.chipin.base.group.Group;
 import cz.cvut.fit.sp.chipin.base.group.GroupRepository;
 import cz.cvut.fit.sp.chipin.base.group.GroupService;
+import cz.cvut.fit.sp.chipin.base.log.LogRepository;
+import cz.cvut.fit.sp.chipin.base.log.LogService;
 import cz.cvut.fit.sp.chipin.base.membership.Member;
 import cz.cvut.fit.sp.chipin.base.membership.MemberRepository;
 import lombok.AllArgsConstructor;
@@ -19,6 +22,8 @@ import java.util.*;
 @AllArgsConstructor
 public class TransactionService {
     private final GroupService groupService;
+    private final DebtService debtService;
+    private final LogService logService;
     private final TransactionRepository transactionRepository;
     private final GroupRepository groupRepository;
     private final UserRepository userRepository;
@@ -83,8 +88,7 @@ public class TransactionService {
         Optional<Transaction> transaction = transactionRepository.findById(transaction_id);
         if (transaction.isEmpty())
             throw new Exception("Transaction not found.");
-        if (!Objects.equals(transaction.get().getPayer().getGroup().getId(), group_id))
-            throw new Exception("Transaction does not belong to this group.");
+        groupService.acceptTxDelete(transaction.get());
         transactionRepository.deleteById(transaction_id);
     }
 }

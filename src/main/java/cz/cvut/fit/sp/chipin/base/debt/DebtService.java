@@ -8,12 +8,22 @@ import org.springframework.stereotype.Service;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-
 @RequiredArgsConstructor
 @Service
 public class DebtService {
 
     private final DebtRepository debtRepository;
+
+    private void checkingForEmptyOrNegativeDebt(Debt debt, Group group, User spender, User payer) throws Exception {
+        if (debt.getAmount() == 0) {
+            debtRepository.deleteById(debt.getId());
+        } else if (debt.getAmount() < 0) {
+            Float newAmount = debt.getAmount() * (-1);
+            debtRepository.deleteById(debt.getId());
+            Debt newDebt = new Debt(group, spender, payer, newAmount);
+            debtRepository.save(newDebt);
+        }
+    }
 
     public void recalculate(Map<User, Float> spent, User payer, Group group) throws Exception {
         for (var entry : spent.entrySet()) {
@@ -27,21 +37,16 @@ public class DebtService {
                 if (debt.isEmpty()) {
                     Debt newDebt = new Debt(group, payer, spender, entry.getValue());
                     debtRepository.save(newDebt);
-                    continue;
-                }
-
-                debt.get().setAmount(debt.get().getAmount() - entry.getValue());
-                if (debt.get().getAmount() == 0) {
-                    debtRepository.deleteById(debt.get().getId());
-                } else if (debt.get().getAmount() < 0) {
-                    Float newAmount = debt.get().getAmount() * (-1);
-                    debtRepository.deleteById(debt.get().getId());
-
-                    Debt newDebt = new Debt(group, payer, spender, newAmount);
-                    debtRepository.save(newDebt);
+                    checkingForEmptyOrNegativeDebt(newDebt, group, spender, payer);
+                } else {
+                    debt.get().setAmount(debt.get().getAmount() - entry.getValue());
+                    debtRepository.save(debt.get());
+                    checkingForEmptyOrNegativeDebt(debt.get(), group, spender, payer);
                 }
             } else {
                 debt.get().setAmount(debt.get().getAmount() + entry.getValue());
+                debtRepository.save(debt.get());
+                checkingForEmptyOrNegativeDebt(debt.get(), group, spender, payer);
             }
         }
     }

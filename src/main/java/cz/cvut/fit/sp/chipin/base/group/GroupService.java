@@ -4,6 +4,7 @@ import cz.cvut.fit.sp.chipin.authentication.user.User;
 import cz.cvut.fit.sp.chipin.authentication.user.UserRepository;
 import cz.cvut.fit.sp.chipin.authentication.user.UserService;
 import cz.cvut.fit.sp.chipin.base.amount.Amount;
+import cz.cvut.fit.sp.chipin.base.amount.AmountRepository;
 import cz.cvut.fit.sp.chipin.base.debt.DebtService;
 import cz.cvut.fit.sp.chipin.base.log.LogService;
 import cz.cvut.fit.sp.chipin.base.membership.GroupRole;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -26,6 +28,7 @@ public class GroupService {
     private final GroupRepository groupRepository;
     private final UserRepository userRepository;
     private final MemberRepository memberRepository;
+    private final AmountRepository amountRepository;
 
     public String create(GroupCreateDTO request) throws Exception {
         User user = userService.getUser(request.getUserId());
@@ -76,6 +79,7 @@ public class GroupService {
     public void acceptTxCreate(Transaction transaction) throws Exception {
         Member payerMember = memberRepository.findByUserIdAndGroupId(transaction.getPayer().getUser().getId(),
                 transaction.getPayer().getGroup().getId()).orElseThrow(() -> new Exception("Payer is not found"));
+
         payerMember.setPaid(payerMember.getPaid() + transaction.getAmount());
         memberRepository.save(payerMember);
 
@@ -84,6 +88,7 @@ public class GroupService {
         for (Amount amount : transaction.getAmounts()) {
             Member member = memberRepository.findByUserIdAndGroupId(amount.getUser().getId(),
                     transaction.getPayer().getGroup().getId()).orElseThrow(() -> new Exception("Transaction participant is not found"));
+
             member.setSpent(member.getSpent() + amount.getAmount());
             memberRepository.save(member);
 
@@ -92,5 +97,31 @@ public class GroupService {
 
         debtService.recalculate(spent, transaction.getPayer().getUser(), transaction.getPayer().getGroup());
         logService.create("made a payment: " + transaction.getAmount(), transaction.getPayer().getGroup(), transaction.getPayer().getUser());
+    }
+
+    public void acceptTxDelete(Transaction transaction) throws Exception {
+        Member payerMember = memberRepository.findByUserIdAndGroupId(transaction.getPayer().getUser().getId(),
+                transaction.getPayer().getGroup().getId()).orElseThrow(() -> new Exception("Payer is not found"));
+
+        payerMember.decreasePaid(transaction.getAmount());
+        memberRepository.save(payerMember);
+
+        Map<User, Float> spent = new HashMap<>();
+
+        for (Amount amount : transaction.getAmounts()) {
+            Member member = memberRepository.findByUserIdAndGroupId(amount.getUser().getId(),
+                    transaction.getPayer().getGroup().getId()).orElseThrow(() -> new Exception("Transaction participant is not found"));
+
+            member.decreaseSpent(amount.getAmount());
+            memberRepository.save(member);
+
+            spent.put(amount.getUser(), amount.reverse());
+
+            amountRepository.deleteById(amount.getId());
+        }
+
+        debtService.recalculate(spent, payerMember.getUser(), payerMember.getGroup());
+        // change to the user who will actually delete the transaction
+        logService.create("deleted transaction", payerMember.getGroup(), payerMember.getUser());
     }
 }
