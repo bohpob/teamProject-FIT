@@ -64,11 +64,21 @@ public class Member {
 
     public void setPaid(Float paid) {
         this.paid = paid;
-        this.balance = paid - spent;
+        this.balance = this.paid - this.spent;
+    }
+
+    public void decreasePaid(Float paid) {
+        this.paid -= paid;
+        this.balance = this.paid - this.spent;
     }
 
     public void setSpent(Float spent) {
         this.spent = spent;
-        this.balance = paid - spent;
+        this.balance = this.paid - this.spent;
+    }
+
+    public void decreaseSpent(Float spent) {
+        this.spent -= spent;
+        this.balance = this.paid - this.spent;
     }
 }

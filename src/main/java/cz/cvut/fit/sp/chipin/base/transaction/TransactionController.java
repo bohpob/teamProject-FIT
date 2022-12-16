@@ -5,6 +5,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("/api/v1/groups")
 @AllArgsConstructor
@@ -14,9 +16,9 @@ public class TransactionController {
 
     @PostMapping("/{group_id}/transactions")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<TransactionDTO> create(@RequestBody TransactionCreateRequest transactionDTO, @PathVariable Long group_id) throws Exception {
+    public ResponseEntity<TransactionDTO> create(@Valid @RequestBody TransactionCreateRequest transactionCreateRequest, @PathVariable Long group_id) throws Exception {
         try {
-            return transactionService.create(transactionDTO, group_id);
+            return transactionService.create(transactionCreateRequest, group_id);
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
@@ -31,6 +33,17 @@ public class TransactionController {
             throw new Exception(e.getMessage());
         }
     }
+
+    @PutMapping("/{group_id}/transactions/{transaction_id}")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<TransactionDTO> update(@Valid @RequestBody TransactionUpdateRequest transactionUpdateRequest, @PathVariable Long group_id, @PathVariable Long transaction_id) throws Exception {
+        try {
+            return transactionService.update(transactionUpdateRequest, group_id, transaction_id);
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+    }
+
 
     @DeleteMapping("/{group_id}/transactions/{transaction_id}")
     public void delete(@PathVariable Long group_id, @PathVariable Long transaction_id) throws Exception {

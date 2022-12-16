@@ -50,4 +50,11 @@ public class Transaction {
         this.payer = payer;
     }
 
+    public Transaction(String name, Float amount, String date, Member payer) {
+        this.name = name;
+        this.amount = amount;
+        this.date = date;
+        this.payer = payer;
+    }
+
 }
