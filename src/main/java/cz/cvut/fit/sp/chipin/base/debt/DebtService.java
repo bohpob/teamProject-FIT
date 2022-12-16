@@ -41,7 +41,7 @@ public class DebtService {
                 } else {
                     debt.get().setAmount(debt.get().getAmount() - entry.getValue());
                     debtRepository.save(debt.get());
-                    checkingForEmptyOrNegativeDebt(debt.get(), group, spender, payer);
+                    checkingForEmptyOrNegativeDebt(debt.get(), group, payer, spender);
                 }
             } else {
                 debt.get().setAmount(debt.get().getAmount() + entry.getValue());

@@ -14,12 +14,10 @@ import java.util.List;
 public class TransactionDTO {
     @NotNull
     private Long id;
-    @NotNull
     @NotBlank
     private String name;
     @NotNull
     private Float amount;
-    @NotNull
     @NotBlank
     private String date;
     @NotNull

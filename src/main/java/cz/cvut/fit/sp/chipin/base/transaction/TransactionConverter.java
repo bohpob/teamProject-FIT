@@ -25,7 +25,11 @@ public class TransactionConverter {
         return result;
     }
 
-    public static Transaction fromDto(TransactionCreateRequest transactionDTO, Member payer) {
-        return new Transaction(transactionDTO.getName(), transactionDTO.getAmount(), payer);
+    public static Transaction fromCreateDto(TransactionCreateRequest transactionCreateRequest, Member payer) {
+        return new Transaction(transactionCreateRequest.getName(), transactionCreateRequest.getAmount(), payer);
+    }
+
+    public static Transaction fromUpdateDto(TransactionUpdateRequest transactionUpdateRequest, Member payer) {
+        return new Transaction(transactionUpdateRequest.getName(), transactionUpdateRequest.getAmount(), transactionUpdateRequest.getDate(), payer);
     }
 }

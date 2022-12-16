@@ -13,10 +13,8 @@ import javax.validation.constraints.NotNull;
 public class GroupCreateDTO {
     @NotNull
     private Long userId;
-    @NotNull
     @NotBlank
     private String name;
-    @NotNull
     @NotBlank
     private String currency;
 }

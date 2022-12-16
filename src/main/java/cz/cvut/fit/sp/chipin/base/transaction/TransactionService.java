@@ -4,11 +4,9 @@ import cz.cvut.fit.sp.chipin.authentication.user.User;
 import cz.cvut.fit.sp.chipin.authentication.user.UserRepository;
 import cz.cvut.fit.sp.chipin.base.amount.Amount;
 import cz.cvut.fit.sp.chipin.base.amount.AmountRepository;
-import cz.cvut.fit.sp.chipin.base.debt.DebtService;
 import cz.cvut.fit.sp.chipin.base.group.Group;
 import cz.cvut.fit.sp.chipin.base.group.GroupRepository;
 import cz.cvut.fit.sp.chipin.base.group.GroupService;
-import cz.cvut.fit.sp.chipin.base.log.LogRepository;
 import cz.cvut.fit.sp.chipin.base.log.LogService;
 import cz.cvut.fit.sp.chipin.base.membership.Member;
 import cz.cvut.fit.sp.chipin.base.membership.MemberRepository;
@@ -16,13 +14,13 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import javax.validation.Valid;
 import java.util.*;
 
 @Service
 @AllArgsConstructor
 public class TransactionService {
     private final GroupService groupService;
-    private final DebtService debtService;
     private final LogService logService;
     private final TransactionRepository transactionRepository;
     private final GroupRepository groupRepository;
@@ -30,28 +28,30 @@ public class TransactionService {
     private final AmountRepository amountRepository;
     private final MemberRepository memberRepository;
 
-    public ResponseEntity<TransactionDTO> create(TransactionCreateRequest transactionDTO, Long group_id) throws Exception {
+    public ResponseEntity<TransactionDTO> create(TransactionCreateRequest transactionCreateRequest, Long group_id) throws Exception {
         Optional<Group> group = groupRepository.findById(group_id);
         if (group.isEmpty())
             throw new Exception("Group not found.");
-        Optional<Member> payer = memberRepository.findByUserIdAndGroupId(transactionDTO.getPayerId(), group_id);
+        Optional<Member> payer = memberRepository.findByUserIdAndGroupId(transactionCreateRequest.getPayerId(), group_id);
         if (payer.isEmpty())
             throw new Exception("Payer not found.");
 
-        Transaction transaction = TransactionConverter.fromDto(transactionDTO, payer.get());
+        Transaction transaction = TransactionConverter.fromCreateDto(transactionCreateRequest, payer.get());
 
         try {
-            setAmounts(transactionDTO.getSpenderIds(), transaction, group_id);
+            List<Amount> amounts = setAmounts(transactionCreateRequest.getSpenderIds(), transaction, group_id);
+            transactionRepository.save(transaction);
+            amountRepository.saveAll(amounts);
+            groupService.acceptTxCreate(transaction);
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
-
-        groupService.acceptTxCreate(transaction);
-
+        // change to the user who will actually delete the transaction
+        logService.create("made a payment: " + transaction.getAmount(), transaction.getPayer().getGroup(), transaction.getPayer().getUser());
         return ResponseEntity.ok(TransactionConverter.toDto(transaction));
     }
 
-    private void setAmounts(List<Long> spenderIds, Transaction transaction, Long groupId) throws Exception {
+    private List<Amount> setAmounts(List<Long> spenderIds, Transaction transaction, Long groupId) throws Exception {
         if (spenderIds.isEmpty())
             throw new Exception("Users not found.");
 
@@ -71,8 +71,7 @@ public class TransactionService {
             }
         }
         transaction.setAmounts(amounts);
-        transactionRepository.save(transaction);
-        amountRepository.saveAll(amounts);
+        return amounts;
     }
 
     public ResponseEntity<TransactionDTO> read(Long transaction_id, Long group_id) throws Exception {
@@ -84,11 +83,49 @@ public class TransactionService {
         return ResponseEntity.ok(TransactionConverter.toDto(transaction.get()));
     }
 
+    public ResponseEntity<TransactionDTO> update(TransactionUpdateRequest transactionUpdateRequest, Long group_id, Long transaction_id) throws Exception {
+        Optional<Group> group = groupRepository.findById(group_id);
+        if (group.isEmpty())
+            throw new Exception("Group not found.");
+        Optional<Transaction> transaction = transactionRepository.findById(transaction_id);
+        if (transaction.isEmpty())
+            throw new Exception("Transaction not found.");
+        if (!Objects.equals(transaction.get().getPayer().getGroup().getId(), group_id))
+            throw new Exception("Transaction does not belong to this group.");
+        Optional<Member> prevPayer = memberRepository.findByUserIdAndGroupId(transaction.get().getPayer().getUser().getId(), group_id);
+        if (prevPayer.isEmpty())
+            throw new Exception("Payer not found.");
+        Optional<Member> nextPayer = memberRepository.findByUserIdAndGroupId(transactionUpdateRequest.getPayerId(), group_id);
+        if (nextPayer.isEmpty())
+            throw new Exception("Payer not found.");
+
+        String log;
+
+        try {
+            groupService.acceptTxDelete(transaction.get());
+            transaction.get().setAmount(transactionUpdateRequest.getAmount());
+            List<Amount> amounts = setAmounts(transactionUpdateRequest.getSpenderIds(), transaction.get(), group_id);
+            log = groupService.acceptTxUpdate(transaction.get(), transactionUpdateRequest, prevPayer.get(), nextPayer.get());
+            groupService.acceptTxCreate(transaction.get());
+            transactionRepository.save(transaction.get());
+            amountRepository.saveAll(amounts);
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+
+        if (!log.isBlank()) {
+            logService.create(log, group.get(), nextPayer.get().getUser());
+        }
+        return ResponseEntity.ok(TransactionConverter.toDto(transaction.get()));
+    }
+
     public void delete(Long transaction_id, Long group_id) throws Exception {
         Optional<Transaction> transaction = transactionRepository.findById(transaction_id);
         if (transaction.isEmpty())
             throw new Exception("Transaction not found.");
         groupService.acceptTxDelete(transaction.get());
+        // change to the user who will actually delete the transaction
+        logService.create("deleted transaction", transaction.get().getPayer().getGroup(), transaction.get().getPayer().getUser());
         transactionRepository.deleteById(transaction_id);
     }
 }

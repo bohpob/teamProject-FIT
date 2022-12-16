@@ -11,12 +11,11 @@ import cz.cvut.fit.sp.chipin.base.membership.GroupRole;
 import cz.cvut.fit.sp.chipin.base.membership.Member;
 import cz.cvut.fit.sp.chipin.base.membership.MemberRepository;
 import cz.cvut.fit.sp.chipin.base.transaction.Transaction;
+import cz.cvut.fit.sp.chipin.base.transaction.TransactionUpdateRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @AllArgsConstructor
@@ -76,6 +75,54 @@ public class GroupService {
         return "User joined";
     }
 
+    public String acceptTxUpdate(Transaction transaction, TransactionUpdateRequest transactionUpdateRequest, Member prevPayer, Member nextPayer) {
+        String log = "";
+        if (!Objects.equals(transaction.getDate(), transactionUpdateRequest.getDate())) {
+            log += "transaction date changed from " + transaction.getDate() + " to " + transactionUpdateRequest.getDate() + ". ";
+            transaction.setDate(transactionUpdateRequest.getDate());
+        }
+        if (!Objects.equals(transaction.getName(), transactionUpdateRequest.getName())) {
+            log += "transaction name changed from " + transaction.getName() + " to " + transactionUpdateRequest.getName() + ". ";
+            transaction.setName(transactionUpdateRequest.getName());
+        }
+        if (!Objects.equals(prevPayer.getUser().getId(), nextPayer.getUser().getId())) {
+            log += "payer changed from " + prevPayer.getUser().getName() + " to " + nextPayer.getUser().getName() + ". ";
+            transaction.setPayer(nextPayer);
+        }
+        if (!Objects.equals(transaction.getAmount(), transactionUpdateRequest.getAmount())) {
+            log += "transaction amount changed from " + transaction.getAmount() + " to " + transactionUpdateRequest.getAmount() + ". ";
+            transaction.setAmount(transactionUpdateRequest.getAmount());
+        }
+        if (!compareSpendersIds(transaction.getAmounts(), transactionUpdateRequest.getSpenderIds())) {
+            log += "participants in the transaction have changed.";
+        }
+        return log;
+    }
+
+    private boolean compareSpendersIds(List<Amount> amounts, List<Long> spendersIds) {
+        if (spendersIds.size() == amounts.size()) {
+            amounts.sort(new Comparator<Amount>() {
+                @Override
+                public int compare(Amount o1, Amount o2) {
+                    return o1.getUser().getId().compareTo(o2.getUser().getId());
+                }
+            });
+            spendersIds.sort(new Comparator<Long>() {
+                @Override
+                public int compare(Long o1, Long o2) {
+                    return o1.compareTo(o2);
+                }
+            });
+            for (int i = 0; i < amounts.size(); i++) {
+                if (!Objects.equals(amounts.get(i).getUser().getId(), spendersIds.get(i))) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
     public void acceptTxCreate(Transaction transaction) throws Exception {
         Member payerMember = memberRepository.findByUserIdAndGroupId(transaction.getPayer().getUser().getId(),
                 transaction.getPayer().getGroup().getId()).orElseThrow(() -> new Exception("Payer is not found"));
@@ -96,7 +143,6 @@ public class GroupService {
         }
 
         debtService.recalculate(spent, transaction.getPayer().getUser(), transaction.getPayer().getGroup());
-        logService.create("made a payment: " + transaction.getAmount(), transaction.getPayer().getGroup(), transaction.getPayer().getUser());
     }
 
     public void acceptTxDelete(Transaction transaction) throws Exception {
@@ -121,7 +167,5 @@ public class GroupService {
         }
 
         debtService.recalculate(spent, payerMember.getUser(), payerMember.getGroup());
-        // change to the user who will actually delete the transaction
-        logService.create("deleted transaction", payerMember.getGroup(), payerMember.getUser());
     }
 }

@@ -9,13 +9,10 @@ import javax.validation.constraints.NotNull;
 @Getter
 @AllArgsConstructor
 public class LogDTO {
-    @NotNull
     @NotBlank
     private String action;
-    @NotNull
     @NotBlank
     private String date;
-    @NotNull
     @NotBlank
     private String userName;
 }

@@ -10,7 +10,6 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 public class TransactionCreateRequest {
-    @NotNull
     @NotBlank
     private String name;
     @NotNull
