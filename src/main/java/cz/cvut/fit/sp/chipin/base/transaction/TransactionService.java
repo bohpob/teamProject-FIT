@@ -14,7 +14,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import javax.validation.Valid;
+import javax.transaction.Transactional;
 import java.util.*;
 
 @Service
@@ -83,6 +83,22 @@ public class TransactionService {
         return ResponseEntity.ok(TransactionConverter.toDto(transaction.get()));
     }
 
+    @Transactional
+    public void updateTransaction(Transaction transaction, TransactionUpdateRequest transactionUpdateRequest, Member nextPayer, Long group_id) throws Exception {
+        transaction.setName(transactionUpdateRequest.getName());
+        transaction.setDate(transactionUpdateRequest.getDate());
+        transaction.setAmount(transactionUpdateRequest.getAmount());
+        transaction.setPayer(nextPayer);
+
+        try {
+            List<Amount> amounts = setAmounts(transactionUpdateRequest.getSpenderIds(), transaction, group_id);
+            amountRepository.saveAll(amounts);
+            transactionRepository.save(transaction);
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+    }
+
     public ResponseEntity<TransactionDTO> update(TransactionUpdateRequest transactionUpdateRequest, Long group_id, Long transaction_id) throws Exception {
         Optional<Group> group = groupRepository.findById(group_id);
         if (group.isEmpty())
@@ -99,23 +115,10 @@ public class TransactionService {
         if (nextPayer.isEmpty())
             throw new Exception("Payer not found.");
 
-        String log;
+        groupService.acceptTxDelete(transaction.get());
+        updateTransaction(transaction.get(), transactionUpdateRequest, nextPayer.get(), group_id);
+        groupService.acceptTxCreate(transaction.get());
 
-        try {
-            groupService.acceptTxDelete(transaction.get());
-            transaction.get().setAmount(transactionUpdateRequest.getAmount());
-            List<Amount> amounts = setAmounts(transactionUpdateRequest.getSpenderIds(), transaction.get(), group_id);
-            log = groupService.acceptTxUpdate(transaction.get(), transactionUpdateRequest, prevPayer.get(), nextPayer.get());
-            groupService.acceptTxCreate(transaction.get());
-            transactionRepository.save(transaction.get());
-            amountRepository.saveAll(amounts);
-        } catch (Exception e) {
-            throw new Exception(e.getMessage());
-        }
-
-        if (!log.isBlank()) {
-            logService.create(log, group.get(), nextPayer.get().getUser());
-        }
         return ResponseEntity.ok(TransactionConverter.toDto(transaction.get()));
     }
 
@@ -123,9 +126,13 @@ public class TransactionService {
         Optional<Transaction> transaction = transactionRepository.findById(transaction_id);
         if (transaction.isEmpty())
             throw new Exception("Transaction not found.");
+        Optional<Member> payer = memberRepository.findByUserIdAndGroupId(transaction.get().getPayer().getUser().getId(), group_id);
+        if (payer.isEmpty())
+            throw new Exception("Payer not found.");
+
         groupService.acceptTxDelete(transaction.get());
         // change to the user who will actually delete the transaction
-        logService.create("deleted transaction", transaction.get().getPayer().getGroup(), transaction.get().getPayer().getUser());
+        logService.create("deleted transaction", payer.get().getGroup(), payer.get().getUser());
         transactionRepository.deleteById(transaction_id);
     }
 }
