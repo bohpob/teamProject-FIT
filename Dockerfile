@@ -11,6 +11,6 @@ RUN ls -R
 
 RUN chmod +x gradlew
 
-ENTRYPOINT ["java","-jar", "build/libs/chipin-0.0.1-SNAPSHOT-plain.jar"]
+ENTRYPOINT ["java", "-cp", "./src/main/java/cz/cvut/fit/sp/chipin/ChipinApplication.java", "-jar", "build/libs/chipin-0.0.1-SNAPSHOT.jar"]
 
-
+CMD ./gradlew build
