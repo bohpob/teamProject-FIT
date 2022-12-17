@@ -4,6 +4,9 @@ import cz.cvut.fit.sp.chipin.authentication.user.User;
 import cz.cvut.fit.sp.chipin.base.group.Group;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class LogConverter {
     public static Log fromDto(LogDTO logDTO, Group group, User user) {
@@ -14,11 +17,8 @@ public class LogConverter {
         return new LogDTO(log.getAction(), log.getDate(), log.getUser().getName());
     }
 
-    public static ArrayList<LogDTO> toListDto(ArrayList<Log> logList) {
-        ArrayList<LogDTO> listDto = new ArrayList<>();
-        for (int i = logList.size() - 1; i >= 0; i--) {
-            listDto.add(LogConverter.toDto(logList.get(i)));
-        }
-        return listDto;
+    public static List<LogDTO> toLogsGroupResponse(ArrayList<Log> logs) {
+        Collections.reverse(logs);
+        return logs.subList(0, 3).stream().map(LogConverter::toDto).collect(Collectors.toList());
     }
 }

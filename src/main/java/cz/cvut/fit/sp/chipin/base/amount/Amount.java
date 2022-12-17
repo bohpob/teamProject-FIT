@@ -36,6 +36,10 @@ public class Amount {
         return amount * -1;
     }
 
+    public String getUserName() {
+        return user.getName();
+    }
+
     public Amount(User user, Transaction transaction, Float amount) {
         id = new AmountKey(user.getId(), transaction.getId());
         this.user = user;

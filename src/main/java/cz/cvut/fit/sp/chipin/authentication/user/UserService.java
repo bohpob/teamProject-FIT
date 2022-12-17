@@ -4,6 +4,7 @@ import cz.cvut.fit.sp.chipin.authentication.email.token.ConfirmationToken;
 import cz.cvut.fit.sp.chipin.authentication.email.token.ConfirmationTokenService;
 import cz.cvut.fit.sp.chipin.base.membership.Member;
 import cz.cvut.fit.sp.chipin.base.membership.MemberDTO;
+import cz.cvut.fit.sp.chipin.base.membership.MemberRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -20,7 +21,7 @@ import java.util.UUID;
 public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
-
+    private final MemberRepository memberRepository;
     private final ConfirmationTokenService confirmationTokenService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final static String USER_NOT_FOUND = "User with email %s not found";
@@ -86,7 +87,7 @@ public class UserService implements UserDetailsService {
 
         List<MemberDTO> memberships = new ArrayList<>();
 
-        for (Member member : user.getMembers()){
+        for (Member member : user.getMembers()) {
             memberships.add(new MemberDTO(
                     member.getId().getGroupId(),
                     member.getRole().name(),
