@@ -1,21 +1,26 @@
 package cz.cvut.fit.sp.chipin.base.group;
 
-import cz.cvut.fit.sp.chipin.authentication.user.User;
-import cz.cvut.fit.sp.chipin.authentication.user.UserRepository;
-import cz.cvut.fit.sp.chipin.authentication.user.UserService;
+import cz.cvut.fit.sp.chipin.authentication.user.*;
 import cz.cvut.fit.sp.chipin.base.amount.Amount;
 import cz.cvut.fit.sp.chipin.base.amount.AmountRepository;
+import cz.cvut.fit.sp.chipin.base.debt.Debt;
+import cz.cvut.fit.sp.chipin.base.debt.DebtConverter;
+import cz.cvut.fit.sp.chipin.base.debt.DebtRepository;
 import cz.cvut.fit.sp.chipin.base.debt.DebtService;
-import cz.cvut.fit.sp.chipin.base.log.LogService;
+import cz.cvut.fit.sp.chipin.base.log.*;
 import cz.cvut.fit.sp.chipin.base.membership.GroupRole;
 import cz.cvut.fit.sp.chipin.base.membership.Member;
 import cz.cvut.fit.sp.chipin.base.membership.MemberRepository;
 import cz.cvut.fit.sp.chipin.base.transaction.Transaction;
-import cz.cvut.fit.sp.chipin.base.transaction.TransactionUpdateRequest;
+import cz.cvut.fit.sp.chipin.base.transaction.TransactionConverter;
+import cz.cvut.fit.sp.chipin.base.transaction.TransactionGroupResponse;
+import cz.cvut.fit.sp.chipin.base.transaction.TransactionRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -28,8 +33,11 @@ public class GroupService {
     private final UserRepository userRepository;
     private final MemberRepository memberRepository;
     private final AmountRepository amountRepository;
+    private final LogRepository logRepository;
+    private final TransactionRepository transactionRepository;
+    private final DebtRepository debtRepository;
 
-    public String create(GroupCreateDTO request) throws Exception {
+    public String create(GroupCreateRequest request) throws Exception {
         User user = userService.getUser(request.getUserId());
 
         if (request.getName() == null || request.getCurrency() == null)
@@ -51,6 +59,30 @@ public class GroupService {
 
         logService.create("created the group.", group, user);
         return "Created";
+    }
+
+    public ResponseEntity<GroupResponse> read(Long group_id) throws Exception {
+        Optional<Group> group = groupRepository.findById(group_id);
+        if (group.isEmpty())
+            throw new Exception("Group not found");
+
+        GroupResponse groupResponse = new GroupResponse();
+        groupResponse.setName(group.get().getName());
+        groupResponse.setCurrency(group.get().getCurrency());
+
+        ArrayList<Member> members = memberRepository.findMembersByGroupId(group_id);
+        groupResponse.setUsers(UserConverter.toUsersGroupResponse(members));
+
+        ArrayList<Long> ids = transactionRepository.getTransactionIdsByGroupId(group_id);
+        groupResponse.setTransactions(TransactionConverter.toTransactionsGroupResponse(transactionRepository.findAllById(ids)));
+
+        ArrayList<Debt> debts = debtRepository.findDebtsByGroupId(group_id);
+        groupResponse.setDebts(debts.stream().map(DebtConverter::toDebtGroupResponse).collect(Collectors.toList()));
+
+        ArrayList<Log> logs = logRepository.findAllByGroupId(group.get().getId());
+        groupResponse.setLogs(LogConverter.toLogsGroupResponse(logs));
+
+        return ResponseEntity.ok(groupResponse);
     }
 
     public String addMember(Long userId, Long groupId) throws Exception {

@@ -28,7 +28,7 @@ public class TransactionService {
     private final AmountRepository amountRepository;
     private final MemberRepository memberRepository;
 
-    public ResponseEntity<TransactionDTO> create(TransactionCreateRequest transactionCreateRequest, Long group_id) throws Exception {
+    public ResponseEntity<TransactionResponse> create(TransactionCreateRequest transactionCreateRequest, Long group_id) throws Exception {
         Optional<Group> group = groupRepository.findById(group_id);
         if (group.isEmpty())
             throw new Exception("Group not found.");
@@ -74,7 +74,7 @@ public class TransactionService {
         return amounts;
     }
 
-    public ResponseEntity<TransactionDTO> read(Long transaction_id, Long group_id) throws Exception {
+    public ResponseEntity<TransactionResponse> read(Long transaction_id, Long group_id) throws Exception {
         Optional<Transaction> transaction = transactionRepository.findById(transaction_id);
         if (transaction.isEmpty())
             throw new Exception("Transaction not found.");
@@ -99,7 +99,7 @@ public class TransactionService {
         }
     }
 
-    public ResponseEntity<TransactionDTO> update(TransactionUpdateRequest transactionUpdateRequest, Long group_id, Long transaction_id) throws Exception {
+    public ResponseEntity<TransactionResponse> update(TransactionUpdateRequest transactionUpdateRequest, Long group_id, Long transaction_id) throws Exception {
         Optional<Group> group = groupRepository.findById(group_id);
         if (group.isEmpty())
             throw new Exception("Group not found.");
