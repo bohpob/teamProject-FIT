@@ -11,7 +11,7 @@ import java.util.List;
 
 @Getter
 @AllArgsConstructor
-public class TransactionDTO {
+public class TransactionResponse {
     @NotNull
     private Long id;
     @NotBlank

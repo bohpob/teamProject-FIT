@@ -1,20 +1,18 @@
-package cz.cvut.fit.sp.chipin.base.group;
+package cz.cvut.fit.sp.chipin.authentication.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @Getter
-@Setter
 @AllArgsConstructor
-public class GroupCreateDTO {
+public class UserGroupResponse {
     @NotNull
-    private Long userId;
+    private final Long id;
     @NotBlank
-    private String name;
-    @NotBlank
-    private String currency;
+    private final String name;
+    @NotNull
+    private final Float balance;
 }
