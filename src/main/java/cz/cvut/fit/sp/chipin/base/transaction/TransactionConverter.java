@@ -4,7 +4,7 @@ import cz.cvut.fit.sp.chipin.authentication.user.UserDTO;
 import cz.cvut.fit.sp.chipin.base.amount.Amount;
 import cz.cvut.fit.sp.chipin.base.amount.AmountConverter;
 import cz.cvut.fit.sp.chipin.base.amount.AmountDTO;
-import cz.cvut.fit.sp.chipin.base.membership.Member;
+import cz.cvut.fit.sp.chipin.base.member.Member;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -23,7 +23,11 @@ public class TransactionConverter {
 
     public static List<TransactionGroupResponse> toTransactionsGroupResponse(List<Transaction> transactions) {
         Collections.reverse(transactions);
-        return transactions.subList(0, 3).stream().map(TransactionConverter::toTransactionGroupResponse).collect(Collectors.toList());
+        if (transactions.size() > 2) {
+            return transactions.subList(0, 3).stream().map(TransactionConverter::toTransactionGroupResponse).collect(Collectors.toList());
+        } else {
+            return transactions.stream().map(TransactionConverter::toTransactionGroupResponse).collect(Collectors.toList());
+        }
     }
 
     private static List<AmountDTO> getAmounts(List<Amount> amounts) {
