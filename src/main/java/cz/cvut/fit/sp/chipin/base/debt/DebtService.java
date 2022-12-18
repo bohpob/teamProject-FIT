@@ -10,7 +10,6 @@ import java.util.*;
 @RequiredArgsConstructor
 @Service
 public class DebtService {
-
     private final DebtRepository debtRepository;
 
     private void checkingForEmptyOrNegativeDebt(Debt debt, Group group, User spender, User payer) throws Exception {
@@ -48,5 +47,13 @@ public class DebtService {
                 checkingForEmptyOrNegativeDebt(debt.get(), group, spender, payer);
             }
         }
+    }
+
+    public List<Debt> readDebts(Long groupId) throws Exception {
+        return debtRepository.findDebtsByGroupId(groupId);
+    }
+
+    public Optional<Debt> readDebt(Long groupId, Long lenderId, Long borrowerId) {
+        return debtRepository.findByGroupIdAndLenderIdAndBorrowerId(groupId, lenderId, borrowerId);
     }
 }

@@ -1,7 +1,8 @@
 package cz.cvut.fit.sp.chipin.base.transaction;
 
+import cz.cvut.fit.sp.chipin.authentication.user.User;
 import cz.cvut.fit.sp.chipin.base.amount.Amount;
-import cz.cvut.fit.sp.chipin.base.membership.Member;
+import cz.cvut.fit.sp.chipin.base.group.Group;
 import lombok.*;
 
 import javax.persistence.*;
@@ -32,29 +33,24 @@ public class Transaction {
     private Float amount;
     private String date;
     @ManyToOne
-    @JoinColumns(foreignKey = @ForeignKey(name = "MemberKey"), value = {
-            @JoinColumn(referencedColumnName = "user_id"),
-            @JoinColumn(referencedColumnName = "group_id")
-    })
-    private Member payer;
+    @JoinColumn(name = "group_id")
+    private Group group;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User payer;
 
     @OneToMany(mappedBy = "transaction")
     private List<Amount> amounts = new ArrayList<>();
 
-    public Transaction(String name, Float amount, Member payer) {
+    public Transaction(String name, Float amount, User payer, Group group) {
         this.name = name;
         this.amount = amount;
         LocalDateTime currentDate = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d MMM yyyy, HH:mm");
         this.date = currentDate.format(formatter);
         this.payer = payer;
-    }
-
-    public Transaction(String name, Float amount, String date, Member payer) {
-        this.name = name;
-        this.amount = amount;
-        this.date = date;
-        this.payer = payer;
+        this.group = group;
     }
 
 }

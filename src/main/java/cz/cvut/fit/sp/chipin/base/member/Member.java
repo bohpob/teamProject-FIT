@@ -1,4 +1,4 @@
-package cz.cvut.fit.sp.chipin.base.membership;
+package cz.cvut.fit.sp.chipin.base.member;
 
 import cz.cvut.fit.sp.chipin.authentication.user.User;
 import cz.cvut.fit.sp.chipin.base.group.Group;
@@ -18,7 +18,6 @@ import java.util.List;
 @Setter
 @EqualsAndHashCode
 public class Member {
-
     @EmbeddedId
     private MemberKey id;
 
@@ -31,10 +30,6 @@ public class Member {
     @MapsId("groupId")
     @JoinColumn(name = "group_id", nullable=false)
     private Group group;
-
-    @OneToMany(mappedBy = "payer")
-    private List<Transaction> transactions = new ArrayList<>();
-
     @NotNull
     @Column
     private GroupRole role;

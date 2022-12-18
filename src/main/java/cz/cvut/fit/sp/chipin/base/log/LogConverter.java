@@ -19,6 +19,10 @@ public class LogConverter {
 
     public static List<LogDTO> toLogsGroupResponse(ArrayList<Log> logs) {
         Collections.reverse(logs);
-        return logs.subList(0, 3).stream().map(LogConverter::toDto).collect(Collectors.toList());
+        if (logs.size() > 2) {
+            return logs.subList(0, 3).stream().map(LogConverter::toDto).collect(Collectors.toList());
+        } else {
+            return logs.stream().map(LogConverter::toDto).collect(Collectors.toList());
+        }
     }
 }

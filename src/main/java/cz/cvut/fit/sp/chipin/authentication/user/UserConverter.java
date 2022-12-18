@@ -1,6 +1,6 @@
 package cz.cvut.fit.sp.chipin.authentication.user;
 
-import cz.cvut.fit.sp.chipin.base.membership.Member;
+import cz.cvut.fit.sp.chipin.base.member.Member;
 
 import java.util.ArrayList;
 import java.util.Comparator;

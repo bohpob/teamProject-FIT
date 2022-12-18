@@ -1,8 +1,10 @@
 package cz.cvut.fit.sp.chipin.base.group;
 
-import cz.cvut.fit.sp.chipin.base.membership.Member;
+import cz.cvut.fit.sp.chipin.base.member.Member;
 import cz.cvut.fit.sp.chipin.base.debt.Debt;
 import cz.cvut.fit.sp.chipin.base.log.Log;
+import cz.cvut.fit.sp.chipin.base.transaction.Transaction;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -15,6 +17,7 @@ import java.util.*;
 @Entity
 @Table(name = "[group]")
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
 public class Group {
@@ -38,6 +41,9 @@ public class Group {
 
     @OneToMany(mappedBy = "group")
     private List<Member> members = new ArrayList<>();
+
+    @OneToMany(mappedBy = "group")
+    private List<Transaction> transactions = new ArrayList<>();
 
     @NotBlank
     @Column(name = "name")

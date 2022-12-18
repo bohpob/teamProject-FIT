@@ -5,4 +5,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface AmountRepository extends JpaRepository<Amount, AmountKey> {
+    void deleteAmountsByTransactionId(Long transaction_id);
 }

@@ -1,6 +1,6 @@
 package cz.cvut.fit.sp.chipin.authentication.user;
 
-import cz.cvut.fit.sp.chipin.base.membership.MemberDTO;
+import cz.cvut.fit.sp.chipin.base.member.MemberDTO;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
