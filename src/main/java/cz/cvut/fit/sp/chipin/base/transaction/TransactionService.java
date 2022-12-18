@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -131,6 +132,7 @@ public class TransactionService {
             throw new Exception("Payer not found.");
 
         groupService.acceptTxDelete(transaction.get());
+        amountRepository.deleteAllById(transaction.get().getAmounts().stream().map(Amount::getId).collect(Collectors.toList()));
         // change to the user who will actually delete the transaction
         logService.create("deleted transaction", payer.get().getGroup(), payer.get().getUser());
         transactionRepository.deleteById(transaction_id);

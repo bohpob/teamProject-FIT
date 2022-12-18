@@ -32,7 +32,6 @@ public class GroupService {
     private final GroupRepository groupRepository;
     private final UserRepository userRepository;
     private final MemberRepository memberRepository;
-    private final AmountRepository amountRepository;
     private final LogRepository logRepository;
     private final TransactionRepository transactionRepository;
     private final DebtRepository debtRepository;
@@ -146,8 +145,6 @@ public class GroupService {
             memberRepository.save(member);
 
             spent.put(amount.getUser(), amount.reverse());
-
-            amountRepository.deleteById(amount.getId());
         }
 
         debtService.recalculate(spent, payerMember.getUser(), payerMember.getGroup());
