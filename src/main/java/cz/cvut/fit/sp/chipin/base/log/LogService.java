@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 
 @Service
 @AllArgsConstructor
@@ -19,5 +20,9 @@ public class LogService {
         String date = currentDate.format(formatter);
 
         logRepository.save(LogConverter.fromDto(new LogDTO(action, date, user.getName()), group, user));
+    }
+
+    public ArrayList<Log> getAllByGroupId(Long groupId) throws Exception {
+        return logRepository.findAllByGroupId(groupId);
     }
 }

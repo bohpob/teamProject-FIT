@@ -1,4 +1,4 @@
-package cz.cvut.fit.sp.chipin.base.membership;
+package cz.cvut.fit.sp.chipin.base.member;
 
 import lombok.AllArgsConstructor;
 

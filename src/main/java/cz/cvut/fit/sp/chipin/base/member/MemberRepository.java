@@ -1,4 +1,4 @@
-package cz.cvut.fit.sp.chipin.base.membership;
+package cz.cvut.fit.sp.chipin.base.member;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

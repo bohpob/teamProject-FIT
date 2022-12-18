@@ -1,7 +1,7 @@
 package cz.cvut.fit.sp.chipin.base.transaction;
 
 import cz.cvut.fit.sp.chipin.base.amount.Amount;
-import cz.cvut.fit.sp.chipin.base.membership.Member;
+import cz.cvut.fit.sp.chipin.base.member.Member;
 import lombok.*;
 
 import javax.persistence.*;

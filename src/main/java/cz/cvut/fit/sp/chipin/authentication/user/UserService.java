@@ -2,9 +2,9 @@ package cz.cvut.fit.sp.chipin.authentication.user;
 
 import cz.cvut.fit.sp.chipin.authentication.email.token.ConfirmationToken;
 import cz.cvut.fit.sp.chipin.authentication.email.token.ConfirmationTokenService;
-import cz.cvut.fit.sp.chipin.base.membership.Member;
-import cz.cvut.fit.sp.chipin.base.membership.MemberDTO;
-import cz.cvut.fit.sp.chipin.base.membership.MemberRepository;
+import cz.cvut.fit.sp.chipin.base.member.Member;
+import cz.cvut.fit.sp.chipin.base.member.MemberDTO;
+import cz.cvut.fit.sp.chipin.base.member.MemberRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -21,7 +21,6 @@ import java.util.UUID;
 public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
-    private final MemberRepository memberRepository;
     private final ConfirmationTokenService confirmationTokenService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final static String USER_NOT_FOUND = "User with email %s not found";
@@ -97,5 +96,9 @@ public class UserService implements UserDetailsService {
         }
 
         return memberships;
+    }
+
+    public void save(User user) throws Exception {
+        userRepository.save(user);
     }
 }

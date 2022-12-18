@@ -8,6 +8,6 @@ import java.util.ArrayList;
 
 @Repository
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
-    @Query(value = "SELECT t.id FROM Transaction t WHERE t.payer.group.id=?1")
-    ArrayList<Long> getTransactionIdsByGroupId(Long groupId);
+    @Query(value = "SELECT t FROM Transaction t WHERE t.payer.group.id=?1")
+    ArrayList<Transaction> getTransactionsByGroupId(Long groupId);
 }
