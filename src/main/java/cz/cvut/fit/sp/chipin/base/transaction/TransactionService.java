@@ -1,8 +1,9 @@
 package cz.cvut.fit.sp.chipin.base.transaction;
 
+import cz.cvut.fit.sp.chipin.authentication.user.User;
 import cz.cvut.fit.sp.chipin.base.amount.Amount;
 import cz.cvut.fit.sp.chipin.base.amount.AmountService;
-import cz.cvut.fit.sp.chipin.base.member.Member;
+import cz.cvut.fit.sp.chipin.base.group.Group;
 import cz.cvut.fit.sp.chipin.base.member.MemberService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,17 +17,11 @@ import java.util.stream.Collectors;
 public class TransactionService {
     private final TransactionRepository transactionRepository;
     private final AmountService amountService;
-    private final MemberService memberService;
 
-    public Transaction create(TransactionCreateRequest transactionCreateRequest, Member payer, Long group_id) throws Exception {
-        Transaction transaction = TransactionConverter.fromCreateDto(transactionCreateRequest, payer);
+    public Transaction create(TransactionCreateRequest transactionCreateRequest, User payer, Group group) throws Exception {
+        Transaction transaction = TransactionConverter.fromCreateDto(transactionCreateRequest, payer, group);
 
         try {
-            for (Long id : transactionCreateRequest.getSpenderIds()) {
-                if (memberService.getMember(id, group_id).isEmpty()) {
-                    throw new Exception("User is not from this group");
-                }
-            }
             List<Amount> amounts = amountService.setAmounts(transactionCreateRequest.getSpenderIds(), transaction);
             transactionRepository.save(transaction);
             amountService.saveAll(amounts);
@@ -40,13 +35,13 @@ public class TransactionService {
         Optional<Transaction> transaction = transactionRepository.findById(transaction_id);
         if (transaction.isEmpty())
             throw new Exception("Transaction not found.");
-        if (!Objects.equals(transaction.get().getPayer().getGroup().getId(), group_id))
+        if (!Objects.equals(transaction.get().getGroup().getId(), group_id))
             throw new Exception("Transaction does not belong to this group.");
         return transaction;
     }
 
     @Transactional
-    public void update(Transaction transaction, TransactionUpdateRequest transactionUpdateRequest, Member nextPayer, Long group_id) throws Exception {
+    public void update(Transaction transaction, TransactionUpdateRequest transactionUpdateRequest, User nextPayer) throws Exception {
         try {
             amountService.deleteAllByTransactionId(transaction.getId());
             transaction.setName(transactionUpdateRequest.getName());
@@ -54,11 +49,6 @@ public class TransactionService {
             transaction.setAmount(transactionUpdateRequest.getAmount());
             transaction.setPayer(nextPayer);
 
-            for (Long id : transactionUpdateRequest.getSpenderIds()) {
-                if (memberService.getMember(id, group_id).isEmpty()) {
-                    throw new Exception("User is not from this group");
-                }
-            }
             List<Amount> amounts = amountService.setAmounts(transactionUpdateRequest.getSpenderIds(), transaction);
             amountService.saveAll(amounts);
             transactionRepository.save(transaction);

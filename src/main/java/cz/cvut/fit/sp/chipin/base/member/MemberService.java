@@ -11,7 +11,7 @@ import java.util.Optional;
 public class MemberService {
     private final MemberRepository memberRepository;
 
-    public Optional<Member> getMember(Long userId, Long groupId ) throws Exception {
+    public Optional<Member> readMember(Long userId, Long groupId ) throws Exception {
         return memberRepository.findByUserIdAndGroupId(userId, groupId);
     }
 
@@ -19,7 +19,7 @@ public class MemberService {
         memberRepository.save(member);
     }
 
-    public ArrayList<Member> getMembersByGroupId(Long groupId) throws Exception {
+    public ArrayList<Member> readMembers(Long groupId) throws Exception {
         return memberRepository.findMembersByGroupId(groupId);
     }
 }

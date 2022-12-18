@@ -6,6 +6,7 @@ import cz.cvut.fit.sp.chipin.base.transaction.TransactionCreateRequest;
 import cz.cvut.fit.sp.chipin.base.transaction.TransactionResponse;
 import cz.cvut.fit.sp.chipin.base.transaction.TransactionUpdateRequest;
 import lombok.AllArgsConstructor;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,7 +28,7 @@ public class GroupController {
     @GetMapping("/{group_id}")
     public ResponseEntity<GroupResponse> readGroup(@PathVariable Long group_id) throws Exception {
         try {
-            return groupService.readGroup(group_id);
+            return ResponseEntity.ok(groupService.readGroup(group_id));
         } catch (Exception e) {
             throw new Exception(e);
         }
@@ -78,9 +79,9 @@ public class GroupController {
     }
 
     @DeleteMapping("/{group_id}/debt/repayment")
-    public void repaymentDebt(@PathVariable Long group_id, @Valid @RequestBody DebtKeyDTO dto) throws Exception {
+    public void settleDebt(@PathVariable Long group_id, @RequestParam("lenderId") Long lenderId, @RequestParam("borrowerId") Long borrowerId) throws Exception {
         try {
-            groupService.repaymentDebt(group_id, dto);
+            groupService.settleDebt(group_id, lenderId, borrowerId);
         } catch (Exception e) {
             throw new Exception(e);
         }
