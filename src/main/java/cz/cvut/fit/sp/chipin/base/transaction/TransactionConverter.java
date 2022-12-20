@@ -4,7 +4,6 @@ import cz.cvut.fit.sp.chipin.authentication.user.User;
 import cz.cvut.fit.sp.chipin.authentication.user.UserDTO;
 import cz.cvut.fit.sp.chipin.base.amount.Amount;
 import cz.cvut.fit.sp.chipin.base.amount.AmountConverter;
-import cz.cvut.fit.sp.chipin.base.amount.AmountDTO;
 import cz.cvut.fit.sp.chipin.base.group.Group;
 
 import java.util.*;
@@ -15,7 +14,8 @@ public class TransactionConverter {
         return new TransactionResponse(transaction.getId(), transaction.getName(),
                 Float.valueOf(String.format(Locale.getDefault(), "%.2f",
                         transaction.getAmount())), transaction.getDate(),
-                new UserDTO(transaction.getPayer().getName()), getAmounts(transaction.getAmounts()));
+                new UserDTO(transaction.getPayer().getName()),
+                transaction.getAmounts().stream().map(AmountConverter::toDto).collect(Collectors.toList()));
     }
 
     public static TransactionGroupResponse toTransactionGroupResponse(Transaction transaction) {
@@ -24,7 +24,7 @@ public class TransactionConverter {
                 transaction.getAmounts().stream().map(Amount::getUserName).collect(Collectors.toList()));
     }
 
-    public static List<TransactionGroupResponse> toTransactionsGroupResponse(List<Transaction> transactions) {
+    public static List<TransactionGroupResponse> toGroupResponse(List<Transaction> transactions) {
         Collections.reverse(transactions);
         if (transactions.size() > 2) {
             return transactions.subList(0, 3).stream().map(TransactionConverter::toTransactionGroupResponse)
@@ -33,14 +33,6 @@ public class TransactionConverter {
             return transactions.stream().map(TransactionConverter::toTransactionGroupResponse)
                     .collect(Collectors.toList());
         }
-    }
-
-    private static List<AmountDTO> getAmounts(List<Amount> amounts) {
-        List<AmountDTO> result = new ArrayList<>();
-        for (Amount a : amounts) {
-            result.add(AmountConverter.toDto(a));
-        }
-        return result;
     }
 
     public static Transaction fromCreateDto(TransactionCreateRequest createRequest, User payer, Group group) {

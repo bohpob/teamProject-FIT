@@ -62,13 +62,13 @@ public class GroupService {
         groupResponse.setUsers(UserConverter.toUsersGroupResponse(memberService.readMembers(groupId)));
 
         groupResponse.setTransactions(TransactionConverter
-                .toTransactionsGroupResponse(transactionService.getTransactionsByGroupId(groupId)));
+                .toGroupResponse(transactionService.readTransactions(groupId)));
 
         groupResponse.setDebts(debtService.readDebts(groupId).stream().map(DebtConverter::toDebtGroupResponse)
                 .collect(Collectors.toList()));
 
-        ArrayList<Log> logs = logService.getAllByGroupId(group.get().getId());
-        groupResponse.setLogs(LogConverter.toLogsGroupResponse(logs));
+        List<Log> logs = logService.readLogs(group.get().getId());
+        groupResponse.setLogs(LogConverter.toGroupResponse(logs));
 
         return groupResponse;
     }
@@ -213,6 +213,20 @@ public class GroupService {
         }
 
         return TransactionConverter.toDto(transaction.get());
+    }
+
+    public TransactionsGroupResponse readTransactions(Long groupId) throws Exception {
+        Optional<Group> group = groupRepository.findById(groupId);
+        if (group.isEmpty()) {
+            throw new Exception("Group not found");
+        }
+
+        List<Transaction> transactions = transactionService.readTransactions(groupId);
+        Collections.reverse(transactions);
+        List<TransactionGroupResponse> transactionsGroupResponse = transactions.stream()
+                .map(TransactionConverter::toTransactionGroupResponse).toList();
+
+        return new TransactionsGroupResponse(transactionsGroupResponse);
     }
 
     public TransactionResponse updateTransaction(TransactionUpdateRequest transactionUpdateRequest,

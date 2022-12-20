@@ -1,9 +1,7 @@
 package cz.cvut.fit.sp.chipin.base.group;
 
 import cz.cvut.fit.sp.chipin.base.member.MemberRequest;
-import cz.cvut.fit.sp.chipin.base.transaction.TransactionCreateRequest;
-import cz.cvut.fit.sp.chipin.base.transaction.TransactionResponse;
-import cz.cvut.fit.sp.chipin.base.transaction.TransactionUpdateRequest;
+import cz.cvut.fit.sp.chipin.base.transaction.*;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -54,6 +52,16 @@ public class GroupController {
                                                                @PathVariable Long transactionId) throws Exception {
         try {
             return ResponseEntity.ok(groupService.readTransaction(transactionId, groupId));
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+    }
+
+    @GetMapping("/{groupId}/transactions")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<TransactionsGroupResponse> readTransactions(@PathVariable Long groupId) throws Exception {
+        try {
+            return ResponseEntity.ok(groupService.readTransactions(groupId));
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
