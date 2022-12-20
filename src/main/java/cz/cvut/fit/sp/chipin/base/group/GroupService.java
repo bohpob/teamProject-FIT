@@ -107,7 +107,7 @@ public class GroupService {
 
         for (Amount amount : transaction.getAmounts()) {
             Member member = memberService.readMember(amount.getUser().getId(),
-                    transaction.getGroup().getId())
+                            transaction.getGroup().getId())
                     .orElseThrow(() -> new Exception("Transaction participant is not found"));
 
             member.setSpent(member.getSpent() + amount.getAmount());
@@ -130,7 +130,7 @@ public class GroupService {
 
         for (Amount amount : transaction.getAmounts()) {
             Member member = memberService.readMember(amount.getUser().getId(),
-                    transaction.getGroup().getId())
+                            transaction.getGroup().getId())
                     .orElseThrow(() -> new Exception("Transaction participant is not found"));
 
             member.decreaseSpent(amount.getAmount());
@@ -287,5 +287,16 @@ public class GroupService {
             }
         }
         return true;
+    }
+
+    public LogsGroupResponse readLogs(Long groupId) throws Exception {
+        Optional<Group> group = groupRepository.findById(groupId);
+        if (group.isEmpty()) {
+            throw new Exception("Group not found");
+        }
+
+        List<Log> logs = logService.readLogs(groupId);
+        Collections.reverse(logs);
+        return new LogsGroupResponse(logs.stream().map(LogConverter::toDto).collect(Collectors.toList()));
     }
 }

@@ -1,5 +1,6 @@
 package cz.cvut.fit.sp.chipin.base.group;
 
+import cz.cvut.fit.sp.chipin.base.log.LogsGroupResponse;
 import cz.cvut.fit.sp.chipin.base.member.MemberRequest;
 import cz.cvut.fit.sp.chipin.base.transaction.*;
 import lombok.AllArgsConstructor;
@@ -70,7 +71,8 @@ public class GroupController {
     @PutMapping("/{groupId}/transactions/{transactionId}")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<TransactionResponse> updateTransaction(@Valid @RequestBody TransactionUpdateRequest request,
-                                     @PathVariable Long groupId, @PathVariable Long transactionId) throws Exception {
+                                                                 @PathVariable Long groupId,
+                                                                 @PathVariable Long transactionId) throws Exception {
         try {
             return ResponseEntity.ok(groupService.updateTransaction(request, groupId, transactionId));
         } catch (Exception e) {
@@ -94,6 +96,16 @@ public class GroupController {
             groupService.settleDebt(groupId, lenderId, borrowerId);
         } catch (Exception e) {
             throw new Exception(e);
+        }
+    }
+
+    @GetMapping("/{groupId}/logs")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<LogsGroupResponse> readLogs(@PathVariable Long groupId) throws Exception {
+        try {
+            return ResponseEntity.ok(groupService.readLogs(groupId));
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
         }
     }
 
