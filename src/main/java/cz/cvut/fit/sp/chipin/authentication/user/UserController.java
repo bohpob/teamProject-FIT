@@ -32,7 +32,6 @@ public class UserController {
         return userService.getAllUsers();
     }
 
-
     @GetMapping("{id}/memberships")
     List<MemberDTO> getMemberships(@PathVariable Long id) throws Exception {
         return userService.getMemberships(id);

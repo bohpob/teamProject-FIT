@@ -32,6 +32,13 @@ public class Amount {
     @Column
     private Float amount = 0f;
 
+    public Amount(User user, Transaction transaction, Float amount) {
+        id = new AmountKey(user.getId(), transaction.getId());
+        this.user = user;
+        this.transaction = transaction;
+        this.amount = amount;
+    }
+
     public Float reverse() {
         return amount * -1;
     }
@@ -40,10 +47,4 @@ public class Amount {
         return user.getName();
     }
 
-    public Amount(User user, Transaction transaction, Float amount) {
-        id = new AmountKey(user.getId(), transaction.getId());
-        this.user = user;
-        this.transaction = transaction;
-        this.amount = amount;
-    }
 }

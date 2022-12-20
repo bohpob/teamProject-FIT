@@ -26,7 +26,7 @@ public class LoginService {
         User user = userService.loadUserByUsername(loginRequest.getEmail());
 
         if (!user.isEnabled()) {
-            if (!userService.userHasActiveToken(user.getId())){
+            if (!userService.userHasActiveToken(user.getId())) {
                 String token = UUID.randomUUID().toString();
                 ConfirmationToken confirmationToken = new ConfirmationToken(
                         token,

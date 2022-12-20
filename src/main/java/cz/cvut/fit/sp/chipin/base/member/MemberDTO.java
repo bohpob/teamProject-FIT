@@ -8,7 +8,7 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 public class MemberDTO {
     @NotNull
-    private Long group_id;
+    private Long groupId;
     @NotBlank
     private String role;
     @NotNull

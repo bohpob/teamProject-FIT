@@ -23,12 +23,12 @@ public class Member {
 
     @ManyToOne
     @MapsId("userId")
-    @JoinColumn(name = "user_id", nullable=false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @ManyToOne
     @MapsId("groupId")
-    @JoinColumn(name = "group_id", nullable=false)
+    @JoinColumn(name = "group_id", nullable = false)
     private Group group;
     @NotNull
     @Column

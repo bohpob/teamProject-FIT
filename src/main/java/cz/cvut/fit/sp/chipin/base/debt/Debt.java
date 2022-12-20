@@ -20,18 +20,18 @@ public class Debt {
 
     @ManyToOne
     @MapsId("groupId")
-    @JoinColumn(name = "group_id", nullable=false)
-    Group group;
+    @JoinColumn(name = "group_id", nullable = false)
+    private Group group;
 
     @ManyToOne
     @MapsId("lenderId")
-    @JoinColumn(name = "lender_id", nullable=false)
-    User lender;
+    @JoinColumn(name = "lender_id", nullable = false)
+    private User lender;
 
     @ManyToOne
     @MapsId("borrowerId")
-    @JoinColumn(name = "borrower_id", nullable=false)
-    User borrower;
+    @JoinColumn(name = "borrower_id", nullable = false)
+    private User borrower;
 
     @NotNull
     @Column(name = "amount", nullable = false)

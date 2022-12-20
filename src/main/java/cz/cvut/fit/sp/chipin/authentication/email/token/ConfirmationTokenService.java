@@ -17,13 +17,14 @@ public class ConfirmationTokenService {
         confirmationTokenRepository.save(token);
     }
 
-    public Optional<ConfirmationToken> getToken(String token){
+    public Optional<ConfirmationToken> getToken(String token) {
         return confirmationTokenRepository.findByToken(token);
     }
 
     public void setConfirmedAt(String token) {
-        if (confirmationTokenRepository.findByToken(token).isEmpty())
+        if (confirmationTokenRepository.findByToken(token).isEmpty()) {
             throw new IllegalStateException("Token nod found");
+        }
 
         ConfirmationToken confirmationToken = confirmationTokenRepository.findByToken(token).get();
         confirmationToken.setConfirmedAt(LocalDateTime.now());
