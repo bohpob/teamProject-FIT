@@ -299,4 +299,18 @@ public class GroupService {
         Collections.reverse(logs);
         return new LogsGroupResponse(logs.stream().map(LogConverter::toDto).collect(Collectors.toList()));
     }
+
+    public GroupResponse changeGroupName(Long groupId, String name) throws Exception {
+        Optional<Group> group = groupRepository.findById(groupId);
+        if (group.isEmpty()) {
+            throw new Exception("Group not found");
+        }
+        if (name.isBlank()) {
+            throw new Exception("New name is empty");
+        }
+
+        group.get().setName(name);
+        groupRepository.save(group.get());
+        return readGroup(groupId);
+    }
 }

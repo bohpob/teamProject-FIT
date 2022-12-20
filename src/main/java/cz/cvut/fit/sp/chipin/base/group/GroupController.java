@@ -109,4 +109,14 @@ public class GroupController {
         }
     }
 
+    @PatchMapping("/{groupId}/name")
+    public ResponseEntity<GroupResponse> changeGroupName(@PathVariable Long groupId,
+                                                         @RequestParam("name") String name) throws Exception {
+        try {
+            return ResponseEntity.ok(groupService.changeGroupName(groupId, name));
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+    }
+
 }
