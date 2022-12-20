@@ -16,8 +16,9 @@ public class AmountService {
     private final UserService userService;
 
     public List<Amount> setAmounts(List<Long> spenderIds, Transaction transaction) throws Exception {
-        if (spenderIds.isEmpty())
+        if (spenderIds.isEmpty()) {
             throw new Exception("Users not found.");
+        }
 
         List<Amount> amounts = new ArrayList<>();
         Float spent = transaction.getAmount() / spenderIds.size();

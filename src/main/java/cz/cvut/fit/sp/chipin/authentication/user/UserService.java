@@ -4,7 +4,6 @@ import cz.cvut.fit.sp.chipin.authentication.email.token.ConfirmationToken;
 import cz.cvut.fit.sp.chipin.authentication.email.token.ConfirmationTokenService;
 import cz.cvut.fit.sp.chipin.base.member.Member;
 import cz.cvut.fit.sp.chipin.base.member.MemberDTO;
-import cz.cvut.fit.sp.chipin.base.member.MemberRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -20,10 +19,11 @@ import java.util.UUID;
 @AllArgsConstructor
 public class UserService implements UserDetailsService {
 
+    private final static String USER_NOT_FOUND = "User with email %s not found";
+
     private final UserRepository userRepository;
     private final ConfirmationTokenService confirmationTokenService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
-    private final static String USER_NOT_FOUND = "User with email %s not found";
 
     @Override
     public User loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -32,8 +32,9 @@ public class UserService implements UserDetailsService {
     }
 
     public String saveUser(User user) {
-        if (userRepository.findUserByEmail(user.getEmail()).isPresent())
+        if (userRepository.findUserByEmail(user.getEmail()).isPresent()) {
             throw new IllegalStateException("Email already taken");
+        }
 
         String encodedPassword = bCryptPasswordEncoder.encode(user.getPassword());
 
@@ -51,16 +52,16 @@ public class UserService implements UserDetailsService {
 
         confirmationTokenService.saveConfirmationToken(confirmationToken);
 
-        //TODO: send e-mail
-
         return token;
     }
 
     public User getUser(Long id) throws Exception {
         User user = userRepository.findById(id).orElse(null);
-        if (user != null)
+        if (user != null) {
             return user;
-        throw new Exception("user doesn't exists(getUser() method in UserService)");
+        } else {
+            throw new Exception("user doesn't exists(getUser() method in UserService)");
+        }
     }
 
     public List<User> getAllUsers() {
@@ -71,12 +72,11 @@ public class UserService implements UserDetailsService {
         return userRepository.enableUser(email);
     }
 
-
     public boolean userHasActiveToken(Long id) {
-        for (ConfirmationToken token :
-                confirmationTokenService.getAllTokensByUserId(id)) {
-            if (token.getExpiresAt().isAfter(LocalDateTime.now()))
+        for (ConfirmationToken token : confirmationTokenService.getAllTokensByUserId(id)) {
+            if (token.getExpiresAt().isAfter(LocalDateTime.now())) {
                 return true;
+            }
         }
         return false;
     }

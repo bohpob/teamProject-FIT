@@ -1,12 +1,10 @@
 package cz.cvut.fit.sp.chipin.base.group;
 
-import cz.cvut.fit.sp.chipin.base.debt.DebtKeyDTO;
 import cz.cvut.fit.sp.chipin.base.member.MemberRequest;
 import cz.cvut.fit.sp.chipin.base.transaction.TransactionCreateRequest;
 import cz.cvut.fit.sp.chipin.base.transaction.TransactionResponse;
 import cz.cvut.fit.sp.chipin.base.transaction.TransactionUpdateRequest;
 import lombok.AllArgsConstructor;
-import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,63 +23,67 @@ public class GroupController {
         return groupService.createGroup(request);
     }
 
-    @GetMapping("/{group_id}")
-    public ResponseEntity<GroupResponse> readGroup(@PathVariable Long group_id) throws Exception {
+    @GetMapping("/{groupId}")
+    public ResponseEntity<GroupResponse> readGroup(@PathVariable Long groupId) throws Exception {
         try {
-            return ResponseEntity.ok(groupService.readGroup(group_id));
+            return ResponseEntity.ok(groupService.readGroup(groupId));
         } catch (Exception e) {
             throw new Exception(e);
         }
     }
 
-    @PatchMapping("/{group_id}/join")
-    public String addMember(@Valid @RequestBody MemberRequest request, @PathVariable Long group_id) throws Exception {
-        return groupService.addMember(request.getId(), group_id);
+    @PatchMapping("/{groupId}/join")
+    public String addMember(@Valid @RequestBody MemberRequest request, @PathVariable Long groupId) throws Exception {
+        return groupService.addMember(request.getId(), groupId);
     }
 
-    @PostMapping("/{group_id}/transactions")
+    @PostMapping("/{groupId}/transactions")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<TransactionResponse> createTransaction(@Valid @RequestBody TransactionCreateRequest transactionCreateRequest, @PathVariable Long group_id) throws Exception {
+    public ResponseEntity<TransactionResponse> createTransaction(@Valid @RequestBody TransactionCreateRequest request,
+                                                                 @PathVariable Long groupId) throws Exception {
         try {
-            return ResponseEntity.ok(groupService.createTransaction(transactionCreateRequest, group_id));
+            return ResponseEntity.ok(groupService.createTransaction(request, groupId));
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
     }
 
-    @GetMapping("/{group_id}/transactions/{transaction_id}")
+    @GetMapping("/{groupId}/transactions/{transactionId}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<TransactionResponse> readTransaction(@PathVariable Long group_id, @PathVariable Long transaction_id) throws Exception {
+    public ResponseEntity<TransactionResponse> readTransaction(@PathVariable Long groupId,
+                                                               @PathVariable Long transactionId) throws Exception {
         try {
-            return ResponseEntity.ok(groupService.readTransaction(transaction_id, group_id));
+            return ResponseEntity.ok(groupService.readTransaction(transactionId, groupId));
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
     }
 
-    @PutMapping("/{group_id}/transactions/{transaction_id}")
+    @PutMapping("/{groupId}/transactions/{transactionId}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<TransactionResponse> updateTransaction(@Valid @RequestBody TransactionUpdateRequest transactionUpdateRequest, @PathVariable Long group_id, @PathVariable Long transaction_id) throws Exception {
+    public ResponseEntity<TransactionResponse> updateTransaction(@Valid @RequestBody TransactionUpdateRequest request,
+                                     @PathVariable Long groupId, @PathVariable Long transactionId) throws Exception {
         try {
-            return ResponseEntity.ok(groupService.updateTransaction(transactionUpdateRequest, group_id, transaction_id));
+            return ResponseEntity.ok(groupService.updateTransaction(request, groupId, transactionId));
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
     }
 
-    @DeleteMapping("/{group_id}/transactions/{transaction_id}")
-    public void deleteTransaction(@PathVariable Long group_id, @PathVariable Long transaction_id) throws Exception {
+    @DeleteMapping("/{groupId}/transactions/{transactionId}")
+    public void deleteTransaction(@PathVariable Long groupId, @PathVariable Long transactionId) throws Exception {
         try {
-            groupService.deleteTransaction(transaction_id, group_id);
+            groupService.deleteTransaction(transactionId, groupId);
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
     }
 
-    @DeleteMapping("/{group_id}/debt/repayment")
-    public void settleDebt(@PathVariable Long group_id, @RequestParam("lenderId") Long lenderId, @RequestParam("borrowerId") Long borrowerId) throws Exception {
+    @DeleteMapping("/{groupId}/debt/repayment")
+    public void settleDebt(@PathVariable Long groupId, @RequestParam("lenderId") Long lenderId,
+                           @RequestParam("borrowerId") Long borrowerId) throws Exception {
         try {
-            groupService.settleDebt(group_id, lenderId, borrowerId);
+            groupService.settleDebt(groupId, lenderId, borrowerId);
         } catch (Exception e) {
             throw new Exception(e);
         }

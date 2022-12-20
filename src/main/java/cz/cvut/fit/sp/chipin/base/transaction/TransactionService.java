@@ -18,11 +18,11 @@ public class TransactionService {
     private final TransactionRepository transactionRepository;
     private final AmountService amountService;
 
-    public Transaction create(TransactionCreateRequest transactionCreateRequest, User payer, Group group) throws Exception {
-        Transaction transaction = TransactionConverter.fromCreateDto(transactionCreateRequest, payer, group);
+    public Transaction create(TransactionCreateRequest request, User payer, Group group) throws Exception {
+        Transaction transaction = TransactionConverter.fromCreateDto(request, payer, group);
 
         try {
-            List<Amount> amounts = amountService.setAmounts(transactionCreateRequest.getSpenderIds(), transaction);
+            List<Amount> amounts = amountService.setAmounts(request.getSpenderIds(), transaction);
             transactionRepository.save(transaction);
             amountService.saveAll(amounts);
         } catch (Exception e) {
@@ -31,25 +31,27 @@ public class TransactionService {
         return transaction;
     }
 
-    public Optional<Transaction> read(Long transaction_id, Long group_id) throws Exception {
-        Optional<Transaction> transaction = transactionRepository.findById(transaction_id);
-        if (transaction.isEmpty())
+    public Optional<Transaction> read(Long transactionId, Long groupId) throws Exception {
+        Optional<Transaction> transaction = transactionRepository.findById(transactionId);
+        if (transaction.isEmpty()) {
             throw new Exception("Transaction not found.");
-        if (!Objects.equals(transaction.get().getGroup().getId(), group_id))
+        }
+        if (!Objects.equals(transaction.get().getGroup().getId(), groupId)) {
             throw new Exception("Transaction does not belong to this group.");
+        }
         return transaction;
     }
 
     @Transactional
-    public void update(Transaction transaction, TransactionUpdateRequest transactionUpdateRequest, User nextPayer) throws Exception {
+    public void update(Transaction transaction, TransactionUpdateRequest request, User nextPayer) throws Exception {
         try {
             amountService.deleteAllByTransactionId(transaction.getId());
-            transaction.setName(transactionUpdateRequest.getName());
-            transaction.setDate(transactionUpdateRequest.getDate());
-            transaction.setAmount(transactionUpdateRequest.getAmount());
+            transaction.setName(request.getName());
+            transaction.setDate(request.getDate());
+            transaction.setAmount(request.getAmount());
             transaction.setPayer(nextPayer);
 
-            List<Amount> amounts = amountService.setAmounts(transactionUpdateRequest.getSpenderIds(), transaction);
+            List<Amount> amounts = amountService.setAmounts(request.getSpenderIds(), transaction);
             amountService.saveAll(amounts);
             transactionRepository.save(transaction);
         } catch (Exception e) {

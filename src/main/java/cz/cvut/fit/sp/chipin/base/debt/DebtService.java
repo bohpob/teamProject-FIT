@@ -26,12 +26,17 @@ public class DebtService {
     public void recalculate(Map<User, Float> spent, User payer, Group group) throws Exception {
         for (var entry : spent.entrySet()) {
             User spender = entry.getKey();
-            if (Objects.equals(spender.getId(), payer.getId()))
+            if (Objects.equals(spender.getId(), payer.getId())) {
                 continue;
+            }
 
-            Optional<Debt> debt = debtRepository.findByGroupIdAndLenderIdAndBorrowerId(group.getId(), payer.getId(), spender.getId());
+            Optional<Debt> debt = debtRepository.findByGroupIdAndLenderIdAndBorrowerId(group.getId(),
+                    payer.getId(), spender.getId());
+
             if (debt.isEmpty()) {
-                debt = debtRepository.findByGroupIdAndLenderIdAndBorrowerId(group.getId(), spender.getId(), payer.getId());
+                debt = debtRepository.findByGroupIdAndLenderIdAndBorrowerId(group.getId(),
+                        spender.getId(), payer.getId());
+
                 if (debt.isEmpty()) {
                     Debt newDebt = new Debt(group, payer, spender, entry.getValue());
                     debtRepository.save(newDebt);
