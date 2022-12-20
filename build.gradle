@@ -11,6 +11,14 @@ checkstyle {
 	ignoreFailures = true
 	toolVersion = '10.5.0'
 	configFile = file("${rootProject.projectDir}/checkstyle/checkstyle.xml")
+	reportsDir = file("${rootProject.projectDir}/checkstyle/")
+}
+
+tasks.withType(Checkstyle) {
+	reports {
+		xml.required = false
+		html.required = true
+	}
 }
 
 group = 'cz.cvut.fit.sp'
