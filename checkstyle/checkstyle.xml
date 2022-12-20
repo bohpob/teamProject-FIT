@@ -13,7 +13,7 @@
 
     <module name="LineLength">
         <property name="fileExtensions" value="java"/>
-        <property name="max" value="100"/>
+        <property name="max" value="120"/>
     </module>
 
     <module name="TreeWalker">
@@ -61,6 +61,7 @@
         <module name="LeftCurly"/>
         <module name="NeedBraces"/>
         <module name="RightCurly"/>
+        <module name="EmptyBlock"/>
 
         <module name="EmptyStatement"/>
         <module name="EqualsHashCode"/>
