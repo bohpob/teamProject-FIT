@@ -4,6 +4,13 @@ plugins {
 	id 'com.android.application' version '7.3.0' apply false
 	id 'com.android.library' version '7.1.2' apply false
 	id 'java'
+	id 'checkstyle'
+}
+
+checkstyle {
+	ignoreFailures = true
+	toolVersion = '10.5.0'
+	configFile = file("${rootProject.projectDir}/checkstyle/checkstyle.xml")
 }
 
 group = 'cz.cvut.fit.sp'
