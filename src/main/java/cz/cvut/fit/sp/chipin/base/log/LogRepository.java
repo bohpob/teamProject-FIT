@@ -3,9 +3,9 @@ package cz.cvut.fit.sp.chipin.base.log;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
+import java.util.List;
 
 @Repository
 public interface LogRepository extends JpaRepository<Log, Long> {
-    ArrayList<Log> findAllByGroupId(Long groupId);
+    List<Log> findLogsByGroupId(Long groupId);
 }

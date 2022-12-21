@@ -53,6 +53,15 @@ public class Group {
     @Enumerated(EnumType.STRING)
     private Currency currency;
 
+    @NotBlank
+    private String hexCode;
+
+    public Group(String name, Currency currency, String hexCode) {
+        this.name = name;
+        this.currency = currency;
+        this.hexCode = hexCode;
+    }
+
     public void addMembership(Member member) {
         members.add(member);
     }

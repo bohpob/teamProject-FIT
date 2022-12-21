@@ -4,7 +4,6 @@ import cz.cvut.fit.sp.chipin.authentication.user.User;
 import cz.cvut.fit.sp.chipin.base.amount.Amount;
 import cz.cvut.fit.sp.chipin.base.amount.AmountService;
 import cz.cvut.fit.sp.chipin.base.group.Group;
-import cz.cvut.fit.sp.chipin.base.member.MemberService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -64,8 +63,8 @@ public class TransactionService {
         transactionRepository.deleteById(transaction.getId());
     }
 
-    public ArrayList<Transaction> getTransactionsByGroupId(Long groupId) {
-        return transactionRepository.getTransactionsByGroupId(groupId);
+    public List<Transaction> readTransactions(Long groupId) {
+        return transactionRepository.findTransactionsByGroupId(groupId);
     }
 
 }

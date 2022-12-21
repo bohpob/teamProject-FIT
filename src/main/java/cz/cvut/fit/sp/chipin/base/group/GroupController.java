@@ -1,9 +1,8 @@
 package cz.cvut.fit.sp.chipin.base.group;
 
+import cz.cvut.fit.sp.chipin.base.log.LogsGroupResponse;
 import cz.cvut.fit.sp.chipin.base.member.MemberRequest;
-import cz.cvut.fit.sp.chipin.base.transaction.TransactionCreateRequest;
-import cz.cvut.fit.sp.chipin.base.transaction.TransactionResponse;
-import cz.cvut.fit.sp.chipin.base.transaction.TransactionUpdateRequest;
+import cz.cvut.fit.sp.chipin.base.transaction.*;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +19,11 @@ public class GroupController {
 
     @PostMapping
     public String createGroup(@Valid @RequestBody GroupCreateRequest request) throws Exception {
-        return groupService.createGroup(request);
+        try {
+            return groupService.createGroup(request);
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
     }
 
     @GetMapping("/{groupId}")
@@ -34,7 +37,11 @@ public class GroupController {
 
     @PatchMapping("/{groupId}/join")
     public String addMember(@Valid @RequestBody MemberRequest request, @PathVariable Long groupId) throws Exception {
-        return groupService.addMember(request.getId(), groupId);
+        try {
+            return groupService.addMember(request.getId(), groupId);
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
     }
 
     @PostMapping("/{groupId}/transactions")
@@ -59,10 +66,21 @@ public class GroupController {
         }
     }
 
+    @GetMapping("/{groupId}/transactions")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<TransactionsGroupResponse> readTransactions(@PathVariable Long groupId) throws Exception {
+        try {
+            return ResponseEntity.ok(groupService.readTransactions(groupId));
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+    }
+
     @PutMapping("/{groupId}/transactions/{transactionId}")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<TransactionResponse> updateTransaction(@Valid @RequestBody TransactionUpdateRequest request,
-                                     @PathVariable Long groupId, @PathVariable Long transactionId) throws Exception {
+                                                                 @PathVariable Long groupId,
+                                                                 @PathVariable Long transactionId) throws Exception {
         try {
             return ResponseEntity.ok(groupService.updateTransaction(request, groupId, transactionId));
         } catch (Exception e) {
@@ -86,6 +104,26 @@ public class GroupController {
             groupService.settleDebt(groupId, lenderId, borrowerId);
         } catch (Exception e) {
             throw new Exception(e);
+        }
+    }
+
+    @GetMapping("/{groupId}/logs")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<LogsGroupResponse> readLogs(@PathVariable Long groupId) throws Exception {
+        try {
+            return ResponseEntity.ok(groupService.readLogs(groupId));
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+    }
+
+    @PatchMapping("/{groupId}/name")
+    public ResponseEntity<GroupResponse> changeGroupName(@PathVariable Long groupId,
+                                                         @RequestParam("name") String name) throws Exception {
+        try {
+            return ResponseEntity.ok(groupService.changeGroupName(groupId, name));
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
         }
     }
 

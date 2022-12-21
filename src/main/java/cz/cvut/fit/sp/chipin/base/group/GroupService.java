@@ -31,9 +31,7 @@ public class GroupService {
             throw new Exception("Name and Currency fields cannot be empty");
         }
 
-        Group group = new Group();
-        group.setName(request.getName());
-        group.setCurrency(Currency.valueOf(request.getCurrency()));
+        Group group = new Group(request.getName(), Currency.valueOf(request.getCurrency()), generateRandomHexCode());
         groupRepository.save(group);
 
         Member member = new Member(user, group, GroupRole.ADMIN, 0f, 0f, 0f);
@@ -49,6 +47,16 @@ public class GroupService {
         return "Created";
     }
 
+    private String generateRandomHexCode() {
+        Random random = new Random();
+        String hexCode = Long.toHexString(random.nextLong(0xffffff + 1));
+        if (groupRepository.findGroupByHexCode(hexCode).isEmpty()) {
+            return hexCode;
+        } else {
+            return generateRandomHexCode();
+        }
+    }
+
     public GroupResponse readGroup(Long groupId) throws Exception {
         Optional<Group> group = groupRepository.findById(groupId);
         if (group.isEmpty()) {
@@ -62,13 +70,13 @@ public class GroupService {
         groupResponse.setUsers(UserConverter.toUsersGroupResponse(memberService.readMembers(groupId)));
 
         groupResponse.setTransactions(TransactionConverter
-                .toTransactionsGroupResponse(transactionService.getTransactionsByGroupId(groupId)));
+                .toGroupResponse(transactionService.readTransactions(groupId)));
 
         groupResponse.setDebts(debtService.readDebts(groupId).stream().map(DebtConverter::toDebtGroupResponse)
                 .collect(Collectors.toList()));
 
-        ArrayList<Log> logs = logService.getAllByGroupId(group.get().getId());
-        groupResponse.setLogs(LogConverter.toLogsGroupResponse(logs));
+        List<Log> logs = logService.readLogs(group.get().getId());
+        groupResponse.setLogs(LogConverter.toGroupResponse(logs));
 
         return groupResponse;
     }
@@ -107,7 +115,7 @@ public class GroupService {
 
         for (Amount amount : transaction.getAmounts()) {
             Member member = memberService.readMember(amount.getUser().getId(),
-                    transaction.getGroup().getId())
+                            transaction.getGroup().getId())
                     .orElseThrow(() -> new Exception("Transaction participant is not found"));
 
             member.setSpent(member.getSpent() + amount.getAmount());
@@ -130,7 +138,7 @@ public class GroupService {
 
         for (Amount amount : transaction.getAmounts()) {
             Member member = memberService.readMember(amount.getUser().getId(),
-                    transaction.getGroup().getId())
+                            transaction.getGroup().getId())
                     .orElseThrow(() -> new Exception("Transaction participant is not found"));
 
             member.decreaseSpent(amount.getAmount());
@@ -215,6 +223,20 @@ public class GroupService {
         return TransactionConverter.toDto(transaction.get());
     }
 
+    public TransactionsGroupResponse readTransactions(Long groupId) throws Exception {
+        Optional<Group> group = groupRepository.findById(groupId);
+        if (group.isEmpty()) {
+            throw new Exception("Group not found");
+        }
+
+        List<Transaction> transactions = transactionService.readTransactions(groupId);
+        Collections.reverse(transactions);
+        List<TransactionGroupResponse> transactionsGroupResponse = transactions.stream()
+                .map(TransactionConverter::toTransactionGroupResponse).toList();
+
+        return new TransactionsGroupResponse(transactionsGroupResponse);
+    }
+
     public TransactionResponse updateTransaction(TransactionUpdateRequest transactionUpdateRequest,
                                                  Long groupId, Long transactionId) throws Exception {
         Optional<Group> group = groupRepository.findById(groupId);
@@ -273,5 +295,30 @@ public class GroupService {
             }
         }
         return true;
+    }
+
+    public LogsGroupResponse readLogs(Long groupId) throws Exception {
+        Optional<Group> group = groupRepository.findById(groupId);
+        if (group.isEmpty()) {
+            throw new Exception("Group not found");
+        }
+
+        List<Log> logs = logService.readLogs(groupId);
+        Collections.reverse(logs);
+        return new LogsGroupResponse(logs.stream().map(LogConverter::toDto).collect(Collectors.toList()));
+    }
+
+    public GroupResponse changeGroupName(Long groupId, String name) throws Exception {
+        Optional<Group> group = groupRepository.findById(groupId);
+        if (group.isEmpty()) {
+            throw new Exception("Group not found");
+        }
+        if (name.isBlank()) {
+            throw new Exception("New name is empty");
+        }
+
+        group.get().setName(name);
+        groupRepository.save(group.get());
+        return readGroup(groupId);
     }
 }
