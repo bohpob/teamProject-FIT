@@ -19,7 +19,11 @@ public class GroupController {
 
     @PostMapping
     public String createGroup(@Valid @RequestBody GroupCreateRequest request) throws Exception {
-        return groupService.createGroup(request);
+        try {
+            return groupService.createGroup(request);
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
     }
 
     @GetMapping("/{groupId}")
@@ -33,7 +37,11 @@ public class GroupController {
 
     @PatchMapping("/{groupId}/join")
     public String addMember(@Valid @RequestBody MemberRequest request, @PathVariable Long groupId) throws Exception {
-        return groupService.addMember(request.getId(), groupId);
+        try {
+            return groupService.addMember(request.getId(), groupId);
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
     }
 
     @PostMapping("/{groupId}/transactions")

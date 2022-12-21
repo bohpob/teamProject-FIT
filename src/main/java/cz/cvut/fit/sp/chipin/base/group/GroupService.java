@@ -31,9 +31,7 @@ public class GroupService {
             throw new Exception("Name and Currency fields cannot be empty");
         }
 
-        Group group = new Group();
-        group.setName(request.getName());
-        group.setCurrency(Currency.valueOf(request.getCurrency()));
+        Group group = new Group(request.getName(), Currency.valueOf(request.getCurrency()), generateRandomHexCode());
         groupRepository.save(group);
 
         Member member = new Member(user, group, GroupRole.ADMIN, 0f, 0f, 0f);
@@ -47,6 +45,16 @@ public class GroupService {
 
         logService.create("created the group.", group, user);
         return "Created";
+    }
+
+    private String generateRandomHexCode() {
+        Random random = new Random();
+        String hexCode = Long.toHexString(random.nextLong(0xffffff + 1));
+        if (groupRepository.findGroupByHexCode(hexCode).isEmpty()) {
+            return hexCode;
+        } else {
+            return generateRandomHexCode();
+        }
     }
 
     public GroupResponse readGroup(Long groupId) throws Exception {
