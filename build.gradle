@@ -4,21 +4,6 @@ plugins {
 	id 'com.android.application' version '7.3.0' apply false
 	id 'com.android.library' version '7.1.2' apply false
 	id 'java'
-	id 'checkstyle'
-}
-
-checkstyle {
-	ignoreFailures = true
-	toolVersion = '10.5.0'
-	configFile = file("${rootProject.projectDir}/checkstyle/checkstyle.xml")
-	reportsDir = file("${rootProject.projectDir}/checkstyle/")
-}
-
-tasks.withType(Checkstyle) {
-	reports {
-		xml.required = false
-		html.required = true
-	}
 }
 
 group = 'cz.cvut.fit.sp'
@@ -29,15 +14,21 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	implementation 'mysql:mysql-connector-java:8.0.30'
+	implementation 'org.springframework.boot:spring-boot-gradle-plugin:2.7.5'
+
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-	compileOnly 'org.projectlombok:lombok'
-	runtimeOnly 'mysql:mysql-connector-java'
-	annotationProcessor 'org.projectlombok:lombok'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
-	implementation 'org.springframework.boot:spring-boot-gradle-plugin:2.7.5'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+	runtimeOnly 'mysql:mysql-connector-java'
+
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
 }
 
 tasks.named('test') {

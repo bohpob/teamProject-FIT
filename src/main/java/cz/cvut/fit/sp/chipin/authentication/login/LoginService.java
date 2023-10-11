@@ -6,6 +6,7 @@ import cz.cvut.fit.sp.chipin.authentication.email.token.ConfirmationTokenService
 import cz.cvut.fit.sp.chipin.authentication.user.User;
 import cz.cvut.fit.sp.chipin.authentication.user.UserService;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +18,8 @@ import java.util.UUID;
 public class LoginService {
 
     private final UserService userService;
+
+    @Autowired
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final EmailSender emailSender;
     private final ConfirmationTokenService confirmationTokenService;

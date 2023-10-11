@@ -29,7 +29,7 @@ public class EmailService implements EmailSender {
     @Async
     public void sendConfirmation(String to, String name, String token) {
         try {
-            String link = "http://194.67.119.84/api/v1/registration/confirm?token=" + token;
+            String link = "https://localhost:8080/api/v1/registration/confirm?token=" + token;
 
             MimeMessage mimeMessage = mailSender.createMimeMessage();
             MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, "utf-8");
