@@ -1,16 +1,28 @@
-FROM amazoncorretto:17 AS app-build
+# Build stage
+FROM gradle:8.3.0-jdk20-alpine AS BUILD
 
-ENV GRADLE_OPTS -Dorg.gradle.deamon=false
+RUN gradle --version && java -version
 
-RUN ls -R
+WORKDIR /app
 
-COPY . /build
-WORKDIR /build
+# Only copy dependency-related files
+COPY build.gradle settings.gradle /app/
 
-RUN ls -R
+# Only download dependencies
+# Eat the expected build failure since no source code has been copied yet
+RUN gradle clean build --no-daemon > /dev/null 2>&1 || true
 
-RUN chmod +x gradlew
+# Copy all files
+COPY ./ /app/
 
-ENTRYPOINT ["java", "-cp", "./src/main/java/cz/cvut/fit/sp/chipin/ChipinApplication.java", "-jar", "build/libs/chipin-0.0.1-SNAPSHOT.jar"]
+# Do the actual build
+RUN gradle clean build --no-daemon
 
-CMD ./gradlew build
+# Package stage
+FROM amazoncorretto:17.0.4-alpine3.16
+ENV JAR_NAME=Success-Story-Generator-0.0.1-SNAPSHOT.jar
+ENV APP_HOME=/app/
+WORKDIR $APP_HOME
+COPY --from=BUILD $APP_HOME .
+EXPOSE 8080
+ENTRYPOINT exec java -jar $APP_HOME/build/libs/$JAR_NAME
