@@ -1,9 +1,8 @@
 package cz.cvut.fit.sp.chipin.base.debt;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-
-import javax.validation.constraints.NotNull;
 
 @Getter
 @AllArgsConstructor
