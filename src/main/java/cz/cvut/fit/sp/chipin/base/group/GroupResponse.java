@@ -4,13 +4,13 @@ import cz.cvut.fit.sp.chipin.authentication.user.UserGroupResponse;
 import cz.cvut.fit.sp.chipin.base.debt.DebtGroupResponse;
 import cz.cvut.fit.sp.chipin.base.log.LogDTO;
 import cz.cvut.fit.sp.chipin.base.transaction.TransactionGroupResponse;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Getter

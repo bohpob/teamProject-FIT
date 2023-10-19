@@ -1,6 +1,9 @@
 package cz.cvut.fit.sp.chipin.authentication.registration;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.ToString;
 
 @Getter
 @AllArgsConstructor

@@ -6,7 +6,9 @@ import cz.cvut.fit.sp.chipin.base.amount.Amount;
 import cz.cvut.fit.sp.chipin.base.amount.AmountConverter;
 import cz.cvut.fit.sp.chipin.base.group.Group;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 public class TransactionConverter {

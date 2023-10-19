@@ -1,10 +1,10 @@
 package cz.cvut.fit.sp.chipin.base.debt;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 
 @Embeddable

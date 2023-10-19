@@ -1,24 +1,47 @@
-version: "2"
+# previous compose
+#version: "2"
+#services:
+#  db:
+#    image: mysql
+#    command: --default-authentication-plugin=mysql_native_password
+#    restart: always
+#    ports:
+#      - "3306:3306"
+#    volumes:
+#      - ./data:/var/lib/mysql
+#    environment:
+#      MYSQL_ROOT_PASSWORD: 2c179piE*
+#      MYSQL_DATABASE: chipin
+
+version: "3.8"
 services:
-  db:
-    image: mysql
-    command: --default-authentication-plugin=mysql_native_password
-    restart: always
-    ports:
-      - "3306:3306"
-    volumes:
-      - ./data:/var/lib/mysql
-    environment:
-      MYSQL_ROOT_PASSWORD: 2c179piE*
-      MYSQL_DATABASE: chipin
   backend:
-    build: ./
-    depends_on:
-      - db
+    build: .
     ports:
       - "8080:8080"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      - db
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/chipin?createDatabaseIfNotExist=true
-      - SPRING_DATASOURCE_USERNAME=root
-      - SPRING_DATASOURCE_PASSWORD=2c179piE*
+      - POSTGRES_DB=chipin
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+
+  db:
+    image: postgres:15.3-alpine3.18
+    restart: always
+    ports:
+      - "5432:5432"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      - POSTGRES_DB=chipin
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+volumes:
+  db-data:

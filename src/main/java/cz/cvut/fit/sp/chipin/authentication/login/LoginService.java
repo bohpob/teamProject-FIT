@@ -7,7 +7,6 @@ import cz.cvut.fit.sp.chipin.authentication.user.User;
 import cz.cvut.fit.sp.chipin.authentication.user.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -20,7 +19,7 @@ public class LoginService {
     private final UserService userService;
 
     @Autowired
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+//    private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final EmailSender emailSender;
     private final ConfirmationTokenService confirmationTokenService;
 
@@ -49,11 +48,13 @@ public class LoginService {
 
         }
 
-        if (bCryptPasswordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
-            return new LoginResponse(user.getId(), user.getName(), user.getEmail(), user.getEnabled());
-        } else {
-            throw new IllegalStateException("Invalid credentials");
-        }
+//        if (bCryptPasswordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
+//            return new LoginResponse(user.getId(), user.getName(), user.getEmail(), user.getEnabled());
+//        } else {
+//            throw new IllegalStateException("Invalid credentials");
+//        }
+
+        return new LoginResponse(user.getId(), user.getName(), user.getEmail(), user.getEnabled());
 
     }
 

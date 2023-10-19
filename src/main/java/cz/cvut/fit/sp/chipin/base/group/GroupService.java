@@ -1,9 +1,16 @@
 package cz.cvut.fit.sp.chipin.base.group;
 
-import cz.cvut.fit.sp.chipin.authentication.user.*;
+import cz.cvut.fit.sp.chipin.authentication.user.User;
+import cz.cvut.fit.sp.chipin.authentication.user.UserConverter;
+import cz.cvut.fit.sp.chipin.authentication.user.UserService;
 import cz.cvut.fit.sp.chipin.base.amount.Amount;
-import cz.cvut.fit.sp.chipin.base.debt.*;
-import cz.cvut.fit.sp.chipin.base.log.*;
+import cz.cvut.fit.sp.chipin.base.debt.Debt;
+import cz.cvut.fit.sp.chipin.base.debt.DebtConverter;
+import cz.cvut.fit.sp.chipin.base.debt.DebtService;
+import cz.cvut.fit.sp.chipin.base.log.Log;
+import cz.cvut.fit.sp.chipin.base.log.LogConverter;
+import cz.cvut.fit.sp.chipin.base.log.LogService;
+import cz.cvut.fit.sp.chipin.base.log.LogsGroupResponse;
 import cz.cvut.fit.sp.chipin.base.member.GroupRole;
 import cz.cvut.fit.sp.chipin.base.member.Member;
 import cz.cvut.fit.sp.chipin.base.member.MemberService;

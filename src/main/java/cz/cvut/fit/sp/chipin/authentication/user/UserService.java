@@ -5,7 +5,6 @@ import cz.cvut.fit.sp.chipin.authentication.email.token.ConfirmationTokenService
 import cz.cvut.fit.sp.chipin.base.member.Member;
 import cz.cvut.fit.sp.chipin.base.member.MemberDTO;
 import lombok.AllArgsConstructor;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -23,9 +22,7 @@ public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final ConfirmationTokenService confirmationTokenService;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
-
-    private final static String USER_NOT_FOUND = "User with email %s not found";
+//    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Override
     public User loadUserByUsername(String email) throws UsernameNotFoundException {
