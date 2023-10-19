@@ -7,7 +7,6 @@ import cz.cvut.fit.sp.chipin.base.member.MemberDTO;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -23,7 +22,7 @@ public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final ConfirmationTokenService confirmationTokenService;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+//    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Override
     public User loadUserByUsername(String email) throws UsernameNotFoundException {
