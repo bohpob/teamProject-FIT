@@ -25,7 +25,8 @@ public class LoginService {
 
     public LoginResponse login(LoginRequest loginRequest) {
 
-        User user = userService.loadUserByUsername(loginRequest.getEmail());
+//        User user = userService.loadUserByUsername(loginRequest.getEmail());
+        User user = new User();
 
         if (!user.isEnabled()) {
             if (!userService.userHasActiveToken(user.getId())) {
