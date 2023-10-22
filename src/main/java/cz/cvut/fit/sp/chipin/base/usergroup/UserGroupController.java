@@ -1,4 +1,4 @@
-package cz.cvut.fit.sp.chipin.base.group;
+package cz.cvut.fit.sp.chipin.base.usergroup;
 
 import cz.cvut.fit.sp.chipin.base.log.LogsGroupResponse;
 import cz.cvut.fit.sp.chipin.base.member.MemberRequest;
@@ -15,23 +15,23 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1/groups")
 @AllArgsConstructor
-public class GroupController {
+public class UserGroupController {
 
-    private final GroupService groupService;
+    private final UserGroupService userGroupService;
 
     @PostMapping
-    public String createGroup(@Valid @RequestBody GroupCreateRequest request) throws Exception {
+    public String createGroup(@Valid @RequestBody UserGroupCreateRequest request) throws Exception {
         try {
-            return groupService.createGroup(request);
+            return userGroupService.createGroup(request);
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
     }
 
     @GetMapping("/{groupId}")
-    public ResponseEntity<GroupResponse> readGroup(@PathVariable Long groupId) throws Exception {
+    public ResponseEntity<UserGroupResponse> readGroup(@PathVariable Long groupId) throws Exception {
         try {
-            return ResponseEntity.ok(groupService.readGroup(groupId));
+            return ResponseEntity.ok(userGroupService.readGroup(groupId));
         } catch (Exception e) {
             throw new Exception(e);
         }
@@ -40,7 +40,7 @@ public class GroupController {
     @PatchMapping("/{groupId}/join")
     public String addMember(@Valid @RequestBody MemberRequest request, @PathVariable Long groupId) throws Exception {
         try {
-            return groupService.addMember(request.getId(), groupId);
+            return userGroupService.addMember(request.getId(), groupId);
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
@@ -51,7 +51,7 @@ public class GroupController {
     public ResponseEntity<TransactionResponse> createTransaction(@Valid @RequestBody TransactionCreateRequest request,
                                                                  @PathVariable Long groupId) throws Exception {
         try {
-            return ResponseEntity.ok(groupService.createTransaction(request, groupId));
+            return ResponseEntity.ok(userGroupService.createTransaction(request, groupId));
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
@@ -62,7 +62,7 @@ public class GroupController {
     public ResponseEntity<TransactionResponse> readTransaction(@PathVariable Long groupId,
                                                                @PathVariable Long transactionId) throws Exception {
         try {
-            return ResponseEntity.ok(groupService.readTransaction(transactionId, groupId));
+            return ResponseEntity.ok(userGroupService.readTransaction(transactionId, groupId));
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
@@ -72,7 +72,7 @@ public class GroupController {
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<TransactionsGroupResponse> readTransactions(@PathVariable Long groupId) throws Exception {
         try {
-            return ResponseEntity.ok(groupService.readTransactions(groupId));
+            return ResponseEntity.ok(userGroupService.readTransactions(groupId));
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
@@ -84,7 +84,7 @@ public class GroupController {
                                                                  @PathVariable Long groupId,
                                                                  @PathVariable Long transactionId) throws Exception {
         try {
-            return ResponseEntity.ok(groupService.updateTransaction(request, groupId, transactionId));
+            return ResponseEntity.ok(userGroupService.updateTransaction(request, groupId, transactionId));
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
@@ -93,7 +93,7 @@ public class GroupController {
     @DeleteMapping("/{groupId}/transactions/{transactionId}")
     public void deleteTransaction(@PathVariable Long groupId, @PathVariable Long transactionId) throws Exception {
         try {
-            groupService.deleteTransaction(transactionId, groupId);
+            userGroupService.deleteTransaction(transactionId, groupId);
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
@@ -103,7 +103,7 @@ public class GroupController {
     public void settleDebt(@PathVariable Long groupId, @RequestParam("lenderId") Long lenderId,
                            @RequestParam("borrowerId") Long borrowerId) throws Exception {
         try {
-            groupService.settleDebt(groupId, lenderId, borrowerId);
+            userGroupService.settleDebt(groupId, lenderId, borrowerId);
         } catch (Exception e) {
             throw new Exception(e);
         }
@@ -113,17 +113,17 @@ public class GroupController {
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<LogsGroupResponse> readLogs(@PathVariable Long groupId) throws Exception {
         try {
-            return ResponseEntity.ok(groupService.readLogs(groupId));
+            return ResponseEntity.ok(userGroupService.readLogs(groupId));
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
     }
 
     @PatchMapping("/{groupId}/name")
-    public ResponseEntity<GroupResponse> changeGroupName(@PathVariable Long groupId,
-                                                         @RequestParam("name") String name) throws Exception {
+    public ResponseEntity<UserGroupResponse> changeGroupName(@PathVariable Long groupId,
+                                                             @RequestParam("name") String name) throws Exception {
         try {
-            return ResponseEntity.ok(groupService.changeGroupName(groupId, name));
+            return ResponseEntity.ok(userGroupService.changeGroupName(groupId, name));
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }

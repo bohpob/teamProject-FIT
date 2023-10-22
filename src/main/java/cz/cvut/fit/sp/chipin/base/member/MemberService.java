@@ -12,7 +12,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
 
     public Optional<Member> readMember(Long userAccountId, Long groupId) throws Exception {
-        return memberRepository.findByUserAccountIdAndGroupId(userAccountId, groupId);
+        return memberRepository.findByUserAccountIdAndUserGroupId(userAccountId, groupId);
     }
 
     public void save(Member member) throws Exception {
@@ -20,6 +20,6 @@ public class MemberService {
     }
 
     public ArrayList<Member> readMembers(Long groupId) throws Exception {
-        return memberRepository.findMembersByGroupId(groupId);
+        return memberRepository.findMembersByUserGroupId(groupId);
     }
 }

@@ -4,7 +4,7 @@ import cz.cvut.fit.sp.chipin.authentication.useraccount.UserAccount;
 import cz.cvut.fit.sp.chipin.authentication.useraccount.UserAccountDTO;
 import cz.cvut.fit.sp.chipin.base.amount.Amount;
 import cz.cvut.fit.sp.chipin.base.amount.AmountConverter;
-import cz.cvut.fit.sp.chipin.base.group.Group;
+import cz.cvut.fit.sp.chipin.base.usergroup.UserGroup;
 
 import java.util.Collections;
 import java.util.List;
@@ -37,7 +37,7 @@ public class TransactionConverter {
         }
     }
 
-    public static Transaction fromCreateDto(TransactionCreateRequest createRequest, UserAccount payer, Group group) {
-        return new Transaction(createRequest.getName(), createRequest.getAmount(), payer, group);
+    public static Transaction fromCreateDto(TransactionCreateRequest createRequest, UserAccount payer, UserGroup userGroup) {
+        return new Transaction(createRequest.getName(), createRequest.getAmount(), payer, userGroup);
     }
 }

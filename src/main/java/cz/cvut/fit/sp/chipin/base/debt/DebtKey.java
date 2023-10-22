@@ -16,7 +16,7 @@ import java.io.Serializable;
 public class DebtKey implements Serializable {
 
     @NotBlank
-    @Column(name = "group_id")
+    @Column(name = "user_group_id")
     private Long groupId;
 
     @NotBlank

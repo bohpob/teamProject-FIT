@@ -2,7 +2,7 @@ package cz.cvut.fit.sp.chipin.base.transaction;
 
 import cz.cvut.fit.sp.chipin.authentication.useraccount.UserAccount;
 import cz.cvut.fit.sp.chipin.base.amount.Amount;
-import cz.cvut.fit.sp.chipin.base.group.Group;
+import cz.cvut.fit.sp.chipin.base.usergroup.UserGroup;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -36,8 +36,8 @@ public class Transaction {
     private Float amount;
     private String date;
     @ManyToOne
-    @JoinColumn(name = "group_id")
-    private Group group;
+    @JoinColumn(name = "user_group_id")
+    private UserGroup userGroup;
 
     @ManyToOne
     @JoinColumn(name = "payer_id")
@@ -46,14 +46,14 @@ public class Transaction {
     @OneToMany(mappedBy = "transaction")
     private List<Amount> amounts = new ArrayList<>();
 
-    public Transaction(String name, Float amount, UserAccount payer, Group group) {
+    public Transaction(String name, Float amount, UserAccount payer, UserGroup userGroup) {
         this.name = name;
         this.amount = amount;
         LocalDateTime currentDate = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d MMM yyyy, HH:mm");
         this.date = currentDate.format(formatter);
         this.payer = payer;
-        this.group = group;
+        this.userGroup = userGroup;
     }
 
 }

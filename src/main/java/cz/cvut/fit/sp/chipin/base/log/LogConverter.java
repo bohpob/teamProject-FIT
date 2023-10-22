@@ -1,15 +1,15 @@
 package cz.cvut.fit.sp.chipin.base.log;
 
 import cz.cvut.fit.sp.chipin.authentication.useraccount.UserAccount;
-import cz.cvut.fit.sp.chipin.base.group.Group;
+import cz.cvut.fit.sp.chipin.base.usergroup.UserGroup;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class LogConverter {
-    public static Log fromDto(LogDTO logDTO, Group group, UserAccount userAccount) {
-        return new Log(logDTO.getAction(), logDTO.getDate(), group, userAccount);
+    public static Log fromDto(LogDTO logDTO, UserGroup userGroup, UserAccount userAccount) {
+        return new Log(logDTO.getAction(), logDTO.getDate(), userGroup, userAccount);
     }
 
     public static LogDTO toDto(Log log) {

@@ -20,6 +20,6 @@ public class MemberKey implements Serializable {
     private Long userAccountId;
 
     @NotNull
-    @Column(name = "group_id")
+    @Column(name = "user_group_id")
     private Long groupId;
 }

@@ -17,7 +17,7 @@ public class AmountService {
 
     public List<Amount> setAmounts(List<Long> spenderIds, Transaction transaction) throws Exception {
         if (spenderIds.isEmpty()) {
-            throw new Exception("Users not found.");
+            throw new Exception("UserAccounts not found.");
         }
 
         List<Amount> amounts = new ArrayList<>();
