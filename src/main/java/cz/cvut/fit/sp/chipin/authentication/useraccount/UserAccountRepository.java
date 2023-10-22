@@ -1,4 +1,4 @@
-package cz.cvut.fit.sp.chipin.authentication.user;
+package cz.cvut.fit.sp.chipin.authentication.useraccount;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -10,15 +10,15 @@ import java.util.Optional;
 
 @Repository
 @Transactional(readOnly = true)
-public interface UserRepository extends JpaRepository<User, Long> {
-    //    Optional<User> findUserByUsername(String username);
-    Optional<User> findUserByEmail(String email);
+public interface UserAccountRepository extends JpaRepository<UserAccount, Long> {
+    //    Optional<UserAccount> findUserAccountByUserAccountname(String userAccountname);
+    Optional<UserAccount> findUserAccountByEmail(String email);
 
     @Transactional
     @Modifying
     @Query(
-            "UPDATE User a " + "SET a.enabled = TRUE where a.email = ?1"
+            "UPDATE UserAccount a " + "SET a.enabled = TRUE where a.email = ?1"
     )
-    int enableUser(String email);
+    int enableUserAccount(String email);
 
 }

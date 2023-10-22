@@ -1,6 +1,6 @@
 package cz.cvut.fit.sp.chipin.authentication.email.token;
 
-import cz.cvut.fit.sp.chipin.authentication.user.User;
+import cz.cvut.fit.sp.chipin.authentication.useraccount.UserAccount;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -36,15 +36,15 @@ public class ConfirmationToken {
     @ManyToOne
     @JoinColumn(
             nullable = false,
-            name = "user_id"
+            name = "user_account_id"
     )
-    private User user;
+    private UserAccount userAccount;
 
     public ConfirmationToken(String token, LocalDateTime createdAt,
-                             LocalDateTime expiresAt, User user) {
+                             LocalDateTime expiresAt, UserAccount userAccount) {
         this.token = token;
         this.createdAt = createdAt;
         this.expiresAt = expiresAt;
-        this.user = user;
+        this.userAccount = userAccount;
     }
 }

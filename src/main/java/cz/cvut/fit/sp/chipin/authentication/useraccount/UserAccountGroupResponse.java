@@ -1,4 +1,4 @@
-package cz.cvut.fit.sp.chipin.authentication.user;
+package cz.cvut.fit.sp.chipin.authentication.useraccount;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -7,7 +7,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class UserGroupResponse {
+public class UserAccountGroupResponse {
     @NotNull
     private final Long id;
     @NotBlank

@@ -1,6 +1,6 @@
 package cz.cvut.fit.sp.chipin.base.debt;
 
-import cz.cvut.fit.sp.chipin.authentication.user.User;
+import cz.cvut.fit.sp.chipin.authentication.useraccount.UserAccount;
 import cz.cvut.fit.sp.chipin.base.group.Group;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -28,18 +28,18 @@ public class Debt {
     @ManyToOne
     @MapsId("lenderId")
     @JoinColumn(name = "lender_id", nullable = false)
-    private User lender;
+    private UserAccount lender;
 
     @ManyToOne
     @MapsId("borrowerId")
     @JoinColumn(name = "borrower_id", nullable = false)
-    private User borrower;
+    private UserAccount borrower;
 
     @NotNull
     @Column(name = "amount", nullable = false)
     private Float amount;
 
-    public Debt(Group group, User lender, User borrower, Float amount) {
+    public Debt(Group group, UserAccount lender, UserAccount borrower, Float amount) {
         id = new DebtKey(group.getId(), lender.getId(), borrower.getId());
         this.group = group;
         this.lender = lender;

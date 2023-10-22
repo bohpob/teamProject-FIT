@@ -1,6 +1,6 @@
 //package cz.cvut.fit.sp.chipin.authentication.security.config;
 //
-//import cz.cvut.fit.sp.chipin.authentication.user.UserService;
+//import cz.cvut.fit.sp.chipin.authentication.userAccount.UserAccountService;
 //import lombok.AllArgsConstructor;
 //import org.springframework.context.annotation.Bean;
 //import org.springframework.context.annotation.Configuration;
@@ -17,7 +17,7 @@
 //@EnableWebSecurity
 //public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //
-//    private final UserService userService;
+//    private final UserAccountService userAccountService;
 //    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 //
 //    @Override
@@ -33,7 +33,7 @@
 ////                .anyRequest().permitAll().and()
 ////                .formLogin()
 ////                    .loginPage("/login")
-////                    .usernameParameter("email")
+////                    .userAccountnameParameter("email")
 ////                    .permitAll()
 ////                    .and()
 //    }
@@ -47,7 +47,7 @@
 //    public DaoAuthenticationProvider daoAuthenticationProvider() {
 //        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
 //        provider.setPasswordEncoder(bCryptPasswordEncoder);
-//        provider.setUserDetailsService(userService);
+//        provider.setUserAccountDetailsService(userAccountService);
 //        return provider;
 //    }
 //}

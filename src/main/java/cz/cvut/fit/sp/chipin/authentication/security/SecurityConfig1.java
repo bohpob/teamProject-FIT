@@ -1,6 +1,6 @@
 //package cz.cvut.fit.sp.chipin.authentication.security;
 //
-//import cz.cvut.fit.sp.chipin.authentication.user.UserService;
+//import cz.cvut.fit.sp.chipin.authentication.userAccount.UserAccountService;
 //import lombok.AllArgsConstructor;
 //import org.springframework.context.annotation.Bean;
 //import org.springframework.context.annotation.Configuration;
@@ -16,7 +16,7 @@
 //@EnableWebSecurity
 //public class SecurityConfig1 {
 //
-//    private final UserService userService;
+//    private final UserAccountService userAccountService;
 //
 //    @Bean
 //    public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
@@ -26,7 +26,7 @@
 //            .cors().disable()
 //            .csrf().disable();
 //
-//        httpSecurity.userDetailsService(userService);
+//        httpSecurity.userAccountDetailsService(userAccountService);
 //
 //        httpSecurity.authorizeRequests()
 //                .antMatchers("/api/v*/registration/**", "/api/v*/login/**", "/resources/**")
@@ -49,7 +49,7 @@
 //        DaoAuthenticationProvider provider =
 //                new DaoAuthenticationProvider();
 //        provider.setPasswordEncoder(bCryptPasswordEncoder());
-//        provider.setUserDetailsService(userService);
+//        provider.setUserAccountDetailsService(userAccountService);
 //        return provider;
 //    }
 //}

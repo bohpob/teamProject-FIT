@@ -1,4 +1,4 @@
-package cz.cvut.fit.sp.chipin.authentication.user;
+package cz.cvut.fit.sp.chipin.authentication.useraccount;
 
 import cz.cvut.fit.sp.chipin.authentication.email.token.ConfirmationToken;
 import cz.cvut.fit.sp.chipin.authentication.email.token.ConfirmationTokenService;
@@ -14,33 +14,33 @@ import java.util.UUID;
 
 @Service
 @AllArgsConstructor
-public class UserService {
+public class UserAccountService {
 
-    private final static String USER_NOT_FOUND = "User with email %s not found";
+    private final static String USER_NOT_FOUND = "UserAccount with email %s not found";
 
-    private final UserRepository userRepository;
+    private final UserAccountRepository userAccountRepository;
     private final ConfirmationTokenService confirmationTokenService;
 //    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
 //    @Override
-//    public User loadUserByUsername(String email) throws UsernameNotFoundException {
-//        return userRepository.findUserByEmail(email)
-//                .orElseThrow(() -> new UsernameNotFoundException(String.format(USER_NOT_FOUND, email)));
+//    public UserAccount loadUserAccountByUserAccountname(String email) throws UserAccountnameNotFoundException {
+//        return userAccountRepository.findUserAccountByEmail(email)
+//                .orElseThrow(() -> new UserAccountnameNotFoundException(String.format(USER_NOT_FOUND, email)));
 //    }
 
-    public String saveUser(User user) {
-        if (userRepository.findUserByEmail(user.getEmail()).isPresent()) {
+    public String saveUserAccount(UserAccount userAccount) {
+        if (userAccountRepository.findUserAccountByEmail(userAccount.getEmail()).isPresent()) {
             throw new IllegalStateException("Email already taken");
         }
 
-        userRepository.save(user);
+        userAccountRepository.save(userAccount);
 
         String token = UUID.randomUUID().toString();
         ConfirmationToken confirmationToken = new ConfirmationToken(
                 token,
                 LocalDateTime.now(),
                 LocalDateTime.now().plusMinutes(15),
-                user
+                userAccount
         );
 
         confirmationTokenService.saveConfirmationToken(confirmationToken);
@@ -48,25 +48,25 @@ public class UserService {
         return token;
     }
 
-    public User getUser(Long id) throws Exception {
-        User user = userRepository.findById(id).orElse(null);
-        if (user != null) {
-            return user;
+    public UserAccount getUserAccount(Long id) throws Exception {
+        UserAccount userAccount = userAccountRepository.findById(id).orElse(null);
+        if (userAccount != null) {
+            return userAccount;
         } else {
-            throw new Exception("user doesn't exists(getUser() method in UserService)");
+            throw new Exception("userAccount doesn't exists(getUserAccount() method in UserAccountService)");
         }
     }
 
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
+    public List<UserAccount> getAllUserAccounts() {
+        return userAccountRepository.findAll();
     }
 
-    public int enableUser(String email) {
-        return userRepository.enableUser(email);
+    public int enableUserAccount(String email) {
+        return userAccountRepository.enableUserAccount(email);
     }
 
-    public boolean userHasActiveToken(Long id) {
-        for (ConfirmationToken token : confirmationTokenService.getAllTokensByUserId(id)) {
+    public boolean userAccountHasActiveToken(Long id) {
+        for (ConfirmationToken token : confirmationTokenService.getAllTokensByUserAccountId(id)) {
             if (token.getExpiresAt().isAfter(LocalDateTime.now())) {
                 return true;
             }
@@ -75,11 +75,11 @@ public class UserService {
     }
 
     public List<MemberDTO> getMemberships(Long id) throws Exception {
-        User user = getUser(id);
+        UserAccount userAccount = getUserAccount(id);
 
         List<MemberDTO> memberships = new ArrayList<>();
 
-        for (Member member : user.getMembers()) {
+        for (Member member : userAccount.getMembers()) {
             memberships.add(new MemberDTO(
                     member.getId().getGroupId(),
                     member.getRole().name(),
@@ -91,7 +91,7 @@ public class UserService {
         return memberships;
     }
 
-    public void save(User user) throws Exception {
-        userRepository.save(user);
+    public void save(UserAccount userAccount) throws Exception {
+        userAccountRepository.save(userAccount);
     }
 }

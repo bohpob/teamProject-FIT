@@ -12,5 +12,5 @@ public class LogDTO {
     @NotBlank
     private String date;
     @NotBlank
-    private String userName;
+    private String userAccountName;
 }

@@ -1,4 +1,4 @@
-package cz.cvut.fit.sp.chipin.authentication.user;
+package cz.cvut.fit.sp.chipin.authentication.useraccount;
 
 import cz.cvut.fit.sp.chipin.base.member.MemberDTO;
 import lombok.AllArgsConstructor;
@@ -13,16 +13,16 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/users")
+@RequestMapping("/api/v1/userAccounts")
 @AllArgsConstructor
-public class UserController {
+public class UserAccountController {
 
-    private final UserService userService;
+    private final UserAccountService userAccountService;
 
     @GetMapping("{id}")
-    public ResponseEntity<User> getUser(@PathVariable("id") Long id) {
+    public ResponseEntity<UserAccount> getUserAccount(@PathVariable("id") Long id) {
         try {
-            return ResponseEntity.ok(userService.getUser(id));
+            return ResponseEntity.ok(userAccountService.getUserAccount(id));
         } catch (Exception e) {
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, e.getMessage(), e
@@ -31,13 +31,13 @@ public class UserController {
     }
 
     @GetMapping
-    public List<User> getAllUsers() {
-        return userService.getAllUsers();
+    public List<UserAccount> getAllUserAccounts() {
+        return userAccountService.getAllUserAccounts();
     }
 
     @GetMapping("{id}/memberships")
     List<MemberDTO> getMemberships(@PathVariable Long id) throws Exception {
-        return userService.getMemberships(id);
+        return userAccountService.getMemberships(id);
     }
 
 }

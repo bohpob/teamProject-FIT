@@ -4,9 +4,9 @@ import cz.cvut.fit.sp.chipin.authentication.email.EmailSender;
 import cz.cvut.fit.sp.chipin.authentication.email.EmailValidator;
 import cz.cvut.fit.sp.chipin.authentication.email.token.ConfirmationToken;
 import cz.cvut.fit.sp.chipin.authentication.email.token.ConfirmationTokenService;
-import cz.cvut.fit.sp.chipin.authentication.user.User;
-import cz.cvut.fit.sp.chipin.authentication.user.UserRole;
-import cz.cvut.fit.sp.chipin.authentication.user.UserService;
+import cz.cvut.fit.sp.chipin.authentication.useraccount.UserAccount;
+import cz.cvut.fit.sp.chipin.authentication.useraccount.UserAccountRole;
+import cz.cvut.fit.sp.chipin.authentication.useraccount.UserAccountService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class RegistrationService {
 
-    private final UserService userService;
+    private final UserAccountService userAccountService;
     private final EmailValidator emailValidator;
     private final ConfirmationTokenService confirmationTokenService;
     private final EmailSender emailSender;
@@ -29,12 +29,12 @@ public class RegistrationService {
             throw new IllegalStateException("Email is not valid");
         }
 
-        String token = userService.saveUser(
-                new User(
+        String token = userAccountService.saveUserAccount(
+                new UserAccount(
                         request.getName(),
                         request.getEmail(),
                         request.getPassword(),
-                        UserRole.USER
+                        UserAccountRole.USER
                 ));
 
         emailSender.sendConfirmation(
@@ -65,8 +65,8 @@ public class RegistrationService {
         }
 
         confirmationTokenService.setConfirmedAt(token);
-        userService.enableUser(
-                confirmationToken.getUser().getEmail()
+        userAccountService.enableUserAccount(
+                confirmationToken.getUserAccount().getEmail()
         );
         return "Confirmed";
     }
