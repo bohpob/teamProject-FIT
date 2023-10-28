@@ -20,7 +20,7 @@ RUN gradle clean build --no-daemon
 
 # Package stage
 FROM amazoncorretto:17.0.4-alpine3.16
-ENV JAR_NAME=Success-Story-Generator-0.0.1-SNAPSHOT.jar
+ENV JAR_NAME=chipin-0.0.1-SNAPSHOT.jar
 ENV APP_HOME=/app/
 WORKDIR $APP_HOME
 COPY --from=BUILD $APP_HOME .
