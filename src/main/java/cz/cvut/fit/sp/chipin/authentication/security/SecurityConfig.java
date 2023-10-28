@@ -69,7 +69,7 @@ public class SecurityConfig {
 
     @Bean
     public UserDetailsService userAccountDetailsService() {
-        UserDetails userAccountDetails = User.withDefaultPasswordEncoder().username("userAccount").password("password").roles("USER").build();
+        UserDetails userAccountDetails = User.withDefaultPasswordEncoder().username("user").password("password").roles("USER").build();
 
         return new InMemoryUserDetailsManager(userAccountDetails);
     }
