@@ -15,7 +15,7 @@ public class AmountService {
     private final AmountRepository amountRepository;
     private final UserAccountService userAccountService;
 
-    public List<Amount> setAmounts(List<Long> spenderIds, Transaction transaction) throws Exception {
+    public List<Amount> setAmounts(List<String> spenderIds, Transaction transaction) throws Exception {
         if (spenderIds.isEmpty()) {
             throw new Exception("UserAccounts not found.");
         }
@@ -23,7 +23,7 @@ public class AmountService {
         List<Amount> amounts = new ArrayList<>();
         Float spent = transaction.getAmount() / spenderIds.size();
 
-        for (Long id : spenderIds) {
+        for (String id : spenderIds) {
             try {
                 UserAccount userAccount = userAccountService.getUserAccount(id);
                 amounts.add(new Amount(userAccount, transaction, spent));

@@ -11,7 +11,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class MemberRequest {
     @NotNull
-    private Long id;
+    private String id;
     @NotBlank
     private String name;
 }

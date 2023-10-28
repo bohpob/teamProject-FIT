@@ -17,7 +17,7 @@ public class MemberKey implements Serializable {
 
     @NotNull
     @Column(name = "user_account_id")
-    private Long userAccountId;
+    private String userAccountId;
 
     @NotNull
     @Column(name = "user_group_id")

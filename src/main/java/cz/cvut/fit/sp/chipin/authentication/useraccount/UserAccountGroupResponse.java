@@ -9,7 +9,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public class UserAccountGroupResponse {
     @NotNull
-    private final Long id;
+    private final String id;
     @NotBlank
     private final String name;
     @NotNull

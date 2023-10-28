@@ -61,7 +61,7 @@ public class DebtService {
         return debtRepository.findDebtsByUserGroupId(groupId);
     }
 
-    public Optional<Debt> readDebt(Long groupId, Long lenderId, Long borrowerId) {
+    public Optional<Debt> readDebt(Long groupId, String lenderId, String borrowerId) {
         return debtRepository.findByUserGroupIdAndLenderIdAndBorrowerId(groupId, lenderId, borrowerId);
     }
 }

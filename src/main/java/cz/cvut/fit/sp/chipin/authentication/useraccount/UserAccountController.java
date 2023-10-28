@@ -30,13 +30,24 @@ public class UserAccountController {
         }
     }
 
+    @GetMapping("/user-accounts/me/user-groups")
+    public List<Long> readMyGroups(Principal principal) {
+        try {
+            return userAccountService.readMyGroups(principal.getName());
+        } catch (Exception e) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, e.getMessage(), e
+            );
+        }
+    }
+
     @GetMapping
     public List<UserAccount> getAllUserAccounts() {
         return userAccountService.getAllUserAccounts();
     }
 
     @GetMapping("{id}/memberships")
-    List<MemberDTO> getMemberships(@PathVariable Long id) throws Exception {
+    List<MemberDTO> getMemberships(@PathVariable String id) throws Exception {
         return userAccountService.getMemberships(id);
     }
 

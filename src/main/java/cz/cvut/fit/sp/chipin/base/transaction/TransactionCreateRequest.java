@@ -15,7 +15,7 @@ public class TransactionCreateRequest {
     @NotNull
     private Float amount;
     @NotNull
-    private Long payerId;
+    private String payerId;
     @NotNull
-    private List<Long> spenderIds;
+    private List<String> spenderIds;
 }

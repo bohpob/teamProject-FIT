@@ -88,7 +88,7 @@ public class UserGroupService {
         return userGroupResponse;
     }
 
-    public String addMember(Long userAccountId, Long groupId) throws Exception {
+    public String addMember(String userAccountId, Long groupId) throws Exception {
 
         UserAccount userAccount = userAccountService.getUserAccount(userAccountId);
         UserGroup userGroup = userGroupRepository.findById(groupId).orElseThrow(() -> new Exception("Group not found"));
@@ -157,7 +157,7 @@ public class UserGroupService {
         debtService.recalculate(spent, payerMember.getUserAccount(), payerMember.getUserGroup());
     }
 
-    public void settleDebt(Long groupId, Long lenderId, Long borrowerId) throws Exception {
+    public void settleDebt(Long groupId, String lenderId, String borrowerId) throws Exception {
         Optional<UserGroup> group = userGroupRepository.findById(groupId);
         if (group.isEmpty()) {
             throw new Exception("Group not found");
@@ -175,7 +175,7 @@ public class UserGroupService {
             throw new Exception("Debt not found");
         }
 
-        List<Long> amounts = new ArrayList<>();
+        List<String> amounts = new ArrayList<>();
         amounts.add(lenderId);
         TransactionCreateRequest transactionCreateRequest = new TransactionCreateRequest(
                 borrower.get().getUserAccount().getName() + " repaid "
@@ -295,8 +295,8 @@ public class UserGroupService {
         logService.create("deleted transaction", payer.get().getUserGroup(), payer.get().getUserAccount());
     }
 
-    private boolean allSpendersFromGroup(List<Long> ids, Long groupId) throws Exception {
-        for (Long id : ids) {
+    private boolean allSpendersFromGroup(List<String> ids, Long groupId) throws Exception {
+        for (String id : ids) {
             if (memberService.readMember(id, groupId).isEmpty()) {
                 throw new Exception("UserAccount is not from this group");
             }

@@ -31,7 +31,7 @@ public class ConfirmationTokenService {
         confirmationTokenRepository.save(confirmationToken);
     }
 
-    public List<ConfirmationToken> getAllTokensByUserAccountId(Long id) {
+    public List<ConfirmationToken> getAllTokensByUserAccountId(String id) {
         return confirmationTokenRepository.findAllByUserAccountId(id);
     }
 }

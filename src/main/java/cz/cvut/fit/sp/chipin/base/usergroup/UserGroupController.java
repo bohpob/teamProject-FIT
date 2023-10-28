@@ -100,8 +100,8 @@ public class UserGroupController {
     }
 
     @DeleteMapping("/{groupId}/debt/repayment")
-    public void settleDebt(@PathVariable Long groupId, @RequestParam("lenderId") Long lenderId,
-                           @RequestParam("borrowerId") Long borrowerId) throws Exception {
+    public void settleDebt(@PathVariable Long groupId, @RequestParam("lenderId") String lenderId,
+                           @RequestParam("borrowerId") String borrowerId) throws Exception {
         try {
             userGroupService.settleDebt(groupId, lenderId, borrowerId);
         } catch (Exception e) {

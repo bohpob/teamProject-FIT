@@ -11,7 +11,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class UserGroupCreateRequest {
     @NotNull
-    private Long userAccountId;
+    private String userAccountId;
     @NotBlank
     private String name;
     @NotBlank

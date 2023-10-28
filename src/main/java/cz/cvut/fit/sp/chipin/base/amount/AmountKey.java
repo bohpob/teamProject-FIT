@@ -16,7 +16,7 @@ import java.io.Serializable;
 public class AmountKey implements Serializable {
     @NotNull
     @Column(name = "user_account_id")
-    private Long userAccountId;
+    private String userAccountId;
 
     @NotNull
     @Column(name = "transaction_id")

@@ -27,16 +27,7 @@ import java.util.List;
 public class UserAccount implements UserDetails {
 
     @Id
-    @SequenceGenerator(
-            name = "user_account_sequence",
-            sequenceName = "user_account_sequence",
-            allocationSize = 1
-    )
-    @GeneratedValue(
-            strategy = GenerationType.SEQUENCE,
-            generator = "user_account_sequence"
-    )
-    private Long id;
+    private String id;
 
     @OneToMany(mappedBy = "userAccount")
     private List<Member> members = new ArrayList<>();

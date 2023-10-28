@@ -4,6 +4,7 @@ import cz.cvut.fit.sp.chipin.authentication.email.token.ConfirmationToken;
 import cz.cvut.fit.sp.chipin.authentication.email.token.ConfirmationTokenService;
 import cz.cvut.fit.sp.chipin.base.member.Member;
 import cz.cvut.fit.sp.chipin.base.member.MemberDTO;
+import cz.cvut.fit.sp.chipin.base.usergroup.UserGroupResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +29,14 @@ public class UserAccountService {
 //                .orElseThrow(() -> new UserAccountnameNotFoundException(String.format(USER_NOT_FOUND, email)));
 //    }
 
+    private UserAccount findUserAccountByIdOrCreate(String id) {
+        return userAccountRepository.findById(id).orElseGet(() -> {
+            UserAccount newUser = new UserAccount();
+            newUser.setId(id);
+            return userAccountRepository.save(newUser);
+        });
+    }
+
     public String saveUserAccount(UserAccount userAccount) {
         if (userAccountRepository.findUserAccountByEmail(userAccount.getEmail()).isPresent()) {
             throw new IllegalStateException("Email already taken");
@@ -48,7 +57,7 @@ public class UserAccountService {
         return token;
     }
 
-    public UserAccount getUserAccount(Long id) throws Exception {
+    public UserAccount getUserAccount(String id) throws Exception {
         UserAccount userAccount = userAccountRepository.findById(id).orElse(null);
         if (userAccount != null) {
             return userAccount;
@@ -65,7 +74,7 @@ public class UserAccountService {
         return userAccountRepository.enableUserAccount(email);
     }
 
-    public boolean userAccountHasActiveToken(Long id) {
+    public boolean userAccountHasActiveToken(String id) {
         for (ConfirmationToken token : confirmationTokenService.getAllTokensByUserAccountId(id)) {
             if (token.getExpiresAt().isAfter(LocalDateTime.now())) {
                 return true;
@@ -74,7 +83,7 @@ public class UserAccountService {
         return false;
     }
 
-    public List<MemberDTO> getMemberships(Long id) throws Exception {
+    public List<MemberDTO> getMemberships(String id) throws Exception {
         UserAccount userAccount = getUserAccount(id);
 
         List<MemberDTO> memberships = new ArrayList<>();
@@ -93,5 +102,14 @@ public class UserAccountService {
 
     public void save(UserAccount userAccount) throws Exception {
         userAccountRepository.save(userAccount);
+    }
+
+    public List<Long> readMyGroups(String name) {
+        List<Member> members = findUserAccountByIdOrCreate(name).getMembers();
+        List<Long> result = new ArrayList<>();
+        for (Member member : members) {
+            result.add(member.getId().getGroupId());
+        }
+        return result;
     }
 }

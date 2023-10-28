@@ -21,9 +21,9 @@ public class DebtKey implements Serializable {
 
     @NotBlank
     @Column(name = "lender_id")
-    private Long lenderId;
+    private String lenderId;
 
     @NotBlank
     @Column(name = "borrower_id")
-    private Long borrowerId;
+    private String borrowerId;
 }

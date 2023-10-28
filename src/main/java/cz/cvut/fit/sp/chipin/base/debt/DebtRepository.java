@@ -9,7 +9,7 @@ import java.util.Optional;
 @Repository
 public interface DebtRepository extends JpaRepository<Debt, DebtKey> {
 
-    Optional<Debt> findByUserGroupIdAndLenderIdAndBorrowerId(Long groupId, Long lenderId, Long borrowerId);
+    Optional<Debt> findByUserGroupIdAndLenderIdAndBorrowerId(Long groupId, String lenderId, String borrowerId);
 
     ArrayList<Debt> findDebtsByUserGroupId(Long groupId);
 }
