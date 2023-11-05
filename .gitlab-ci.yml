@@ -3,6 +3,7 @@ image: gradle:latest
 stages:
   - build
   - test
+  - check
 
 variables:
   GRADLE_USER_HOME: "$CI_PROJECT_DIR/.gradle"
@@ -22,4 +23,12 @@ test:
   stage: test
   script:
     - gradle test
-    
+
+vulnerability_check:
+  stage: check
+  script:
+    - chmod +x gradlew
+    - ./gradlew dependencyCheckAnalyze
+  artifacts:
+    paths:
+      - build/reports/*.html
