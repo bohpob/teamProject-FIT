@@ -1,7 +1,6 @@
 package cz.cvut.fit.sp.chipin.base.usergroup;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,8 +9,6 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class UserGroupCreateRequest {
-    @NotNull
-    private String userAccountId;
     @NotBlank
     private String name;
     @NotBlank

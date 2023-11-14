@@ -30,7 +30,7 @@ public class UserAccountController {
         }
     }
 
-    @GetMapping("/user-accounts/me/user-groups")
+    @GetMapping("/me/user-groups")
     public List<Long> readMyGroups(Principal principal) {
         try {
             return userAccountService.readMyGroups(principal.getName());

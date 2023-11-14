@@ -31,8 +31,8 @@ public class UserGroupService {
     private final MemberService memberService;
     private final TransactionService transactionService;
 
-    public String createGroup(UserGroupCreateRequest request) throws Exception {
-        UserAccount userAccount = userAccountService.getUserAccount(request.getUserAccountId());
+    public String createGroup(UserGroupCreateRequest request, String userAccountId) throws Exception {
+        UserAccount userAccount = userAccountService.findUserAccountByIdOrCreate(userAccountId);
 
         if (request.getName() == null || request.getCurrency() == null) {
             throw new Exception("Name and Currency fields cannot be empty");
@@ -90,7 +90,7 @@ public class UserGroupService {
 
     public String addMember(String userAccountId, Long groupId) throws Exception {
 
-        UserAccount userAccount = userAccountService.getUserAccount(userAccountId);
+        UserAccount userAccount = userAccountService.findUserAccountByIdOrCreate(userAccountId);
         UserGroup userGroup = userGroupRepository.findById(groupId).orElseThrow(() -> new Exception("Group not found"));
 
         for (Member member : userGroup.getMembers()) {

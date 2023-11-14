@@ -4,7 +4,6 @@ import cz.cvut.fit.sp.chipin.authentication.email.token.ConfirmationToken;
 import cz.cvut.fit.sp.chipin.authentication.email.token.ConfirmationTokenService;
 import cz.cvut.fit.sp.chipin.base.member.Member;
 import cz.cvut.fit.sp.chipin.base.member.MemberDTO;
-import cz.cvut.fit.sp.chipin.base.usergroup.UserGroupResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -29,7 +28,7 @@ public class UserAccountService {
 //                .orElseThrow(() -> new UserAccountnameNotFoundException(String.format(USER_NOT_FOUND, email)));
 //    }
 
-    private UserAccount findUserAccountByIdOrCreate(String id) {
+    public UserAccount findUserAccountByIdOrCreate(String id) {
         return userAccountRepository.findById(id).orElseGet(() -> {
             UserAccount newUser = new UserAccount();
             newUser.setId(id);

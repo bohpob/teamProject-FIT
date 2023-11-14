@@ -1,7 +1,6 @@
 package cz.cvut.fit.sp.chipin.base.usergroup;
 
 import cz.cvut.fit.sp.chipin.base.log.LogsGroupResponse;
-import cz.cvut.fit.sp.chipin.base.member.MemberRequest;
 import cz.cvut.fit.sp.chipin.base.transaction.TransactionCreateRequest;
 import cz.cvut.fit.sp.chipin.base.transaction.TransactionResponse;
 import cz.cvut.fit.sp.chipin.base.transaction.TransactionUpdateRequest;
@@ -12,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
+
 @RestController
 @RequestMapping("/api/v1/user-groups")
 @AllArgsConstructor
@@ -20,9 +21,9 @@ public class UserGroupController {
     private final UserGroupService userGroupService;
 
     @PostMapping
-    public String createGroup(@Valid @RequestBody UserGroupCreateRequest request) throws Exception {
+    public String createGroup(@Valid @RequestBody UserGroupCreateRequest request, Principal principal) throws Exception {
         try {
-            return userGroupService.createGroup(request);
+            return userGroupService.createGroup(request, principal.getName());
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
@@ -38,9 +39,9 @@ public class UserGroupController {
     }
 
     @PatchMapping("/{groupId}/join")
-    public String addMember(@Valid @RequestBody MemberRequest request, @PathVariable Long groupId) throws Exception {
+    public String addMember(@Valid @RequestParam String userAccountId, @PathVariable Long groupId) throws Exception {
         try {
-            return userGroupService.addMember(request.getId(), groupId);
+            return userGroupService.addMember(userAccountId, groupId);
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
