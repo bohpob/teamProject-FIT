@@ -15,6 +15,10 @@ configurations {
 	}
 }
 
+repositories {
+	mavenCentral()
+}
+
 dependencyManagement {
 	imports {
 		mavenBom "org.keycloak.bom:keycloak-adapter-bom:22.0.5"
