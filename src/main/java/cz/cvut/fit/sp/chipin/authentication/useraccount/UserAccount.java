@@ -14,7 +14,10 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 @Entity
 @Table(name = "user_account")
@@ -24,6 +27,7 @@ import java.util.*;
 public class UserAccount implements UserDetails {
 
     @Id
+    @Column(length = 36)
     private String id;
 
     @OneToMany(mappedBy = "userAccount")
@@ -50,8 +54,6 @@ public class UserAccount implements UserDetails {
     @NotBlank
     @Column(name = "password", nullable = false)
     private String password;
-    @Enumerated(EnumType.STRING)
-    private cz.cvut.fit.sp.chipin.authentication.useraccount.UserAccountRole userAccountRole;
     private Boolean locked = false;
     private Boolean enabled = false;
 
@@ -60,11 +62,10 @@ public class UserAccount implements UserDetails {
         this.email = email;
     }
 
-    public UserAccount(String name, String email, String password, UserAccountRole userAccountRole) {
+    public UserAccount(String name, String email, String password) {
         this.name = name;
         this.email = email;
         this.password = password;
-        this.userAccountRole = userAccountRole;
     }
 
     @Override
@@ -74,7 +75,7 @@ public class UserAccount implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        SimpleGrantedAuthority authority = new SimpleGrantedAuthority(userAccountRole.name());
+        SimpleGrantedAuthority authority = new SimpleGrantedAuthority("USER");
         return Collections.singletonList(authority);
     }
 

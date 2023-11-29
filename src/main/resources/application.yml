@@ -1,9 +1,3 @@
-jwt:
-  auth:
-    converter:
-      resource-id: chipin
-      principal-attribute: preferred_username
-
 logging:
   level:
     org.springframework.security: trace

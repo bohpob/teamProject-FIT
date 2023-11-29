@@ -5,7 +5,6 @@ import cz.cvut.fit.sp.chipin.authentication.email.EmailValidator;
 import cz.cvut.fit.sp.chipin.authentication.email.token.ConfirmationToken;
 import cz.cvut.fit.sp.chipin.authentication.email.token.ConfirmationTokenService;
 import cz.cvut.fit.sp.chipin.authentication.useraccount.UserAccount;
-import cz.cvut.fit.sp.chipin.authentication.useraccount.UserAccountRole;
 import cz.cvut.fit.sp.chipin.authentication.useraccount.UserAccountService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -33,8 +32,7 @@ public class RegistrationService {
                 new UserAccount(
                         request.getName(),
                         request.getEmail(),
-                        request.getPassword(),
-                        UserAccountRole.USER
+                        request.getPassword()
                 ));
 
         emailSender.sendConfirmation(
