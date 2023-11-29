@@ -1,0 +1,110 @@
+# previous compose
+#version: "2"
+#services:
+#  db:
+#    image: mysql
+#    command: --default-authentication-plugin=mysql_native_password
+#    restart: always
+#    ports:
+#      - "3306:3306"
+#    volumes:
+#      - ./data:/var/lib/mysql
+#    environment:
+#      MYSQL_ROOT_PASSWORD: 2c179piE*
+#      MYSQL_DATABASE: chipin
+
+version: "3.8"
+services:
+  backend-db:
+    image: postgres:15.3-alpine3.18
+    restart: on-failure
+    ports:
+      - "5433:5432"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      - POSTGRES_DB=chipin
+      - POSTGRES_SCHEMA=chipin
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - backend-db-data:/var/lib/postgresql/data
+
+  backend:
+    build: .
+    ports:
+      - "8080:8080"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      - backend-db
+    environment:
+      - DB_HOST=backend-db
+      - DB_PORT=5432
+      - KC_HOST=keycloak
+      - KC_PORT=8081
+
+  keycloak-db:
+    image: postgres:15.3-alpine3.18
+    restart: on-failure
+    ports:
+      - "5434:5432"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      - POSTGRES_DB=keycloak
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - keycloak-db-data:/var/lib/postgresql/data
+
+  keycloak:
+    build: keycloak
+    command: ['start-dev', '--import-realm']
+    ports:
+      - "8081:8081"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      - KC_HTTP_PORT=8081
+      - KC_DB=postgres
+      - KC_DB_URL=jdbc:postgresql://keycloak-db/keycloak
+      - KC_DB_URL_DATABASE=keycloak
+      - KC_DB_USERNAME=postgres
+      - KC_DB_PASSWORD=postgres
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
+      - KC_HOSTNAME_URL=http://localhost:8081
+    depends_on:
+      - keycloak-db
+
+#  zookeeper:
+#    image: confluentinc/cp-zookeeper:latest
+#    environment:
+#      ZOOKEEPER_CLIENT_PORT: 2181
+#
+#  kafka:
+#    image: confluentinc/cp-kafka:latest
+#    depends_on:
+#      - zookeeper
+#    environment:
+#      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+#      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+#      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+#
+#  connect:
+#    image: debezium/connect:latest
+#    depends_on:
+#      - zookeeper
+#      - kafka
+#      - postgres
+#    environment:
+#      BOOTSTRAP_SERVERS: kafka:9092
+#      GROUP_ID: 1
+#      CONFIG_STORAGE_TOPIC: connect_configs
+#      OFFSET_STORAGE_TOPIC: connect_offsets
+#      STATUS_STORAGE_TOPIC: connect_statuses
+
+volumes:
+  backend-db-data:
+  keycloak-db-data:

@@ -1,22 +1,84 @@
 plugins {
-	id 'org.springframework.boot' version '2.7.4'
-	id 'io.spring.dependency-management' version '1.0.14.RELEASE'
+	//noinspection JavaPluginLanguageLevel
 	id 'java'
+	id 'org.springframework.boot' version '3.1.3'
+	id 'io.spring.dependency-management' version '1.1.3'
 }
 
 group = 'cz.cvut.fit.sp'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '17'
 
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
 repositories {
 	mavenCentral()
 }
 
-dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+dependencyManagement {
+	imports {
+		mavenBom "org.keycloak.bom:keycloak-adapter-bom:22.0.5"
+	}
 }
 
-tasks.named('test') {
+ext {
+	mapstructVersion = "1.5.5.Final"
+	lombokVersion = "1.18.20"
+	lombokMapstructBindingVersion = "0.2.0"
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter'
+//	implementation 'org.springframework.boot:spring-boot-gradle-plugin:3.1.3'
+
+	// lombok
+	compileOnly "org.projectlombok:lombok:${lombokVersion}"
+	annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+
+	// mapstruct
+	implementation "org.mapstruct:mapstruct:${mapstructVersion}"
+	annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
+	testAnnotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
+	annotationProcessor "org.projectlombok:lombok-mapstruct-binding:${lombokMapstructBindingVersion}"
+
+	// keycloak
+	implementation "org.springframework.boot:spring-boot-starter-oauth2-resource-server"
+	implementation "org.keycloak:keycloak-spring-boot-starter"
+
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+	implementation 'org.springframework.boot:spring-boot-starter-mail'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+	runtimeOnly 'org.postgresql:postgresql'
+}
+
+/*
+test {
 	useJUnitPlatform()
 }
+
+jar {
+	manifest {
+		attributes('Main-Class': 'cz.cvut.fit.sp.chipin.ChipinApplication')
+	}
+}
+
+tasks.register('customFatJar', Jar) {
+	manifest {
+		attributes 'Main-Class': 'cz.cvut.fit.sp.chipin.ChipinApplication'
+	}
+	archiveBaseName = 'all-in-one-jar'
+	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+	from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+	with jar
+}
+*/
