@@ -1,6 +1,6 @@
-package cz.cvut.fit.sp.chipin.base.group;
+package cz.cvut.fit.sp.chipin.base.usergroup;
 
-import cz.cvut.fit.sp.chipin.authentication.user.UserGroupResponse;
+import cz.cvut.fit.sp.chipin.authentication.useraccount.UserAccountGroupResponse;
 import cz.cvut.fit.sp.chipin.base.debt.DebtGroupResponse;
 import cz.cvut.fit.sp.chipin.base.log.LogDTO;
 import cz.cvut.fit.sp.chipin.base.transaction.TransactionGroupResponse;
@@ -17,13 +17,13 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class GroupResponse {
+public class UserGroupResponse {
     @NotBlank
     private String name;
     @NotNull
     private Currency currency;
     @NotNull
-    private List<UserGroupResponse> users;
+    private List<UserAccountGroupResponse> userAccounts;
     @NotNull
     private List<TransactionGroupResponse> transactions;
     @NotNull

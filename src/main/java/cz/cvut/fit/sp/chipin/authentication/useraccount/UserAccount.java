@@ -1,4 +1,4 @@
-package cz.cvut.fit.sp.chipin.authentication.user;
+package cz.cvut.fit.sp.chipin.authentication.useraccount;
 
 import cz.cvut.fit.sp.chipin.base.amount.Amount;
 import cz.cvut.fit.sp.chipin.base.debt.Debt;
@@ -20,28 +20,21 @@ import java.util.Collections;
 import java.util.List;
 
 @Entity
-@Table(name = "[user]")
+
+@Table(name = "user_account")
 @NoArgsConstructor
 @Getter
 @Setter
-public class User implements UserDetails {
+public class UserAccount implements UserDetails {
 
     @Id
-    @SequenceGenerator(
-            name = "user_sequence",
-            sequenceName = "user_sequence",
-            allocationSize = 1
-    )
-    @GeneratedValue(
-            strategy = GenerationType.SEQUENCE,
-            generator = "user_sequence"
-    )
-    private Long id;
+    @Column(length = 36)
+    private String id;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "userAccount")
     private List<Member> members = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "userAccount")
     private List<Amount> amounts = new ArrayList<>();
 
     @OneToMany(mappedBy = "lender")
@@ -62,21 +55,18 @@ public class User implements UserDetails {
     @NotBlank
     @Column(name = "password", nullable = false)
     private String password;
-    @Enumerated(EnumType.STRING)
-    private UserRole userRole;
     private Boolean locked = false;
     private Boolean enabled = false;
 
-    public User(String name, String email) {
+    public UserAccount(String name, String email) {
         this.name = name;
         this.email = email;
     }
 
-    public User(String name, String email, String password, UserRole userRole) {
+    public UserAccount(String name, String email, String password) {
         this.name = name;
         this.email = email;
         this.password = password;
-        this.userRole = userRole;
     }
 
     @Override
@@ -86,7 +76,7 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        SimpleGrantedAuthority authority = new SimpleGrantedAuthority(userRole.name());
+        SimpleGrantedAuthority authority = new SimpleGrantedAuthority("USER");
         return Collections.singletonList(authority);
     }
 

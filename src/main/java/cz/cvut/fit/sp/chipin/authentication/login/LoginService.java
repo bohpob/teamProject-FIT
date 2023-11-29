@@ -3,8 +3,8 @@ package cz.cvut.fit.sp.chipin.authentication.login;
 import cz.cvut.fit.sp.chipin.authentication.email.EmailSender;
 import cz.cvut.fit.sp.chipin.authentication.email.token.ConfirmationToken;
 import cz.cvut.fit.sp.chipin.authentication.email.token.ConfirmationTokenService;
-import cz.cvut.fit.sp.chipin.authentication.user.User;
-import cz.cvut.fit.sp.chipin.authentication.user.UserService;
+import cz.cvut.fit.sp.chipin.authentication.useraccount.UserAccount;
+import cz.cvut.fit.sp.chipin.authentication.useraccount.UserAccountService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,7 +16,7 @@ import java.util.UUID;
 @Service
 public class LoginService {
 
-    private final UserService userService;
+    private final UserAccountService userAccountService;
 
     @Autowired
 //    private final BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -25,36 +25,37 @@ public class LoginService {
 
     public LoginResponse login(LoginRequest loginRequest) {
 
-        User user = userService.loadUserByUsername(loginRequest.getEmail());
+//        UserAccount userAccount = userAccountService.loadUserAccountByUserAccountname(loginRequest.getEmail());
+        UserAccount userAccount = new UserAccount();
 
-        if (!user.isEnabled()) {
-            if (!userService.userHasActiveToken(user.getId())) {
+        if (!userAccount.isEnabled()) {
+            if (!userAccountService.userAccountHasActiveToken(userAccount.getId())) {
                 String token = UUID.randomUUID().toString();
                 ConfirmationToken confirmationToken = new ConfirmationToken(
                         token,
                         LocalDateTime.now(),
                         LocalDateTime.now().plusMinutes(15),
-                        user
+                        userAccount
                 );
 
                 confirmationTokenService.saveConfirmationToken(confirmationToken);
 
                 emailSender.sendConfirmation(
-                        user.getEmail(),
-                        user.getName(),
+                        userAccount.getEmail(),
+                        userAccount.getName(),
                         token
                 );
             }
 
         }
 
-//        if (bCryptPasswordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
-//            return new LoginResponse(user.getId(), user.getName(), user.getEmail(), user.getEnabled());
+//        if (bCryptPasswordEncoder.matches(loginRequest.getPassword(), userAccount.getPassword())) {
+//            return new LoginResponse(userAccount.getId(), userAccount.getName(), userAccount.getEmail(), userAccount.getEnabled());
 //        } else {
 //            throw new IllegalStateException("Invalid credentials");
 //        }
 
-        return new LoginResponse(user.getId(), user.getName(), user.getEmail(), user.getEnabled());
+        return new LoginResponse(userAccount.getId(), userAccount.getName(), userAccount.getEmail(), userAccount.getEnabled());
 
     }
 

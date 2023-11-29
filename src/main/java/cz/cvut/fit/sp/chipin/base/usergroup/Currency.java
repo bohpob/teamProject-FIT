@@ -1,4 +1,4 @@
-package cz.cvut.fit.sp.chipin.base.group;
+package cz.cvut.fit.sp.chipin.base.usergroup;
 
 public enum Currency {
     CZK,

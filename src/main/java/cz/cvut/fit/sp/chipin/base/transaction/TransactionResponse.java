@@ -1,6 +1,6 @@
 package cz.cvut.fit.sp.chipin.base.transaction;
 
-import cz.cvut.fit.sp.chipin.authentication.user.UserDTO;
+import cz.cvut.fit.sp.chipin.authentication.useraccount.UserAccountDTO;
 import cz.cvut.fit.sp.chipin.base.amount.AmountDTO;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -21,7 +21,7 @@ public class TransactionResponse {
     @NotBlank
     private String date;
     @NotNull
-    private UserDTO payer;
+    private UserAccountDTO payer;
     @NotNull
     private List<AmountDTO> amounts;
 }

@@ -8,8 +8,8 @@ import java.util.Optional;
 
 @Repository
 public interface MemberRepository extends JpaRepository<Member, MemberKey> {
-    Optional<Member> findByUserIdAndGroupId(Long userId, Long groupId);
+    Optional<Member> findByUserAccountIdAndUserGroupId(String userAccountId, Long groupId);
 
-    ArrayList<Member> findMembersByGroupId(Long groupId);
+    ArrayList<Member> findMembersByUserGroupId(Long groupId);
 
 }

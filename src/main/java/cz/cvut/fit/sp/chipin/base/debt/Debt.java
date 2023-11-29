@@ -1,7 +1,7 @@
 package cz.cvut.fit.sp.chipin.base.debt;
 
-import cz.cvut.fit.sp.chipin.authentication.user.User;
-import cz.cvut.fit.sp.chipin.base.group.Group;
+import cz.cvut.fit.sp.chipin.authentication.useraccount.UserAccount;
+import cz.cvut.fit.sp.chipin.base.usergroup.UserGroup;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
@@ -21,27 +21,27 @@ public class Debt {
     private DebtKey id;
 
     @ManyToOne
-    @MapsId("groupId")
-    @JoinColumn(name = "group_id", nullable = false)
-    private Group group;
+    @MapsId("userGroupId")
+    @JoinColumn(name = "user_group_id", nullable = false)
+    private UserGroup userGroup;
 
     @ManyToOne
     @MapsId("lenderId")
     @JoinColumn(name = "lender_id", nullable = false)
-    private User lender;
+    private UserAccount lender;
 
     @ManyToOne
     @MapsId("borrowerId")
     @JoinColumn(name = "borrower_id", nullable = false)
-    private User borrower;
+    private UserAccount borrower;
 
     @NotNull
     @Column(name = "amount", nullable = false)
     private Float amount;
 
-    public Debt(Group group, User lender, User borrower, Float amount) {
-        id = new DebtKey(group.getId(), lender.getId(), borrower.getId());
-        this.group = group;
+    public Debt(UserGroup userGroup, UserAccount lender, UserAccount borrower, Float amount) {
+        id = new DebtKey(userGroup.getId(), lender.getId(), borrower.getId());
+        this.userGroup = userGroup;
         this.lender = lender;
         this.borrower = borrower;
         this.amount = amount;

@@ -16,10 +16,10 @@ import java.io.Serializable;
 public class MemberKey implements Serializable {
 
     @NotNull
-    @Column(name = "user_id")
-    private Long userId;
+    @Column(name = "user_account_id")
+    private String userAccountId;
 
     @NotNull
-    @Column(name = "group_id")
+    @Column(name = "user_group_id")
     private Long groupId;
 }

@@ -1,7 +1,7 @@
 package cz.cvut.fit.sp.chipin.base.amount;
 
-import cz.cvut.fit.sp.chipin.authentication.user.User;
-import cz.cvut.fit.sp.chipin.authentication.user.UserService;
+import cz.cvut.fit.sp.chipin.authentication.useraccount.UserAccount;
+import cz.cvut.fit.sp.chipin.authentication.useraccount.UserAccountService;
 import cz.cvut.fit.sp.chipin.base.transaction.Transaction;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,22 +13,22 @@ import java.util.List;
 @AllArgsConstructor
 public class AmountService {
     private final AmountRepository amountRepository;
-    private final UserService userService;
+    private final UserAccountService userAccountService;
 
-    public List<Amount> setAmounts(List<Long> spenderIds, Transaction transaction) throws Exception {
+    public List<Amount> setAmounts(List<String> spenderIds, Transaction transaction) throws Exception {
         if (spenderIds.isEmpty()) {
-            throw new Exception("Users not found.");
+            throw new Exception("UserAccounts not found.");
         }
 
         List<Amount> amounts = new ArrayList<>();
         Float spent = transaction.getAmount() / spenderIds.size();
 
-        for (Long id : spenderIds) {
+        for (String id : spenderIds) {
             try {
-                User user = userService.getUser(id);
-                amounts.add(new Amount(user, transaction, spent));
+                UserAccount userAccount = userAccountService.getUserAccount(id);
+                amounts.add(new Amount(userAccount, transaction, spent));
             } catch (Exception e) {
-                throw new Exception("User not found.");
+                throw new Exception("UserAccount not found.");
             }
         }
 

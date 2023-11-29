@@ -17,7 +17,7 @@ public class TransactionUpdateRequest {
     @NotBlank
     private String date;
     @NotNull
-    private Long payerId;
+    private String payerId;
     @NotNull
-    private List<Long> spenderIds;
+    private List<String> spenderIds;
 }
