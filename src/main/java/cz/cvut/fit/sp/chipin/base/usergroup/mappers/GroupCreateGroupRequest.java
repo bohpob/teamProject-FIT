@@ -1,4 +1,4 @@
-package cz.cvut.fit.sp.chipin.base.usergroup;
+package cz.cvut.fit.sp.chipin.base.usergroup.mappers;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -7,10 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Data
-@Getter
-@Setter
-@AllArgsConstructor
-public class GroupCreateRequest {
+public class GroupCreateGroupRequest {
     @NotBlank
     private String name;
     @NotBlank
