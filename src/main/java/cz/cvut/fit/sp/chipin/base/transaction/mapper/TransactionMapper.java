@@ -1,0 +1,13 @@
+package cz.cvut.fit.sp.chipin.base.transaction.mapper;
+
+import cz.cvut.fit.sp.chipin.base.transaction.Transaction;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+
+@Mapper(componentModel = "spring")
+public interface TransactionMapper {
+
+    @Mapping(source = "payer.userEntity.firstName", target = "payer")
+    @Mapping(expression = "java(Float.valueOf(String.format(Locale.US, \"%.2f\", transaction.getAmount())))", target = "amount")
+    TransactionReadGroupTransactionsResponse entityToReadGroupTransactionsResponse(Transaction transaction);
+}

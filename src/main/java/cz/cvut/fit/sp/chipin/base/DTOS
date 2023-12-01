@@ -1,9 +1,9 @@
 UserAccount
     _Read User:
         UserReadUserResponse
-    _Read User Groups:
-        UserReadUserGroupsResponse
-            GroupReadUserGroupsResponse
+                //_Read User Groups:
+                //    UserReadUserGroupsResponse
+                //        GroupReadUserGroupsResponse
     _Read User Transactions:
         UserReadUserTransactionsResponse
             TransactionReadUserTransactionsResponse
@@ -27,6 +27,10 @@ UserGroup
             DebtReadGroupResponse
             LogReadGroupResponse
 
+    _Read User Groups:
+        UserReadUserGroupsResponse
+            GroupReadUserGroupsResponse
+
     _Read Group Transactions:
         GroupReadGroupTransactionsResponse
             TransactionReadGroupTransactionsResponse
@@ -36,3 +40,8 @@ UserGroup
             LogReadGroupLogsResponse
 
 Transactions
+    _Create Transaction:
+        TransactionCreateTransactionRequest
+
+        TransactionCreateTransactionResponse
+
