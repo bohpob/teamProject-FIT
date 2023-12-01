@@ -13,6 +13,9 @@ before_script:
 
 build:
   stage: build
+  only: 
+    - master
+    - develop
   script:
     - gradle build
   artifacts:
@@ -21,11 +24,17 @@ build:
 
 test:
   stage: test
+  only: 
+    - master
+    - develop
   script:
     - gradle test
 
 vulnerability_check:
   stage: check
+  only: 
+    - master
+    - develop
   script:
     - chmod +x gradlew
     - ./gradlew dependencyCheckAnalyze
