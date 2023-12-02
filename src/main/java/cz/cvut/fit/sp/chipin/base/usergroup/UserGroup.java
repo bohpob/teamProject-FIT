@@ -1,8 +1,8 @@
 package cz.cvut.fit.sp.chipin.base.usergroup;
 
+import cz.cvut.fit.sp.chipin.base.member.Member;
 import cz.cvut.fit.sp.chipin.base.debt.Debt;
 import cz.cvut.fit.sp.chipin.base.log.Log;
-import cz.cvut.fit.sp.chipin.base.member.Member;
 import cz.cvut.fit.sp.chipin.base.transaction.Transaction;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
