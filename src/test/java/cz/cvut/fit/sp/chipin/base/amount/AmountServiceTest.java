@@ -1,24 +1,35 @@
-package cz.cvut.fit.sp.chipin.base.amount;
-
-import cz.cvut.fit.sp.chipin.authentication.useraccount.UserAccountService;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-
-@SpringBootTest
-@TestPropertySource(properties = {"spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration"})
-@ExtendWith(SpringExtension.class)
-public class AmountServiceTest {
-
-    @MockBean
-    private UserAccountService userAccountService;
-
-    @InjectMocks
-    private AmountService amountService;
-
+//package cz.cvut.fit.sp.chipin.base.amount;
+//
+//import cz.cvut.fit.sp.chipin.authentication.useraccount.UserAccount;
+//import cz.cvut.fit.sp.chipin.authentication.useraccount.UserAccountService;
+//import cz.cvut.fit.sp.chipin.base.amount.calculator.*;
+//import cz.cvut.fit.sp.chipin.base.transaction.Transaction;
+//import cz.cvut.fit.sp.chipin.base.transaction.TransactionType;
+//import cz.cvut.fit.sp.chipin.base.transaction.spender.*;
+//import cz.cvut.fit.sp.chipin.base.usergroup.UserGroup;
+//import org.junit.jupiter.api.Assertions;
+//import org.junit.jupiter.api.Test;
+//import org.mockito.InjectMocks;
+//import org.mockito.MockedStatic;
+//import org.springframework.boot.test.context.SpringBootTest;
+//import org.springframework.boot.test.mock.mockito.MockBean;
+//
+//import java.util.Arrays;
+//import java.util.List;
+//
+//import static org.mockito.ArgumentMatchers.anyString;
+//import static org.mockito.Mockito.mockStatic;
+//import static org.mockito.Mockito.when;
+//
+//@SpringBootTest(classes = {UserAccountService.class, AmountService.class})
+//public class AmountServiceTest {
+//
+//    @MockBean
+//    private UserAccountService userAccountService;
+//
+//    @InjectMocks
+//    private AmountService amountService;
+//
 //    @Test
 //    public void testSetAmountsWithValidEqualInputs_1() throws Exception {
 //        UserAccount payer = new UserAccount();
@@ -236,4 +247,4 @@ public class AmountServiceTest {
 //            Assertions.assertEquals(result.get(2).getAmount(), 162.5f);
 //        }
 //    }
-}
+//}
