@@ -1,31 +1,15 @@
 package cz.cvut.fit.sp.chipin.base.amount;
 
-import cz.cvut.fit.sp.chipin.authentication.useraccount.UserAccount;
 import cz.cvut.fit.sp.chipin.authentication.useraccount.UserAccountService;
-import cz.cvut.fit.sp.chipin.base.amount.calculator.*;
-import cz.cvut.fit.sp.chipin.base.transaction.Transaction;
-import cz.cvut.fit.sp.chipin.base.transaction.spender.*;
-import cz.cvut.fit.sp.chipin.base.transaction.TransactionType;
-import cz.cvut.fit.sp.chipin.base.usergroup.UserGroup;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockedStatic;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.util.Arrays;
-import java.util.List;
-
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.mockStatic;
-import static org.mockito.Mockito.when;
-
-@SpringBootTest
+@ExtendWith(SpringExtension.class)
 public class AmountServiceTest {
 
-    @Mock
+    @MockBean
     private UserAccountService userAccountService;
 
     @InjectMocks
