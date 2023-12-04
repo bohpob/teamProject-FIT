@@ -80,7 +80,7 @@ services:
       - keycloak-db
 
   zookeeper:
-    image: quay.io/debezium/zookeeper:2.4
+    image: confluentinc/cp-zookeeper:latest
     ports:
       - "2181:2181"
     extra_hosts:
@@ -89,7 +89,7 @@ services:
       ZOOKEEPER_CLIENT_PORT: 2181
 
   kafka:
-    image: quay.io/debezium/kafka:2.4
+    image: confluentinc/cp-kafka:latest
     ports:
       - "9092:9092"
     extra_hosts:
@@ -97,9 +97,10 @@ services:
     depends_on:
       - zookeeper
     environment:
-      - KAFKA_ZOOKEEPER_CONNECT = zookeeper:2181
-      - KAFKA_ADVERTISED_LISTENERS = PLAINTEXT://kafka:9092
-      - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR = 1
+      KAFKA_ADVERTISED_HOST_NAME: kafka
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
 
   connect:
     image: quay.io/debezium/connect:2.4
