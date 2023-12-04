@@ -1,0 +1,5 @@
+INSERT INTO user_entity (id, email, email_constraint, email_verified, enabled, federation_link, first_name, last_name, realm_id, username, created_timestamp, service_account_client_link, not_before)
+VALUES
+    ('ba0a07c8-7f66-4cee-9f81-2d3a985d137d', 'tajil52467@newcupon.com', 'tajil52467@newcupon.com', true, true, NULL, '1', '1', 'dc66e9b7-4572-4419-ba5c-68a5e5c6fa01', 'tajil52467@newcupon.com', 1701701767746, NULL, 0),
+    ('94c68919-8adc-46fc-ae47-71ea197a1b48', 'rokahe4622@lanxi8.com', 'rokahe4622@lanxi8.com', true, true, NULL, '2', '2', 'dc66e9b7-4572-4419-ba5c-68a5e5c6fa01', 'rokahe4622@lanxi8.com', 1701701990122, NULL, 0),
+    ('1599ab4d-8bc8-468d-a08b-92696a24b48d', 'bosonix477@mcenb.com', 'bosonix477@mcenb.com', true, true, NULL, '3', '3', 'dc66e9b7-4572-4419-ba5c-68a5e5c6fa01', 'bosonix477@mcenb.com', 1701702067402, NULL, 0);
