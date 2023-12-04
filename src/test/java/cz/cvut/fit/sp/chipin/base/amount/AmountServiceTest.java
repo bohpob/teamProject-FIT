@@ -3,9 +3,13 @@ package cz.cvut.fit.sp.chipin.base.amount;
 import cz.cvut.fit.sp.chipin.authentication.useraccount.UserAccountService;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+@SpringBootTest
+@TestPropertySource(properties = {"spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration"})
 @ExtendWith(SpringExtension.class)
 public class AmountServiceTest {
 
