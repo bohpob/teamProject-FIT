@@ -39,7 +39,7 @@ services:
     depends_on:
       - backend-db
     environment:
-      - CHIPIN_HOST=localhost
+      - CHIPIN_HOST=157.230.116.219
       - DB_HOST=backend-db
       - DB_PORT=5432
       - KC_HOST=keycloak
@@ -77,7 +77,7 @@ services:
       - KC_DB_PASSWORD=postgres
       - KEYCLOAK_ADMIN=admin
       - KEYCLOAK_ADMIN_PASSWORD=admin
-      - KC_HOSTNAME_URL=http://localhost:8081/
+      - KC_HOSTNAME_URL=http://157.230.116.219:8081/
     depends_on:
       - keycloak-db
 
