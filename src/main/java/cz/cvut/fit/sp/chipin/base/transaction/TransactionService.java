@@ -26,7 +26,7 @@ public class TransactionService {
         Transaction transaction = TransactionConverter.fromCreateDto(request, payer, userGroup);
 
         try {
-            List<Amount> amounts = amountService.setAmounts(request.getSpenderIds(), transaction);
+            List<Amount> amounts = amountService.setAmounts(transaction, request.getSpenders(), request.getSplitStrategy());
             transactionRepository.save(transaction);
             amountService.saveAll(amounts);
         } catch (Exception e) {
@@ -61,7 +61,7 @@ public class TransactionService {
             transaction.setAmount(request.getAmount());
             transaction.setPayer(nextPayer);
 
-            List<Amount> amounts = amountService.setAmounts(request.getSpenderIds(), transaction);
+            List<Amount> amounts = amountService.setAmounts(transaction, request.getSpenders(), request.getSplitStrategy());
             amountService.saveAll(amounts);
             transactionRepository.save(transaction);
         } catch (Exception e) {
