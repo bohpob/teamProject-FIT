@@ -76,12 +76,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-mail'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
 
-<<<<<<< 123d41a2289d8adfd4842ffffa35aa2f2173101b
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
     runtimeOnly 'org.postgresql:postgresql'
 }
-=======
-	runtimeOnly 'org.postgresql:postgresql'
-}
->>>>>>> 47cd87b067ba510d3c2e64db2bfdc37fc61c8eca
