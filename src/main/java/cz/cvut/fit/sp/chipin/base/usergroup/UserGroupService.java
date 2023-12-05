@@ -1,25 +1,21 @@
 package cz.cvut.fit.sp.chipin.base.usergroup;
 
 import cz.cvut.fit.sp.chipin.authentication.useraccount.UserAccount;
-import cz.cvut.fit.sp.chipin.authentication.useraccount.UserAccountConverter;
 import cz.cvut.fit.sp.chipin.authentication.useraccount.UserAccountService;
 import cz.cvut.fit.sp.chipin.base.amount.Amount;
 import cz.cvut.fit.sp.chipin.base.debt.Debt;
-import cz.cvut.fit.sp.chipin.base.debt.DebtConverter;
 import cz.cvut.fit.sp.chipin.base.debt.DebtService;
-import cz.cvut.fit.sp.chipin.base.log.Log;
-import cz.cvut.fit.sp.chipin.base.log.LogConverter;
 import cz.cvut.fit.sp.chipin.base.log.LogService;
-import cz.cvut.fit.sp.chipin.base.log.LogsGroupResponse;
 import cz.cvut.fit.sp.chipin.base.member.GroupRole;
 import cz.cvut.fit.sp.chipin.base.member.Member;
 import cz.cvut.fit.sp.chipin.base.member.MemberService;
 import cz.cvut.fit.sp.chipin.base.transaction.*;
+import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionReadGroupTransactionResponse;
+import cz.cvut.fit.sp.chipin.base.usergroup.mapper.*;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -30,15 +26,13 @@ public class UserGroupService {
     private final LogService logService;
     private final MemberService memberService;
     private final TransactionService transactionService;
+    private final UserGroupMapper userGroupMapper;
 
-    public String createGroup(UserGroupCreateRequest request, String userAccountId) throws Exception {
-        UserAccount userAccount = userAccountService.getUserAccount(userAccountId);
+    public GroupCreateGroupResponse createGroup(GroupCreateGroupRequest request, String userId) throws Exception {
+        UserAccount userAccount = userAccountService.getUserAccount(userId);
 
-        if (request.getName() == null || request.getCurrency() == null) {
-            throw new Exception("Name and Currency fields cannot be empty");
-        }
-
-        UserGroup userGroup = new UserGroup(request.getName(), Currency.valueOf(request.getCurrency()), generateRandomHexCode());
+        UserGroup userGroup = userGroupMapper.createGroupRequestToEntity(request);
+        userGroup.setHexCode(generateRandomHexCode());
         userGroupRepository.save(userGroup);
 
         Member member = new Member(userAccount, userGroup, GroupRole.ADMIN, 0f, 0f, 0f);
@@ -50,8 +44,11 @@ public class UserGroupService {
         userGroupRepository.save(userGroup);
         userAccountService.save(userAccount);
 
-        logService.create("created the group.", userGroup, userAccount);
-        return "Created";
+        logService.create("Created the group", userGroup, userAccount);
+        userGroup.setLogs(logService.readLogs(userGroup.getId()));
+        userGroupRepository.save(userGroup);
+
+        return userGroupMapper.entityToCreateGroupResponse(userGroup);
     }
 
     private String generateRandomHexCode() {
@@ -64,28 +61,10 @@ public class UserGroupService {
         }
     }
 
-    public UserGroupResponse readGroup(Long groupId) throws Exception {
-        Optional<UserGroup> group = userGroupRepository.findById(groupId);
-        if (group.isEmpty()) {
-            throw new Exception("Group not found");
-        }
-
-        UserGroupResponse userGroupResponse = new UserGroupResponse();
-        userGroupResponse.setName(group.get().getName());
-        userGroupResponse.setCurrency(group.get().getCurrency());
-
-        userGroupResponse.setUserAccounts(UserAccountConverter.toUserAccountsGroupResponse(memberService.readMembers(groupId)));
-
-        userGroupResponse.setTransactions(TransactionConverter
-                .toGroupResponse(transactionService.readTransactions(groupId)));
-
-        userGroupResponse.setDebts(debtService.readDebts(groupId).stream().map(DebtConverter::toDebtGroupResponse)
-                .collect(Collectors.toList()));
-
-        List<Log> logs = logService.readLogs(group.get().getId());
-        userGroupResponse.setLogs(LogConverter.toGroupResponse(logs));
-
-        return userGroupResponse;
+    public GroupReadGroupResponse readGroup(Long id) throws Exception {
+        UserGroup userGroup = userGroupRepository.findById(id)
+                .orElseThrow(() -> new Exception("Group not found"));
+        return userGroupMapper.entityToReadGroupResponse(userGroup);
     }
 
     public String addMember(String userAccountId, Long groupId) throws Exception {
@@ -230,18 +209,14 @@ public class UserGroupService {
         return TransactionConverter.toDto(transaction.get());
     }
 
-    public TransactionsGroupResponse readTransactions(Long groupId) throws Exception {
-        Optional<UserGroup> group = userGroupRepository.findById(groupId);
-        if (group.isEmpty()) {
-            throw new Exception("Group not found");
-        }
+    public TransactionReadGroupTransactionResponse readGroupTransaction(Long transactionId, Long groupId) throws Exception {
+        return transactionService.readGroupTransaction(transactionId, groupId);
+    }
 
-        List<Transaction> transactions = transactionService.readTransactions(groupId);
-        Collections.reverse(transactions);
-        List<TransactionGroupResponse> transactionsGroupResponse = transactions.stream()
-                .map(TransactionConverter::toTransactionGroupResponse).toList();
-
-        return new TransactionsGroupResponse(transactionsGroupResponse);
+    public GroupReadGroupTransactionsResponse readGroupTransactions(Long groupId) throws Exception {
+        UserGroup userGroup = userGroupRepository.findById(groupId)
+                .orElseThrow(() -> new Exception("Group not found"));
+        return userGroupMapper.entityToReadGroupTransactionsResponse(userGroup);
     }
 
     public TransactionResponse updateTransaction(TransactionUpdateRequest transactionUpdateRequest,
@@ -304,28 +279,20 @@ public class UserGroupService {
         return true;
     }
 
-    public LogsGroupResponse readLogs(Long groupId) throws Exception {
-        Optional<UserGroup> group = userGroupRepository.findById(groupId);
-        if (group.isEmpty()) {
-            throw new Exception("Group not found");
-        }
-
-        List<Log> logs = logService.readLogs(groupId);
-        Collections.reverse(logs);
-        return new LogsGroupResponse(logs.stream().map(LogConverter::toDto).collect(Collectors.toList()));
+    public GroupReadGroupLogsResponse readGroupLogs(Long groupId) throws Exception {
+        UserGroup userGroup = userGroupRepository.findById(groupId)
+                .orElseThrow(() -> new Exception("Group not found"));
+        return userGroupMapper.entityToReadGroupLogsResponse(userGroup);
     }
 
-    public UserGroupResponse changeGroupName(Long groupId, String name) throws Exception {
-        Optional<UserGroup> group = userGroupRepository.findById(groupId);
-        if (group.isEmpty()) {
-            throw new Exception("Group not found");
-        }
+    public GroupUpdateGroupNameResponse updateGroupName(Long groupId, String name) throws Exception {
+        UserGroup userGroup = userGroupRepository.findById(groupId)
+                .orElseThrow(() -> new Exception("Group not found"));
         if (name.isBlank()) {
             throw new Exception("New name is empty");
         }
-
-        group.get().setName(name);
-        userGroupRepository.save(group.get());
-        return readGroup(groupId);
+        userGroup.setName(name);
+        userGroupRepository.save(userGroup);
+        return userGroupMapper.entityToUpdateGroupNameResponse(userGroup);
     }
 }
