@@ -6,6 +6,8 @@ import lombok.Data;
 @Data
 public class MemberReadMemberResponse {
     @NotBlank
+    private String id;
+    @NotBlank
     private String name;
     @NotBlank
     private String userRole;

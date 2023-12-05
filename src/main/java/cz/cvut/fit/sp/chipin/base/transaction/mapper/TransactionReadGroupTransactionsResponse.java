@@ -13,7 +13,9 @@ public class TransactionReadGroupTransactionsResponse {
     @NotBlank
     private Float amount;
     @NotBlank
-    private String payer;
+    private String payerId;
+    @NotBlank
+    private String payerName;
     @NotBlank
     private String date;
 }

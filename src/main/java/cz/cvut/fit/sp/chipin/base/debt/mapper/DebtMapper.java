@@ -9,8 +9,10 @@ import java.util.Locale;
 
 @Mapper(componentModel = "spring", imports = Locale.class)
 public interface DebtMapper {
-    @Mapping(source = "lender.userEntity.firstName", target = "lender")
-    @Mapping(source = "borrower.userEntity.firstName", target = "borrower")
+    @Mapping(source = "lender.userEntity.id", target = "lenderId")
+    @Mapping(source = "lender.userEntity.firstName", target = "lenderName")
+    @Mapping(source = "borrower.userEntity.id", target = "borrowerId")
+    @Mapping(source = "borrower.userEntity.firstName", target = "borrowerName")
     @Mapping(expression = "java(Float.valueOf(String.format(Locale.US, \"%.2f\", debt.getAmount())))", target = "debt")
     DebtReadUserDebtsResponse entityToReadUserDebtsResponse(Debt debt);
 

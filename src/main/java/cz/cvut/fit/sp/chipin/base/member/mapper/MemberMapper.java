@@ -6,6 +6,7 @@ import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface MemberMapper {
+    @Mapping(source = "id.userAccountId", target = "id")
     @Mapping(source = "userAccount.userEntity.firstName", target = "name")
     @Mapping(source = "role", target = "userRole")
     MemberReadMemberResponse entityToReadMemberResponse(Member member);

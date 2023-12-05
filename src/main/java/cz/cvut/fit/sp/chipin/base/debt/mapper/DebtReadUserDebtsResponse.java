@@ -7,9 +7,13 @@ import lombok.Data;
 @Data
 public class DebtReadUserDebtsResponse {
     @NotBlank
-    private String lender;
+    private String lenderId;
     @NotBlank
-    private String borrower;
+    private String lenderName;
+    @NotBlank
+    private String borrowerId;
+    @NotBlank
+    private String borrowerName;
     @NotNull
     private Float debt;
 }
