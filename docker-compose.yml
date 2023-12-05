@@ -24,7 +24,7 @@ services:
       - "host.docker.internal:host-gateway"
     environment:
       - POSTGRES_DB=chipin
-      - POSTGRES_SCHEMA=chipin
+      - POSTGRES_SCHEMA=public
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
     volumes:

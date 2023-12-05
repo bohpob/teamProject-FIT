@@ -4,7 +4,6 @@ import cz.cvut.fit.sp.chipin.base.member.MemberDTO;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
@@ -46,9 +45,9 @@ public class UserAccountController {
         return userAccountService.getAllUserAccounts();
     }
 
-    @GetMapping("{id}/memberships")
-    List<MemberDTO> getMemberships(@PathVariable String id) throws Exception {
-        return userAccountService.getMemberships(id);
+    @GetMapping("/memberships")
+    List<MemberDTO> getMemberships(Principal principal) throws Exception {
+        return userAccountService.getMemberships(principal.getName());
     }
 
 }
