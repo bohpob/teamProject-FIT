@@ -56,6 +56,8 @@ services:
       - POSTGRES_DB=keycloak
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
+      - wal_level=logical
+    command: [ "postgres", "-c", "wal_level=logical" ]
     volumes:
       - keycloak-db-data:/var/lib/postgresql/data
 
@@ -118,6 +120,16 @@ services:
       CONFIG_STORAGE_TOPIC: connect_configs
       OFFSET_STORAGE_TOPIC: connect_offsets
       STATUS_STORAGE_TOPIC: connect_statuses
+
+#  watcher:
+#    image: debezium/kafka:0.9
+#    command: watch-topic -a -k keycloak-db-server.public.user_entity
+#    depends_on:
+#      - kafka
+#      - zookeeper
+#    environment:
+#      ZOOKEEPER_CONNECT: zookeeper:2181
+#      KAFKA_BROKER: kafka:9092
 
 volumes:
   backend-db-data:

@@ -8,6 +8,7 @@
     "database.password": "postgres",
     "database.dbname": "keycloak",
     "database.server.name": "keycloak-db-server",
+    "topic.prefix": "keycloak-db-server",
     "table.include.list": "public.user_entity",
     "plugin.name": "pgoutput",
     "snapshot.mode": "initial"
