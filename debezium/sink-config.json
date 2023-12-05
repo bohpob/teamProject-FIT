@@ -1,0 +1,22 @@
+{
+  "name": "backend-db-connector",
+  "config": {
+    "connector.class": "io.debezium.connector.jdbc.JdbcSinkConnector",
+    "tasks.max": "1",
+    "topics": "keycloak-db-server.public.user_entity",
+    "connection.url": "jdbc:postgresql://backend-db:5432/chipin",
+    "connection.username": "postgres",
+    "connection.password": "postgres",
+    "auto.create": "false",
+    "auto.evolve": "true",
+    "insert.mode": "upsert",
+    "primary.key.mode": "record_key",
+    "primary.key.fields": "id",
+    "delete.enabled": "true",
+    "transforms": "unwrap,route",
+    "transforms.unwrap.type": "io.debezium.transforms.ExtractNewRecordState",
+    "transforms.route.type": "org.apache.kafka.connect.transforms.RegexRouter",
+    "transforms.route.regex": "keycloak-db-server.public.user_entity",
+    "transforms.route.replacement": "user_entity"
+  }
+}
