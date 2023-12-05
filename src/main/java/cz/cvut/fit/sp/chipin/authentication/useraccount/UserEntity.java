@@ -13,7 +13,7 @@ import lombok.Setter;
 public class UserEntity {
 
     @Id
-    @Column(name = "user_entity_id")
+    @Column(name = "id", length = 36)
     private String id;
 
     @OneToOne

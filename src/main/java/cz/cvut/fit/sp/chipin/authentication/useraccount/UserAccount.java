@@ -20,12 +20,12 @@ import java.util.List;
 public class UserAccount {
 
     @Id
-    @Column(name = "user_entity_id")
+    @Column(name = "id")
     private String id;
 
     @MapsId
     @OneToOne
-    @JoinColumn(name = "user_entity_id")
+    @JoinColumn(name = "id")
     private UserEntity userEntity;
 
     @OneToMany(mappedBy = "userAccount")

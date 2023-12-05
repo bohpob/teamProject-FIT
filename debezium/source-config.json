@@ -11,6 +11,12 @@
     "topic.prefix": "keycloak-db-server",
     "table.include.list": "public.user_entity",
     "plugin.name": "pgoutput",
-    "snapshot.mode": "initial"
+    "snapshot.mode": "initial",
+    "table.name.format": "user_entity",
+    "transforms": "unwrap,route",
+    "transforms.unwrap.type": "io.debezium.transforms.ExtractNewRecordState",
+    "transforms.route.type": "org.apache.kafka.connect.transforms.RegexRouter",
+    "transforms.route.regex": "keycloak-db-server.public.user_entity",
+    "transforms.route.replacement": "user_entity"
   }
 }
