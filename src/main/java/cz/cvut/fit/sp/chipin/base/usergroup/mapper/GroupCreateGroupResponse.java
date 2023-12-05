@@ -1,6 +1,5 @@
 package cz.cvut.fit.sp.chipin.base.usergroup.mapper;
 
-import cz.cvut.fit.sp.chipin.base.log.mapper.LogReadLogResponse;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
