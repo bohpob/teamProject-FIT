@@ -3,6 +3,8 @@ package cz.cvut.fit.sp.chipin.base.transaction;
 import cz.cvut.fit.sp.chipin.authentication.useraccount.UserAccount;
 import cz.cvut.fit.sp.chipin.base.amount.Amount;
 import cz.cvut.fit.sp.chipin.base.amount.AmountService;
+import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionMapper;
+import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionReadGroupTransactionResponse;
 import cz.cvut.fit.sp.chipin.base.usergroup.UserGroup;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -18,12 +20,13 @@ import java.util.stream.Collectors;
 public class TransactionService {
     private final TransactionRepository transactionRepository;
     private final AmountService amountService;
+    private final TransactionMapper transactionMapper;
 
     public Transaction create(TransactionCreateRequest request, UserAccount payer, UserGroup userGroup) throws Exception {
         Transaction transaction = TransactionConverter.fromCreateDto(request, payer, userGroup);
 
         try {
-            List<Amount> amounts = amountService.setAmounts(request.getSpenderIds(), transaction);
+            List<Amount> amounts = amountService.setAmounts(transaction, request.getSpenders(), request.getSplitStrategy());
             transactionRepository.save(transaction);
             amountService.saveAll(amounts);
         } catch (Exception e) {
@@ -43,6 +46,12 @@ public class TransactionService {
         return transaction;
     }
 
+    public TransactionReadGroupTransactionResponse readGroupTransaction(Long transactionId, Long groupId) throws Exception {
+        Transaction transaction = read(transactionId, groupId)
+                .orElseThrow(() -> new Exception("Transaction not found"));
+        return transactionMapper.entityToReadGroupTransactionResponse(transaction);
+    }
+
     @Transactional
     public void update(Transaction transaction, TransactionUpdateRequest request, UserAccount nextPayer) throws Exception {
         try {
@@ -52,7 +61,7 @@ public class TransactionService {
             transaction.setAmount(request.getAmount());
             transaction.setPayer(nextPayer);
 
-            List<Amount> amounts = amountService.setAmounts(request.getSpenderIds(), transaction);
+            List<Amount> amounts = amountService.setAmounts(transaction, request.getSpenders(), request.getSplitStrategy());
             amountService.saveAll(amounts);
             transactionRepository.save(transaction);
         } catch (Exception e) {

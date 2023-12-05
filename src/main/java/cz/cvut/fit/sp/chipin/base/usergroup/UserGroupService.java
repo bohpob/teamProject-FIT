@@ -1,25 +1,25 @@
 package cz.cvut.fit.sp.chipin.base.usergroup;
 
 import cz.cvut.fit.sp.chipin.authentication.useraccount.UserAccount;
-import cz.cvut.fit.sp.chipin.authentication.useraccount.UserAccountConverter;
 import cz.cvut.fit.sp.chipin.authentication.useraccount.UserAccountService;
 import cz.cvut.fit.sp.chipin.base.amount.Amount;
+import cz.cvut.fit.sp.chipin.base.transaction.spender.UnequalTransactionMember;
+import cz.cvut.fit.sp.chipin.base.transaction.TransactionType;
 import cz.cvut.fit.sp.chipin.base.debt.Debt;
-import cz.cvut.fit.sp.chipin.base.debt.DebtConverter;
 import cz.cvut.fit.sp.chipin.base.debt.DebtService;
-import cz.cvut.fit.sp.chipin.base.log.Log;
-import cz.cvut.fit.sp.chipin.base.log.LogConverter;
 import cz.cvut.fit.sp.chipin.base.log.LogService;
-import cz.cvut.fit.sp.chipin.base.log.LogsGroupResponse;
 import cz.cvut.fit.sp.chipin.base.member.GroupRole;
 import cz.cvut.fit.sp.chipin.base.member.Member;
 import cz.cvut.fit.sp.chipin.base.member.MemberService;
 import cz.cvut.fit.sp.chipin.base.transaction.*;
+import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionReadGroupTransactionResponse;
+import cz.cvut.fit.sp.chipin.base.usergroup.mapper.*;
+import cz.cvut.fit.sp.chipin.base.transaction.TransactionCreateRequest;
+import cz.cvut.fit.sp.chipin.base.transaction.spender.MemberAbstractRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -30,15 +30,13 @@ public class UserGroupService {
     private final LogService logService;
     private final MemberService memberService;
     private final TransactionService transactionService;
+    private final UserGroupMapper userGroupMapper;
 
-    public String createGroup(UserGroupCreateRequest request, String userAccountId) throws Exception {
-        UserAccount userAccount = userAccountService.getUserAccount(userAccountId);
+    public GroupCreateGroupResponse createGroup(GroupCreateGroupRequest request, String userId) throws Exception {
+        UserAccount userAccount = userAccountService.getUserAccount(userId);
 
-        if (request.getName() == null || request.getCurrency() == null) {
-            throw new Exception("Name and Currency fields cannot be empty");
-        }
-
-        UserGroup userGroup = new UserGroup(request.getName(), Currency.valueOf(request.getCurrency()), generateRandomHexCode());
+        UserGroup userGroup = userGroupMapper.createGroupRequestToEntity(request);
+        userGroup.setHexCode(generateRandomHexCode());
         userGroupRepository.save(userGroup);
 
         Member member = new Member(userAccount, userGroup, GroupRole.ADMIN, 0f, 0f, 0f);
@@ -50,8 +48,11 @@ public class UserGroupService {
         userGroupRepository.save(userGroup);
         userAccountService.save(userAccount);
 
-        logService.create("created the group.", userGroup, userAccount);
-        return "Created";
+        logService.create("Created the group", userGroup, userAccount);
+        userGroup.setLogs(logService.readLogs(userGroup.getId()));
+        userGroupRepository.save(userGroup);
+
+        return userGroupMapper.entityToCreateGroupResponse(userGroup);
     }
 
     private String generateRandomHexCode() {
@@ -64,28 +65,10 @@ public class UserGroupService {
         }
     }
 
-    public UserGroupResponse readGroup(Long groupId) throws Exception {
-        Optional<UserGroup> group = userGroupRepository.findById(groupId);
-        if (group.isEmpty()) {
-            throw new Exception("Group not found");
-        }
-
-        UserGroupResponse userGroupResponse = new UserGroupResponse();
-        userGroupResponse.setName(group.get().getName());
-        userGroupResponse.setCurrency(group.get().getCurrency());
-
-        userGroupResponse.setUserAccounts(UserAccountConverter.toUserAccountsGroupResponse(memberService.readMembers(groupId)));
-
-        userGroupResponse.setTransactions(TransactionConverter
-                .toGroupResponse(transactionService.readTransactions(groupId)));
-
-        userGroupResponse.setDebts(debtService.readDebts(groupId).stream().map(DebtConverter::toDebtGroupResponse)
-                .collect(Collectors.toList()));
-
-        List<Log> logs = logService.readLogs(group.get().getId());
-        userGroupResponse.setLogs(LogConverter.toGroupResponse(logs));
-
-        return userGroupResponse;
+    public GroupReadGroupResponse readGroup(Long id) throws Exception {
+        UserGroup userGroup = userGroupRepository.findById(id)
+                .orElseThrow(() -> new Exception("Group not found"));
+        return userGroupMapper.entityToReadGroupResponse(userGroup);
     }
 
     public String addMember(String userAccountId, Long groupId) throws Exception {
@@ -175,16 +158,18 @@ public class UserGroupService {
             throw new Exception("Debt not found");
         }
 
-        List<String> amounts = new ArrayList<>();
-        amounts.add(lenderId);
-        TransactionCreateRequest transactionCreateRequest = new TransactionCreateRequest(
+        List<MemberAbstractRequest> amounts = new ArrayList<>();
+        amounts.add(new UnequalTransactionMember(lenderId, debt.get().getAmount()));
+
+        TransactionCreateRequest request = new TransactionCreateRequest(
                 borrower.get().getUserAccount().getName() + " repaid "
                         + lender.get().getUserAccount().getName() + "'s " + "debt",
-                debt.get().getAmount(), borrower.get().getUserAccount().getId(), amounts);
+                debt.get().getAmount(), borrower.get().getUserAccount().getId(), TransactionType.UNEQUALLY, amounts);
+
 
         try {
-            if (allSpendersFromGroup(transactionCreateRequest.getSpenderIds(), groupId)) {
-                Transaction transaction = transactionService.create(transactionCreateRequest,
+            if (allSpendersFromGroup(request.getSpenders(), groupId)) {
+                Transaction transaction = transactionService.create(request,
                         borrower.get().getUserAccount(), group.get());
                 acceptTxCreate(transaction);
                 //
@@ -193,25 +178,25 @@ public class UserGroupService {
         } catch (Exception e) {
             throw new Exception(e);
         }
+
     }
 
-    public TransactionResponse createTransaction(TransactionCreateRequest transactionCreateRequest,
-                                                 Long groupId) throws Exception {
+    public TransactionResponse createTransaction(TransactionCreateRequest request, Long groupId) throws Exception {
         Optional<UserGroup> group = userGroupRepository.findById(groupId);
         if (group.isEmpty()) {
             throw new Exception("Group not found.");
         }
-        Optional<Member> payer = memberService.readMember(transactionCreateRequest.getPayerId(), groupId);
+        Optional<Member> payer = memberService.readMember(request.getPayerId(), groupId);
         if (payer.isEmpty()) {
             throw new Exception("Payer not found.");
         }
 
         Transaction transaction = new Transaction();
         try {
-            if (allSpendersFromGroup(transactionCreateRequest.getSpenderIds(), groupId)) {
-                transaction = transactionService.create(transactionCreateRequest, payer.get().getUserAccount(), group.get());
+            if (allSpendersFromGroup(request.getSpenders(), groupId)) {
+                transaction = transactionService.create(request, payer.get().getUserAccount(), group.get());
                 acceptTxCreate(transaction);
-                // change to the userAccount who will actually delete the transaction
+
                 logService.create("made a payment: " + transaction.getAmount(),
                         transaction.getUserGroup(), transaction.getPayer());
             }
@@ -230,18 +215,14 @@ public class UserGroupService {
         return TransactionConverter.toDto(transaction.get());
     }
 
-    public TransactionsGroupResponse readTransactions(Long groupId) throws Exception {
-        Optional<UserGroup> group = userGroupRepository.findById(groupId);
-        if (group.isEmpty()) {
-            throw new Exception("Group not found");
-        }
+    public TransactionReadGroupTransactionResponse readGroupTransaction(Long transactionId, Long groupId) throws Exception {
+        return transactionService.readGroupTransaction(transactionId, groupId);
+    }
 
-        List<Transaction> transactions = transactionService.readTransactions(groupId);
-        Collections.reverse(transactions);
-        List<TransactionGroupResponse> transactionsGroupResponse = transactions.stream()
-                .map(TransactionConverter::toTransactionGroupResponse).toList();
-
-        return new TransactionsGroupResponse(transactionsGroupResponse);
+    public GroupReadGroupTransactionsResponse readGroupTransactions(Long groupId) throws Exception {
+        UserGroup userGroup = userGroupRepository.findById(groupId)
+                .orElseThrow(() -> new Exception("Group not found"));
+        return userGroupMapper.entityToReadGroupTransactionsResponse(userGroup);
     }
 
     public TransactionResponse updateTransaction(TransactionUpdateRequest transactionUpdateRequest,
@@ -267,7 +248,7 @@ public class UserGroupService {
         }
 
         try {
-            if (allSpendersFromGroup(transactionUpdateRequest.getSpenderIds(), groupId)) {
+            if (allSpendersFromGroup(transactionUpdateRequest.getSpenders(), groupId)) {
                 acceptTxDelete(transaction.get());
                 transactionService.update(transaction.get(), transactionUpdateRequest, nextPayer.get().getUserAccount());
                 acceptTxCreate(transaction.get());
@@ -295,7 +276,8 @@ public class UserGroupService {
         logService.create("deleted transaction", payer.get().getUserGroup(), payer.get().getUserAccount());
     }
 
-    private boolean allSpendersFromGroup(List<String> ids, Long groupId) throws Exception {
+    private boolean allSpendersFromGroup(List<MemberAbstractRequest> spenders, Long groupId) throws Exception {
+        List<String> ids = spenders.stream().map(MemberAbstractRequest::getSpenderId).toList();
         for (String id : ids) {
             if (memberService.readMember(id, groupId).isEmpty()) {
                 throw new Exception("UserAccount is not from this group");
@@ -304,28 +286,20 @@ public class UserGroupService {
         return true;
     }
 
-    public LogsGroupResponse readLogs(Long groupId) throws Exception {
-        Optional<UserGroup> group = userGroupRepository.findById(groupId);
-        if (group.isEmpty()) {
-            throw new Exception("Group not found");
-        }
-
-        List<Log> logs = logService.readLogs(groupId);
-        Collections.reverse(logs);
-        return new LogsGroupResponse(logs.stream().map(LogConverter::toDto).collect(Collectors.toList()));
+    public GroupReadGroupLogsResponse readGroupLogs(Long groupId) throws Exception {
+        UserGroup userGroup = userGroupRepository.findById(groupId)
+                .orElseThrow(() -> new Exception("Group not found"));
+        return userGroupMapper.entityToReadGroupLogsResponse(userGroup);
     }
 
-    public UserGroupResponse changeGroupName(Long groupId, String name) throws Exception {
-        Optional<UserGroup> group = userGroupRepository.findById(groupId);
-        if (group.isEmpty()) {
-            throw new Exception("Group not found");
-        }
+    public GroupUpdateGroupNameResponse updateGroupName(Long groupId, String name) throws Exception {
+        UserGroup userGroup = userGroupRepository.findById(groupId)
+                .orElseThrow(() -> new Exception("Group not found"));
         if (name.isBlank()) {
             throw new Exception("New name is empty");
         }
-
-        group.get().setName(name);
-        userGroupRepository.save(group.get());
-        return readGroup(groupId);
+        userGroup.setName(name);
+        userGroupRepository.save(userGroup);
+        return userGroupMapper.entityToUpdateGroupNameResponse(userGroup);
     }
 }

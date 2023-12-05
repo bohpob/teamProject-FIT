@@ -14,15 +14,15 @@ import java.util.List;
 public class LogService {
     private final LogRepository logRepository;
 
-    public void create(String action, UserGroup userGroup, UserAccount userAccount) throws Exception {
+    public void create(String action, UserGroup userGroup, UserAccount userAccount) {
         LocalDateTime currentDate = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d MMM yyyy, HH:mm");
         String date = currentDate.format(formatter);
 
-        logRepository.save(LogConverter.fromDto(new LogDTO(action, date, userAccount.getName()), userGroup, userAccount));
+        logRepository.save(new Log(action, date, userGroup, userAccount));
     }
 
-    public List<Log> readLogs(Long groupId) throws Exception {
+    public List<Log> readLogs(Long groupId) {
         return logRepository.findLogsByUserGroupId(groupId);
     }
 }

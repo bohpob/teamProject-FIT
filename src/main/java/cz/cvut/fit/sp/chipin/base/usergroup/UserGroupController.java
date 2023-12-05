@@ -1,11 +1,12 @@
 package cz.cvut.fit.sp.chipin.base.usergroup;
 
-import cz.cvut.fit.sp.chipin.base.log.LogsGroupResponse;
 import cz.cvut.fit.sp.chipin.base.transaction.TransactionCreateRequest;
 import cz.cvut.fit.sp.chipin.base.transaction.TransactionResponse;
 import cz.cvut.fit.sp.chipin.base.transaction.TransactionUpdateRequest;
-import cz.cvut.fit.sp.chipin.base.transaction.TransactionsGroupResponse;
+import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionReadGroupTransactionResponse;
+import cz.cvut.fit.sp.chipin.base.usergroup.mapper.*;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,20 +18,20 @@ import java.security.Principal;
 @RequestMapping("/api/v1/user-groups")
 @AllArgsConstructor
 public class UserGroupController {
-
     private final UserGroupService userGroupService;
 
     @PostMapping
-    public String createGroup(@Valid @RequestBody UserGroupCreateRequest request, Principal principal) throws Exception {
+    public ResponseEntity<GroupCreateGroupResponse> createGroup(@Valid @RequestBody GroupCreateGroupRequest request,
+                                                                Principal principal) throws Exception {
         try {
-            return userGroupService.createGroup(request, principal.getName());
+            return ResponseEntity.ok(userGroupService.createGroup(request, principal.getName()));
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
     }
 
     @GetMapping("/{groupId}")
-    public ResponseEntity<UserGroupResponse> readGroup(@PathVariable Long groupId) throws Exception {
+    public ResponseEntity<GroupReadGroupResponse> readGroup(@PathVariable Long groupId) throws Exception {
         try {
             return ResponseEntity.ok(userGroupService.readGroup(groupId));
         } catch (Exception e) {
@@ -60,10 +61,10 @@ public class UserGroupController {
 
     @GetMapping("/{groupId}/transactions/{transactionId}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<TransactionResponse> readTransaction(@PathVariable Long groupId,
-                                                               @PathVariable Long transactionId) throws Exception {
+    public ResponseEntity<TransactionReadGroupTransactionResponse> readTransaction(@PathVariable Long groupId,
+                                                                                   @PathVariable Long transactionId) throws Exception {
         try {
-            return ResponseEntity.ok(userGroupService.readTransaction(transactionId, groupId));
+            return ResponseEntity.ok(userGroupService.readGroupTransaction(transactionId, groupId));
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
@@ -71,9 +72,9 @@ public class UserGroupController {
 
     @GetMapping("/{groupId}/transactions")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<TransactionsGroupResponse> readTransactions(@PathVariable Long groupId) throws Exception {
+    public ResponseEntity<GroupReadGroupTransactionsResponse> readGroupTransactions(@PathVariable Long groupId) throws Exception {
         try {
-            return ResponseEntity.ok(userGroupService.readTransactions(groupId));
+            return ResponseEntity.ok(userGroupService.readGroupTransactions(groupId));
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
@@ -101,8 +102,8 @@ public class UserGroupController {
     }
 
     @DeleteMapping("/{groupId}/debt/repayment")
-    public void settleDebt(@PathVariable Long groupId, @RequestParam("lenderId") String lenderId,
-                           @RequestParam("borrowerId") String borrowerId) throws Exception {
+    public void settleDebt(@PathVariable Long groupId, @RequestParam String lenderId,
+                           @RequestParam String borrowerId) throws Exception {
         try {
             userGroupService.settleDebt(groupId, lenderId, borrowerId);
         } catch (Exception e) {
@@ -112,22 +113,21 @@ public class UserGroupController {
 
     @GetMapping("/{groupId}/logs")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<LogsGroupResponse> readLogs(@PathVariable Long groupId) throws Exception {
+    public ResponseEntity<GroupReadGroupLogsResponse> readLogs(@PathVariable Long groupId) throws Exception {
         try {
-            return ResponseEntity.ok(userGroupService.readLogs(groupId));
+            return ResponseEntity.ok(userGroupService.readGroupLogs(groupId));
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
     }
 
-    @PatchMapping("/{groupId}/name")
-    public ResponseEntity<UserGroupResponse> changeGroupName(@PathVariable Long groupId,
-                                                             @RequestParam("name") String name) throws Exception {
+    @PatchMapping("/{groupId}")
+    public ResponseEntity<GroupUpdateGroupNameResponse> updateGroupName(@PathVariable Long groupId,
+                                                                  @RequestParam @NotBlank String name) throws Exception {
         try {
-            return ResponseEntity.ok(userGroupService.changeGroupName(groupId, name));
+            return ResponseEntity.ok(userGroupService.updateGroupName(groupId, name));
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
     }
-
 }
