@@ -1,4 +1,4 @@
-package cz.cvut.fit.sp.chipin.base.config;
+package cz.cvut.fit.sp.chipin.config;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Contact;

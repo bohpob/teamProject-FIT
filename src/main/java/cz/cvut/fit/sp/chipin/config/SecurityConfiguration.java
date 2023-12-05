@@ -1,4 +1,4 @@
-package cz.cvut.fit.sp.chipin.base.config;
+package cz.cvut.fit.sp.chipin.config;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
