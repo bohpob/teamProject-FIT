@@ -5,11 +5,9 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
-public class GroupCreateGroupResponse {
-    @NotNull
-    private Long id;
+public class GroupUpdateGroupNameResponse {
     @NotBlank
     private String name;
-    @NotBlank
+    @NotNull
     private String currency;
 }

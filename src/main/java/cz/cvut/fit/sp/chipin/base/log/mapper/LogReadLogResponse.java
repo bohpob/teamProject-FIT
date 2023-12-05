@@ -10,5 +10,7 @@ public class LogReadLogResponse {
     @NotBlank
     private String date;
     @NotBlank
+    private String userId;
+    @NotBlank
     private String userName;
 }

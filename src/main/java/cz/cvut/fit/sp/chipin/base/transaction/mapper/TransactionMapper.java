@@ -12,6 +12,15 @@ public interface TransactionMapper {
             expression = "java(Float.valueOf(String.format(Locale.US, \"%.2f\", transaction.getAmount())))",
             target = "amount"
     )
-    @Mapping(source = "payer.userEntity.firstName", target = "payer")
+    @Mapping(source = "payer.userEntity.id", target = "payerId")
+    @Mapping(source = "payer.userEntity.firstName", target = "payerName")
+    TransactionReadGroupTransactionResponse entityToReadGroupTransactionResponse(Transaction transaction);
+
+    @Mapping(
+            expression = "java(Float.valueOf(String.format(Locale.US, \"%.2f\", transaction.getAmount())))",
+            target = "amount"
+    )
+    @Mapping(source = "payer.userEntity.id", target = "payerId")
+    @Mapping(source = "payer.userEntity.firstName", target = "payerName")
     TransactionReadGroupTransactionsResponse entityToReadGroupTransactionsResponse(Transaction transaction);
 }

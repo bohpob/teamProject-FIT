@@ -1,13 +1,10 @@
 package cz.cvut.fit.sp.chipin.base.transaction.mapper;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
-public class TransactionReadGroupTransactionsResponse {
-    @NotNull
-    private Long id;
+public class TransactionReadGroupTransactionResponse {
     @NotBlank
     private String name;
     @NotBlank

@@ -13,13 +13,17 @@ import org.mapstruct.Mapping;
         uses = {DebtMapper.class, MemberMapper.class, TransactionMapper.class, LogMapper.class}
 )
 public interface UserGroupMapper {
-    GroupCreateGroupRequest entityToCreateGroupResponse(UserGroup userGroup);
+    GroupCreateGroupResponse entityToCreateGroupResponse(UserGroup userGroup);
 
     GroupReadGroupResponse entityToReadGroupResponse(UserGroup userGroup);
 
+    @Mapping(source = "userGroup.transactions", target = "transactions")
     GroupReadGroupTransactionsResponse entityToReadGroupTransactionsResponse(UserGroup userGroup);
 
+    @Mapping(source = "userGroup.logs", target = "logs")
     GroupReadGroupLogsResponse entityToReadGroupLogsResponse(UserGroup userGroup);
+
+    GroupUpdateGroupNameResponse entityToUpdateGroupNameResponse(UserGroup userGroup);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "debts", ignore = true)

@@ -3,6 +3,8 @@ package cz.cvut.fit.sp.chipin.base.transaction;
 import cz.cvut.fit.sp.chipin.authentication.useraccount.UserAccount;
 import cz.cvut.fit.sp.chipin.base.amount.Amount;
 import cz.cvut.fit.sp.chipin.base.amount.AmountService;
+import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionMapper;
+import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionReadGroupTransactionResponse;
 import cz.cvut.fit.sp.chipin.base.usergroup.UserGroup;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -18,6 +20,7 @@ import java.util.stream.Collectors;
 public class TransactionService {
     private final TransactionRepository transactionRepository;
     private final AmountService amountService;
+    private final TransactionMapper transactionMapper;
 
     public Transaction create(TransactionCreateRequest request, UserAccount payer, UserGroup userGroup) throws Exception {
         Transaction transaction = TransactionConverter.fromCreateDto(request, payer, userGroup);
@@ -41,6 +44,12 @@ public class TransactionService {
             throw new Exception("Transaction does not belong to this group.");
         }
         return transaction;
+    }
+
+    public TransactionReadGroupTransactionResponse readGroupTransaction(Long transactionId, Long groupId) throws Exception {
+        Transaction transaction = read(transactionId, groupId)
+                .orElseThrow(() -> new Exception("Transaction not found"));
+        return transactionMapper.entityToReadGroupTransactionResponse(transaction);
     }
 
     @Transactional
