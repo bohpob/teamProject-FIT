@@ -6,7 +6,7 @@
 //import cz.cvut.fit.sp.chipin.base.transaction.Transaction;
 //import cz.cvut.fit.sp.chipin.base.transaction.TransactionType;
 //import cz.cvut.fit.sp.chipin.base.transaction.spender.*;
-//import cz.cvut.fit.sp.chipin.base.usergroup.UserGroup;
+//import cz.cvut.fit.sp.chipin.base.usergroup.Group;
 //import org.junit.jupiter.api.Assertions;
 //import org.junit.jupiter.api.Test;
 //import org.mockito.InjectMocks;
@@ -33,7 +33,7 @@
 //    @Test
 //    public void testSetAmountsWithValidEqualInputs_1() throws Exception {
 //        User payer = new User();
-//        UserGroup group = new UserGroup();
+//        Group group = new Group();
 //
 //        Transaction transaction = new Transaction("Transaction1", 300f, payer, group);
 //        List<MemberAbstractRequest> spenders = Arrays.asList(
@@ -60,7 +60,7 @@
 //    @Test
 //    public void testSetAmountsWithValidEqualInputs_2() throws Exception {
 //        User payer = new User();
-//        UserGroup group = new UserGroup();
+//        Group group = new Group();
 //
 //        Transaction transaction = new Transaction("Transaction1", 2000f, payer, group);
 //        List<MemberAbstractRequest> spenders = Arrays.asList(
@@ -88,7 +88,7 @@
 //    @Test
 //    public void testSetAmountsWithValidUnequalInputs_1() throws Exception {
 //        User payer = new User();
-//        UserGroup group = new UserGroup();
+//        Group group = new Group();
 //
 //        Transaction transaction = new Transaction("Transaction1", 300f, payer, group);
 //        List<MemberAbstractRequest> spenders = Arrays.asList(
@@ -113,7 +113,7 @@
 //    @Test
 //    public void testSetAmountsWithValidByAdjustmentInputs_1() throws Exception {
 //        User payer = new User();
-//        UserGroup group = new UserGroup();
+//        Group group = new Group();
 //
 //        Transaction transaction = new Transaction("Transaction1", 300f, payer, group);
 //        List<MemberAbstractRequest> spenders = Arrays.asList(
@@ -141,7 +141,7 @@
 //    @Test
 //    public void testSetAmountsWithValidByAdjustmentInputs_2() throws Exception {
 //        User payer = new User();
-//        UserGroup group = new UserGroup();
+//        Group group = new Group();
 //
 //        Transaction transaction = new Transaction("Transaction1", 300f, payer, group);
 //        List<MemberAbstractRequest> spenders = Arrays.asList(
@@ -169,7 +169,7 @@
 //    @Test
 //    public void testSetAmountsWithValidByAdjustmentInputs_3() throws Exception {
 //        User payer = new User();
-//        UserGroup group = new UserGroup();
+//        Group group = new Group();
 //
 //        Transaction transaction = new Transaction("Transaction1", 300f, payer, group);
 //        List<MemberAbstractRequest> spenders = Arrays.asList(
@@ -197,7 +197,7 @@
 //    @Test
 //    public void testSetAmountsWithValidByPercentagesInputs() throws Exception {
 //        User payer = new User();
-//        UserGroup group = new UserGroup();
+//        Group group = new Group();
 //
 //        Transaction transaction = new Transaction("Transaction1", 300f, payer, group);
 //        List<MemberAbstractRequest> spenders = Arrays.asList(
@@ -224,7 +224,7 @@
 //    @Test
 //    public void testSetAmountsWithValidBySharesInputs() throws Exception {
 //        User payer = new User();
-//        UserGroup group = new UserGroup();
+//        Group group = new Group();
 //
 //        Transaction transaction = new Transaction("Transaction1", 300f, payer, group);
 //        List<MemberAbstractRequest> spenders = Arrays.asList(

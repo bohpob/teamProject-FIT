@@ -9,12 +9,12 @@ import java.util.stream.Collectors;
 
 public class UserConverter {
 
-    private static UserGroupResponse toUserGroupResponse(Member member) {
-        return new UserGroupResponse(member.getUser().getId(), member.getUser().getName(), member.getBalance());
+    private static GroupResponse toGroupResponse(Member member) {
+        return new GroupResponse(member.getUser().getId(), member.getUser().getName(), member.getBalance());
     }
 
-    public static List<UserGroupResponse> toUsersGroupResponse(ArrayList<Member> members) {
+    public static List<GroupResponse> toUsersGroupResponse(ArrayList<Member> members) {
         members.sort(Comparator.comparing(Member::getBalance).reversed());
-        return members.stream().map(UserConverter::toUserGroupResponse).collect(Collectors.toList());
+        return members.stream().map(UserConverter::toGroupResponse).collect(Collectors.toList());
     }
 }

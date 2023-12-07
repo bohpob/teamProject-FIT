@@ -5,7 +5,7 @@ import cz.cvut.fit.sp.chipin.base.amount.Amount;
 import cz.cvut.fit.sp.chipin.base.amount.AmountService;
 import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionMapper;
 import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionReadGroupTransactionResponse;
-import cz.cvut.fit.sp.chipin.base.usergroup.UserGroup;
+import cz.cvut.fit.sp.chipin.base.usergroup.Group;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,8 +22,8 @@ public class TransactionService {
     private final AmountService amountService;
     private final TransactionMapper transactionMapper;
 
-    public Transaction create(TransactionCreateRequest request, User payer, UserGroup userGroup) throws Exception {
-        Transaction transaction = TransactionConverter.fromCreateDto(request, payer, userGroup);
+    public Transaction create(TransactionCreateRequest request, User payer, Group group) throws Exception {
+        Transaction transaction = TransactionConverter.fromCreateDto(request, payer, group);
 
         try {
             List<Amount> amounts = amountService.setAmounts(transaction, request.getSpenders(), request.getSplitStrategy());
@@ -40,7 +40,7 @@ public class TransactionService {
         if (transaction.isEmpty()) {
             throw new Exception("Transaction not found.");
         }
-        if (!Objects.equals(transaction.get().getUserGroup().getId(), groupId)) {
+        if (!Objects.equals(transaction.get().getGroup().getId(), groupId)) {
             throw new Exception("Transaction does not belong to this group.");
         }
         return transaction;
@@ -75,7 +75,7 @@ public class TransactionService {
     }
 
     public List<Transaction> readTransactions(Long groupId) {
-        return transactionRepository.findTransactionsByUserGroupId(groupId);
+        return transactionRepository.findTransactionsByGroupId(groupId);
     }
 
 }

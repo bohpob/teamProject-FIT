@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface UserGroupRepository extends JpaRepository<UserGroup, Long> {
-    Optional<UserGroup> findUserGroupByHexCode(String hexCode);
+public interface GroupRepository extends JpaRepository<Group, Long> {
+    Optional<Group> findGroupByHexCode(String hexCode);
 }

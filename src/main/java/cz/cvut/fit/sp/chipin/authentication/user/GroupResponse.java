@@ -7,7 +7,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class UserGroupResponse {
+public class GroupResponse {
     @NotNull
     private final String id;
     @NotBlank
