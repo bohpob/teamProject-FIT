@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.security.Principal;
 
 @RestController
-@RequestMapping("/api/v1/user-groups")
+@RequestMapping("/api/v1/groups")
 @AllArgsConstructor
 public class GroupController {
     private final GroupService groupService;
