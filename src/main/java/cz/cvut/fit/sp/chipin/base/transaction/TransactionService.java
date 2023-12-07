@@ -37,6 +37,14 @@ public class TransactionService {
         return transaction;
     }
 
+    //new
+    public List<TransactionReadGroupTransactionResponse> readGroupTransactionsByCategories(Long groupId, List<Category> categories) throws Exception {
+        List<Transaction> transactions = transactionRepository.findTransactionByUserGroupIdAndCategoryIn(groupId, categories);
+        return transactions.stream()
+                .map(transactionMapper::entityToReadGroupTransactionResponse)
+                .collect(Collectors.toList());
+    }
+
     public Optional<Transaction> read(Long transactionId, Long groupId) throws Exception {
         Optional<Transaction> transaction = transactionRepository.findById(transactionId);
         if (transaction.isEmpty()) {
