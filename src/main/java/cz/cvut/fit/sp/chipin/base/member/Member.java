@@ -1,6 +1,6 @@
 package cz.cvut.fit.sp.chipin.base.member;
 
-import cz.cvut.fit.sp.chipin.authentication.useraccount.UserAccount;
+import cz.cvut.fit.sp.chipin.authentication.user.User;
 import cz.cvut.fit.sp.chipin.base.usergroup.UserGroup;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -18,9 +18,9 @@ public class Member {
     private MemberKey id;
 
     @ManyToOne
-    @MapsId("userAccountId")
-    @JoinColumn(name = "user_account_id", nullable = false)
-    private UserAccount userAccount;
+    @MapsId("userId")
+    @JoinColumn(name = "user_entity_id", nullable = false)
+    private User user;
 
     @ManyToOne
     @MapsId("userGroupId")
@@ -43,9 +43,9 @@ public class Member {
     @Setter(AccessLevel.NONE)
     private Float balance = 0f;
 
-    public Member(UserAccount userAccount, UserGroup userGroup, GroupRole role, Float paid, Float spent, Float balance) {
-        id = new MemberKey(userAccount.getId(), userGroup.getId());
-        this.userAccount = userAccount;
+    public Member(User user, UserGroup userGroup, GroupRole role, Float paid, Float spent, Float balance) {
+        id = new MemberKey(user.getId(), userGroup.getId());
+        this.user = user;
         this.userGroup = userGroup;
         this.role = role;
         this.paid = paid;

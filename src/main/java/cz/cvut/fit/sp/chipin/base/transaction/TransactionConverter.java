@@ -1,7 +1,7 @@
 package cz.cvut.fit.sp.chipin.base.transaction;
 
-import cz.cvut.fit.sp.chipin.authentication.useraccount.UserAccount;
-import cz.cvut.fit.sp.chipin.authentication.useraccount.UserAccountDTO;
+import cz.cvut.fit.sp.chipin.authentication.user.User;
+import cz.cvut.fit.sp.chipin.authentication.user.UserDTO;
 import cz.cvut.fit.sp.chipin.base.amount.Amount;
 import cz.cvut.fit.sp.chipin.base.amount.AmountConverter;
 import cz.cvut.fit.sp.chipin.base.usergroup.UserGroup;
@@ -16,7 +16,7 @@ public class TransactionConverter {
         return new TransactionResponse(transaction.getId(), transaction.getName(),
                 Float.valueOf(String.format(Locale.getDefault(), "%.2f",
                         transaction.getAmount())), transaction.getDate(),
-                new UserAccountDTO(transaction.getPayer().getName()),
+                new UserDTO(transaction.getPayer().getName()),
                 transaction.getAmounts().stream().map(AmountConverter::toDto).collect(Collectors.toList()));
     }
 
@@ -37,7 +37,7 @@ public class TransactionConverter {
         }
     }
 
-    public static Transaction fromCreateDto(TransactionCreateRequest createRequest, UserAccount payer, UserGroup userGroup) {
+    public static Transaction fromCreateDto(TransactionCreateRequest createRequest, User payer, UserGroup userGroup) {
         return new Transaction(createRequest.getName(), createRequest.getAmount(), payer, userGroup);
     }
 }

@@ -15,8 +15,8 @@ import java.io.Serializable;
 @EqualsAndHashCode
 public class AmountKey implements Serializable {
     @NotNull
-    @Column(name = "user_account_id")
-    private String userAccountId;
+    @Column(name = "user_entity_id")
+    private String userId;
 
     @NotNull
     @Column(name = "transaction_id")

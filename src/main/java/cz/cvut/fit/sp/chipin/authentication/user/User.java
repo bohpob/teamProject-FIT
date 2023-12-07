@@ -1,4 +1,4 @@
-package cz.cvut.fit.sp.chipin.authentication.useraccount;
+package cz.cvut.fit.sp.chipin.authentication.user;
 
 import cz.cvut.fit.sp.chipin.base.amount.Amount;
 import cz.cvut.fit.sp.chipin.base.debt.Debt;
@@ -13,25 +13,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "user_account")
+@Table(name = "user_entity")
 @NoArgsConstructor
 @Getter
 @Setter
-public class UserAccount {
-
+public class User {
     @Id
-    @Column(name = "id")
+    @Column(name = "id", length = 36)
     private String id;
 
-    @MapsId
-    @OneToOne
-    @JoinColumn(name = "id")
-    private UserEntity userEntity;
-
-    @OneToMany(mappedBy = "userAccount")
+    @OneToMany(mappedBy = "user")
     private List<Member> members = new ArrayList<>();
 
-    @OneToMany(mappedBy = "userAccount")
+    @OneToMany(mappedBy = "user")
     private List<Amount> amounts = new ArrayList<>();
 
     @OneToMany(mappedBy = "lender")
@@ -43,12 +37,21 @@ public class UserAccount {
     @OneToMany(mappedBy = "payer")
     private List<Transaction> transactions = new ArrayList<>();
 
-    public UserAccount(UserEntity userEntity) {
-        this.userEntity = userEntity;
-    }
+    private String email;
+    private String emailConstraint;
+    private Boolean emailVerified;
+    private Boolean enabled;
+    private String federationLink;
+    private String firstName;
+    private String lastName;
+    private String realmId;
+    private String username;
+    private Long createdTimestamp;
+    private String serviceAccountClientLink;
+    private Integer notBefore;
 
     public String getName() {
-        return userEntity.getFirstName() + " " + userEntity.getLastName();
+        return getFirstName() + " " + getLastName();
     }
 
     public void addMembership(Member member) {

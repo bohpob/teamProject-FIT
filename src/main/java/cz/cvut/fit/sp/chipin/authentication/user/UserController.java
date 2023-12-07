@@ -1,4 +1,4 @@
-package cz.cvut.fit.sp.chipin.authentication.useraccount;
+package cz.cvut.fit.sp.chipin.authentication.user;
 
 import cz.cvut.fit.sp.chipin.base.member.MemberDTO;
 import lombok.AllArgsConstructor;
@@ -12,11 +12,11 @@ import java.security.Principal;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/user-accounts")
+@RequestMapping("/api/v1/users")
 @AllArgsConstructor
-public class UserAccountController {
+public class UserController {
 
-    private final UserAccountService userAccountService;
+    private final UserService userService;
 
     @GetMapping("/me")
     public String readMyself(Principal principal) {
@@ -32,7 +32,7 @@ public class UserAccountController {
     @GetMapping("/me/user-groups")
     public List<Long> readMyGroups(Principal principal) {
         try {
-            return userAccountService.readMyGroups(principal.getName());
+            return userService.readMyGroups(principal.getName());
         } catch (Exception e) {
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, e.getMessage(), e
@@ -41,13 +41,13 @@ public class UserAccountController {
     }
 
     @GetMapping
-    public List<UserAccount> getAllUserAccounts() {
-        return userAccountService.getAllUserAccounts();
+    public List<User> getAllUsers() {
+        return userService.getAllUsers();
     }
 
     @GetMapping("/memberships")
     List<MemberDTO> getMemberships(Principal principal) throws Exception {
-        return userAccountService.getMemberships(principal.getName());
+        return userService.getMemberships(principal.getName());
     }
 
 }

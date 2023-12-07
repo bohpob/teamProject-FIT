@@ -1,6 +1,6 @@
 package cz.cvut.fit.sp.chipin.base.debt;
 
-import cz.cvut.fit.sp.chipin.authentication.useraccount.UserAccount;
+import cz.cvut.fit.sp.chipin.authentication.user.User;
 import cz.cvut.fit.sp.chipin.base.usergroup.UserGroup;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,7 +15,7 @@ import java.util.Optional;
 public class DebtService {
     private final DebtRepository debtRepository;
 
-    private void checkingForEmptyOrNegativeDebt(Debt debt, UserGroup userGroup, UserAccount spender, UserAccount payer) throws Exception {
+    private void checkingForEmptyOrNegativeDebt(Debt debt, UserGroup userGroup, User spender, User payer) throws Exception {
         if (debt.getAmount() == 0) {
             debtRepository.deleteById(debt.getId());
         } else if (debt.getAmount() < 0) {
@@ -26,9 +26,9 @@ public class DebtService {
         }
     }
 
-    public void recalculate(Map<UserAccount, Float> spent, UserAccount payer, UserGroup userGroup) throws Exception {
+    public void recalculate(Map<User, Float> spent, User payer, UserGroup userGroup) throws Exception {
         for (var entry : spent.entrySet()) {
-            UserAccount spender = entry.getKey();
+            User spender = entry.getKey();
             if (Objects.equals(spender.getId(), payer.getId())) {
                 continue;
             }

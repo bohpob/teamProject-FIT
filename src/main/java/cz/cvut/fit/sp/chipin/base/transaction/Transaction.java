@@ -1,6 +1,6 @@
 package cz.cvut.fit.sp.chipin.base.transaction;
 
-import cz.cvut.fit.sp.chipin.authentication.useraccount.UserAccount;
+import cz.cvut.fit.sp.chipin.authentication.user.User;
 import cz.cvut.fit.sp.chipin.base.amount.Amount;
 import cz.cvut.fit.sp.chipin.base.usergroup.UserGroup;
 import jakarta.persistence.*;
@@ -41,12 +41,12 @@ public class Transaction {
 
     @ManyToOne
     @JoinColumn(name = "payer_id")
-    private UserAccount payer;
+    private User payer;
 
     @OneToMany(mappedBy = "transaction")
     private List<Amount> amounts = new ArrayList<>();
 
-    public Transaction(String name, Float amount, UserAccount payer, UserGroup userGroup) {
+    public Transaction(String name, Float amount, User payer, UserGroup userGroup) {
         this.name = name;
         this.amount = amount;
         LocalDateTime currentDate = LocalDateTime.now();

@@ -1,6 +1,6 @@
 package cz.cvut.fit.sp.chipin.base.transaction;
 
-import cz.cvut.fit.sp.chipin.authentication.useraccount.UserAccount;
+import cz.cvut.fit.sp.chipin.authentication.user.User;
 import cz.cvut.fit.sp.chipin.base.amount.Amount;
 import cz.cvut.fit.sp.chipin.base.amount.AmountService;
 import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionMapper;
@@ -22,7 +22,7 @@ public class TransactionService {
     private final AmountService amountService;
     private final TransactionMapper transactionMapper;
 
-    public Transaction create(TransactionCreateRequest request, UserAccount payer, UserGroup userGroup) throws Exception {
+    public Transaction create(TransactionCreateRequest request, User payer, UserGroup userGroup) throws Exception {
         Transaction transaction = TransactionConverter.fromCreateDto(request, payer, userGroup);
 
         try {
@@ -53,7 +53,7 @@ public class TransactionService {
     }
 
     @Transactional
-    public void update(Transaction transaction, TransactionUpdateRequest request, UserAccount nextPayer) throws Exception {
+    public void update(Transaction transaction, TransactionUpdateRequest request, User nextPayer) throws Exception {
         try {
             amountService.deleteAllByTransactionId(transaction.getId());
             transaction.setName(request.getName());

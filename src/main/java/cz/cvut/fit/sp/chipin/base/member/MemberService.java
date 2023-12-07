@@ -11,8 +11,8 @@ import java.util.Optional;
 public class MemberService {
     private final MemberRepository memberRepository;
 
-    public Optional<Member> readMember(String userAccountId, Long groupId) throws Exception {
-        return memberRepository.findByUserAccountIdAndUserGroupId(userAccountId, groupId);
+    public Optional<Member> readMember(String userId, Long groupId) throws Exception {
+        return memberRepository.findByUserIdAndUserGroupId(userId, groupId);
     }
 
     public void save(Member member) throws Exception {

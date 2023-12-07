@@ -40,9 +40,9 @@ public class UserGroupController {
     }
 
     @PatchMapping("/{groupId}/join")
-    public String addMember(@Valid @RequestParam String userAccountId, @PathVariable Long groupId) throws Exception {
+    public String addMember(@Valid @RequestParam String userId, @PathVariable Long groupId) throws Exception {
         try {
-            return userGroupService.addMember(userAccountId, groupId);
+            return userGroupService.addMember(userId, groupId);
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }

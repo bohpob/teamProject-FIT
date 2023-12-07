@@ -1,6 +1,6 @@
 package cz.cvut.fit.sp.chipin.base.log;
 
-import cz.cvut.fit.sp.chipin.authentication.useraccount.UserAccount;
+import cz.cvut.fit.sp.chipin.authentication.user.User;
 import cz.cvut.fit.sp.chipin.base.usergroup.UserGroup;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -32,13 +32,13 @@ public class Log {
     private UserGroup userGroup;
 
     @ManyToOne
-    @JoinColumn(name = "user_account_id")
-    private UserAccount userAccount;
+    @JoinColumn(name = "user_entity_id")
+    private User user;
 
-    public Log(String action, String date, UserGroup userGroup, UserAccount userAccount) {
+    public Log(String action, String date, UserGroup userGroup, User user) {
         this.action = action;
         this.date = date;
         this.userGroup = userGroup;
-        this.userAccount = userAccount;
+        this.user = user;
     }
 }
