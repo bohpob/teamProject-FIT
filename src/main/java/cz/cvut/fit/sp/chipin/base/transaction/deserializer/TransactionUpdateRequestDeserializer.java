@@ -10,8 +10,8 @@ import java.util.List;
 public class TransactionUpdateRequestDeserializer extends TransactionRequestDeserializer<TransactionUpdateRequest> {
     @Override
     protected TransactionUpdateRequest createTransactionRequest(
-            String name, float amount, String payerId, String splitStrategy, List<MemberAbstractRequest> spenders, JsonNode rootNode) {
+            String name, float amount, String currency, String payerId, String splitStrategy, List<MemberAbstractRequest> spenders, JsonNode rootNode) {
         String date = rootNode.get("date").asText();
-        return new TransactionUpdateRequest(name, amount, date, payerId, TransactionType.valueOf(splitStrategy), spenders);
+        return new TransactionUpdateRequest(name, amount, currency, date, payerId, TransactionType.valueOf(splitStrategy), spenders);
     }
 }

@@ -1,6 +1,8 @@
 package cz.cvut.fit.sp.chipin.base.transaction;
 
-import cz.cvut.fit.sp.chipin.authentication.user.User;
+import cz.cvut.fit.sp.chipin.Common.CurrencyData;
+import cz.cvut.fit.sp.chipin.Common.ExchangeRate;
+import cz.cvut.fit.sp.chipin.authentication.useraccount.UserAccount;
 import cz.cvut.fit.sp.chipin.base.amount.Amount;
 import cz.cvut.fit.sp.chipin.base.amount.AmountService;
 import cz.cvut.fit.sp.chipin.base.group.Group;
@@ -8,9 +10,13 @@ import cz.cvut.fit.sp.chipin.base.member.mapper.MemberReadMemberResponse;
 import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionCreateTransactionRequest;
 import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionMapper;
 import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionReadGroupTransactionResponse;
+import cz.cvut.fit.sp.chipin.base.transaction.spender.MemberAbstractRequest;
+import cz.cvut.fit.sp.chipin.base.usergroup.UserGroup;
+import cz.cvut.fit.sp.chipin.base.usergroup.UserGroupController;
 import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionReadGroupTransactionsResponse;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -90,6 +96,21 @@ public class TransactionService {
         Transaction transaction = read(transactionId, groupId)
                 .orElseThrow(() -> new Exception("Transaction not found"));
         return transactionMapper.entityToReadGroupTransactionResponse(transaction);
+    }
+    @Getter
+    public static class CurrencyUpdateRequest { private String currency; }
+    @Transactional
+    public void updateCurrency(Transaction transaction, CurrencyUpdateRequest request) throws Exception {
+        try {
+            Currency baseCurrency = transaction.getCurrency();
+            Currency newCurrency = Currency.getInstance(request.getCurrency());
+            Float exchangeRate = ExchangeRate.getExchangeRate(baseCurrency, newCurrency, transaction.getFormattedDate());
+            Float newAmount = exchangeRate * transaction.getAmount();
+            transaction.setAmount(newAmount);
+            transactionRepository.save(transaction);
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
     }
 
     public List<Transaction> readAllByCategories(Long groupId, List<Category> categories) throws Exception {

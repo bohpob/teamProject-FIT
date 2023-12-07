@@ -25,7 +25,7 @@ public class ShareBasedAmountCalculator implements AmountCalculator {
         for (int i = 0; i < users.size(); i++) {
             try {
                 Float percentage = memberBySharesList.get(i).getShare() / shares;
-                amounts.add(new Amount(users.get(i), transaction, percentage * transaction.getAmount()));
+                amounts.add(new Amount(users.get(i), transaction, percentage * transaction.getConvertedAmount()));
             } catch (Exception e) {
                 throw new Exception("User not found.");
             }

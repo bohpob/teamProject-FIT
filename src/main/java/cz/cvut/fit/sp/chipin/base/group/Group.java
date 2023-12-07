@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.ArrayList;
+import java.util.Currency;
 import java.util.List;
 import java.util.Random;
 
@@ -52,8 +53,7 @@ public class Group {
     private String name;
 
     @NotNull
-    @Enumerated(EnumType.STRING)
-    private Currency currency;
+    private java.util.Currency currency;
 
     @NotBlank
     private String hexCode;

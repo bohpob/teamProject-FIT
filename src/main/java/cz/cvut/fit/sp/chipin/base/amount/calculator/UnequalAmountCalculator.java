@@ -26,7 +26,7 @@ public class UnequalAmountCalculator implements AmountCalculator {
             }
         }
 
-        if (Math.abs(totalSpent - transaction.getAmount()) > 0.01)
+        if (Math.abs(totalSpent - transaction.getConvertedAmount()) > 0.01)
             throw new Exception("The total transaction amount is not equal to what each participant spent individually");
         return amounts;
     }

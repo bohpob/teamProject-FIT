@@ -144,17 +144,17 @@ public class GroupService {
     }
 
     public void settleDebt(Long groupId, String lenderId, String borrowerId) throws Exception {
-        Optional<Group> group = groupRepository.findById(groupId);
+        Optional<UserGroup> group = userGroupRepository.findById(groupId);
         if (group.isEmpty()) {
             throw new Exception("Group not found");
         }
         Optional<Member> lender = memberService.readMember(lenderId, groupId);
         if (lender.isEmpty()) {
-            throw new Exception("User not found");
+            throw new Exception("UserAccount not found");
         }
         Optional<Member> borrower = memberService.readMember(borrowerId, groupId);
         if (borrower.isEmpty()) {
-            throw new Exception("User not found");
+            throw new Exception("UserAccount not found");
         }
         Optional<Debt> debt = debtService.readDebt(groupId, lenderId, borrowerId);
         if (debt.isEmpty()) {
@@ -164,10 +164,10 @@ public class GroupService {
         List<MemberAbstractRequest> amounts = new ArrayList<>();
         amounts.add(new UnequalTransactionMember(lenderId, debt.get().getAmount()));
 
-        TransactionCreateTransactionRequest request = new TransactionCreateTransactionRequest(
-                borrower.get().getUser().getName() + " repaid "
-                        + lender.get().getUser().getName() + "'s " + "debt",
-                debt.get().getAmount(), borrower.get().getUser().getId(), TransactionType.UNEQUALLY, amounts);
+        TransactionCreateRequest request = new TransactionCreateRequest(
+                borrower.get().getUserAccount().getName() + " repaid "
+                        + lender.get().getUserAccount().getName() + "'s " + "debt",
+                debt.get().getAmount(), group.get().getCurrency().toString(), borrower.get().getUserAccount().getId(), TransactionType.UNEQUALLY, amounts);
 
 
         try {
@@ -262,6 +262,33 @@ public class GroupService {
                 transactionService.update(transaction.get(), transactionUpdateRequest, nextPayer.get().getUser());
                 acceptTxCreate(transaction.get());
             }
+        } catch (Exception e) {
+            throw new Exception(e);
+        }
+
+        return transactionMapper.entityToUpdateTransactionResponse(transaction.get());
+    }
+
+    public TransactionResponse updateCurrency(TransactionService.CurrencyUpdateRequest currencyUpdateRequest,
+                                              Long groupId, Long transactionId) throws Exception {
+        Optional<UserGroup> group = userGroupRepository.findById(groupId);
+        if (group.isEmpty()) {
+            throw new Exception("Group not found.");
+        }
+        Optional<Transaction> transaction = transactionService.read(transactionId, groupId);
+        if (transaction.isEmpty()) {
+            throw new Exception("Transaction not found.");
+        }
+        if (!Objects.equals(transaction.get().getUserGroup().getId(), groupId)) {
+            throw new Exception("Transaction does not belong to this group.");
+        }
+        Optional<Member> prevPayer = memberService.readMember(transaction.get().getPayer().getId(), groupId);
+        if (prevPayer.isEmpty()) {
+            throw new Exception("Payer not found.");
+        }
+
+        try {
+            transactionService.updateCurrency(transaction.get(), currencyUpdateRequest);
         } catch (Exception e) {
             throw new Exception(e);
         }

@@ -1,8 +1,8 @@
 package cz.cvut.fit.sp.chipin.base.transaction;
 
-import cz.cvut.fit.sp.chipin.authentication.user.User;
+import cz.cvut.fit.sp.chipin.authentication.useraccount.UserAccount;
 import cz.cvut.fit.sp.chipin.base.amount.Amount;
-import cz.cvut.fit.sp.chipin.base.group.Group;
+import cz.cvut.fit.sp.chipin.base.usergroup.UserGroup;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,7 +10,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Currency;
 import java.util.List;
 
 @Entity
@@ -33,6 +35,11 @@ public class Transaction {
     private Long id;
     private String name;
     private Float amount;
+    private Float convertedAmount;
+    private String date;
+    private Currency currency;
+    private String formattedDate;
+
     private LocalDateTime dateTime;
     @Enumerated(EnumType.STRING)
     private Category category;
@@ -46,4 +53,19 @@ public class Transaction {
 
     @OneToMany(mappedBy = "transaction")
     private List<Amount> amounts = new ArrayList<>();
+
+    public Transaction(String name, Float amount, UserAccount payer, UserGroup userGroup, Currency currency) {
+        this.name = name;
+        this.amount = amount;
+        LocalDateTime currentDate = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d MMM yyyy, HH:mm");
+        DateTimeFormatter dateOnlyFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        this.date = currentDate.format(formatter);
+        this.formattedDate = currentDate.format(dateOnlyFormatter);
+        this.convertedAmount = ExchangeRate.getExchangeRate(currency, userGroup.getCurrency(), this.formattedDate) * amount;
+        this.payer = payer;
+        this.userGroup = userGroup;
+        this.currency = currency;
+    }
+
 }

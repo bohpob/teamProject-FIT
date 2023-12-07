@@ -22,7 +22,7 @@ public class AdjustmentBasedAmountCalculator implements AmountCalculator {
             totalAdjustment += memberByAdjustment.getAdjustment();
         }
 
-        float amountBeforeAdjustment = transaction.getAmount() - totalAdjustment;
+        float amountBeforeAdjustment = transaction.getConvertedAmount() - totalAdjustment;
         Float baseAmount = amountBeforeAdjustment / adjustmentMemberList.size();
 
         for (int i = 0; i < users.size(); i++) {

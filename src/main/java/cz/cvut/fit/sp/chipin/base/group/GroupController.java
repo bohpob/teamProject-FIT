@@ -126,6 +126,18 @@ public class GroupController {
         }
     }
 
+    @PatchMapping("/{groupId}/transactions/{transactionId}")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<TransactionResponse> patchCurrency(@Valid @RequestBody TransactionService.CurrencyUpdateRequest request,
+                                                                 @PathVariable Long groupId,
+                                                                 @PathVariable Long transactionId) throws Exception {
+        try {
+            return ResponseEntity.ok(userGroupService.updateCurrency(request, groupId, transactionId));
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+    }
+
     @DeleteMapping("/{groupId}/transactions/{transactionId}")
     public void deleteTransaction(@PathVariable Long groupId, @PathVariable Long transactionId) throws Exception {
         try {

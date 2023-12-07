@@ -19,7 +19,7 @@ public class PercentBasedAmountCalculator implements AmountCalculator {
             try {
                 PercentTransactionMember memberByPercentages = (PercentTransactionMember) spenders.get(i);
                 float percent = memberByPercentages.getPercentage();
-                amounts.add(new Amount(users.get(i), transaction, percent * transaction.getAmount() / 100));
+                amounts.add(new Amount(users.get(i), transaction, percent * transaction.getConvertedAmount() / 100));
                 totalPercent += percent;
             } catch (Exception e) {
                 throw new Exception("User not found.");

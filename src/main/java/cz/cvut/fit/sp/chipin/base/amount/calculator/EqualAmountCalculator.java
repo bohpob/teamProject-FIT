@@ -12,7 +12,7 @@ public class EqualAmountCalculator implements AmountCalculator {
     @Override
     public List<Amount> calculateAmounts(List<User> users, Transaction transaction, List<MemberAbstractRequest> spenders) throws Exception {
         List<Amount> amounts = new ArrayList<>();
-        Float spent = transaction.getAmount() / users.size();
+        Float spent = transaction.getConvertedAmount() / users.size();
 
         for (User user : users) {
             try {

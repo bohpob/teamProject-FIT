@@ -18,6 +18,8 @@ public class TransactionCreateTransactionRequest {
     @NotNull
     private Float amount;
     @NotBlank
+    private String currency;
+    @NotBlank
     private String payerId;
     @NotNull
     private TransactionType splitStrategy;

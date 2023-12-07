@@ -20,6 +20,7 @@ public abstract class TransactionRequestDeserializer<T> extends JsonDeserializer
 
         String name = rootNode.get("name").asText();
         float amount = (float) rootNode.get("amount").asDouble();
+        String currency = rootNode.get("currency").asText();
         String payerId = rootNode.get("payerId").asText();
         String splitStrategy = rootNode.get("splitStrategy").asText();
 
@@ -32,11 +33,11 @@ public abstract class TransactionRequestDeserializer<T> extends JsonDeserializer
             }
         }
 
-        return createTransactionRequest(name, amount, payerId, splitStrategy, spenders, rootNode);
+        return createTransactionRequest(name, amount, currency, payerId, splitStrategy, spenders, rootNode);
     }
 
     protected abstract T createTransactionRequest(
-            String name, float amount, String payerId, String splitStrategy, List<MemberAbstractRequest> spenders, JsonNode rootNode);
+            String name, float amount, String currency, String payerId, String splitStrategy, List<MemberAbstractRequest> spenders, JsonNode rootNode);
 
     private MemberAbstractRequest mapSpender(String splitStrategy, JsonNode spenderNode, ObjectMapper mapper)
             throws JsonProcessingException {
