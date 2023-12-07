@@ -14,8 +14,8 @@ import java.util.stream.Collectors;
 public class TransactionConverter {
     public static TransactionResponse toDto(Transaction transaction) {
         return new TransactionResponse(transaction.getId(), transaction.getName(),
-                Float.valueOf(String.format(Locale.getDefault(), "%.2f",
-                        transaction.getAmount())), transaction.getDate(),
+                /*Float.valueOf(String.format(Locale.getDefault(), "%.2f",
+                        transaction.getAmount()))*/transaction.getAmount(), transaction.getDate(),
                 new UserAccountDTO(transaction.getPayer().getName()),
                 transaction.getAmounts().stream().map(AmountConverter::toDto).collect(Collectors.toList()));
     }

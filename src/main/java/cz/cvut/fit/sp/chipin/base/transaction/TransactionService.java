@@ -4,6 +4,7 @@ import cz.cvut.fit.sp.chipin.authentication.useraccount.UserAccount;
 import cz.cvut.fit.sp.chipin.base.amount.Amount;
 import cz.cvut.fit.sp.chipin.base.amount.AmountService;
 import cz.cvut.fit.sp.chipin.base.member.Member;
+import cz.cvut.fit.sp.chipin.base.member.MemberService;
 import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionMapper;
 import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionReadGroupTransactionResponse;
 import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionReadGroupTransactionsResponse;
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class TransactionService {
     private final TransactionRepository transactionRepository;
+    private final MemberService memberService;
     private final AmountService amountService;
     private final TransactionMapper transactionMapper;
 
@@ -39,24 +41,42 @@ public class TransactionService {
 
     //new
     public List<TransactionReadGroupTransactionsResponse> readGroupTransactions(
-            Long groupId, List<Category> categories, String dateFrom, String dateTo, List<Member> members) throws Exception {
+            Long groupId, TransactionReadGroupTransactionsSmartRequest request) throws Exception {
         try {
+
+//            List<Category> categories = request.getCategories().stream().map(Category::valueOf).collect(Collectors.toList());
+//            List<Member> members = memberService.readMembers(groupId).stream()
+//                    .filter(member -> request.getMembers().stream()
+//                    .anyMatch(memberReadMemberResponse -> memberReadMemberResponse.getId().equals(member.getId().getUserAccountId()))).toList();
+//            String dateFrom = request.getDateFrom();
+//            String dateTo = request.getDateTo();
+
             Set<Transaction> transactionsSet = new HashSet<>(transactionRepository.findTransactionsByUserGroupId(groupId));
 
-            if (categories != null && !categories.isEmpty()) {
-                transactionsSet.retainAll(transactionRepository.findTransactionByUserGroupIdAndCategoryIn(groupId, categories));
+            if (!request.categories.isEmpty()) {
+//                transactionsSet.retainAll(transactionRepository.findTransactionByUserGroupIdAndCategoryIn(groupId, categories));
+                transactionsSet = transactionsSet.stream()
+                        .filter(transaction -> request.categories.contains(transaction.getCategory().name()))
+                        .collect(Collectors.toSet());
             }
-            if (dateFrom != null && dateTo != null) {
-                transactionsSet.retainAll(transactionRepository.findTransactionsByUserGroupIdAndDateBetween(groupId, dateFrom, dateTo));
+            if (request.dateFrom != null && request.dateTo != null) {
+//                transactionsSet.retainAll(transactionRepository.findTransactionsByUserGroupIdAndDateBetween(groupId, dateFrom, dateTo));
+                transactionsSet = transactionsSet.stream()
+                        .filter(transaction -> transaction.getDate()
+                                .compareTo(request.dateFrom) >= 0 && transaction.getDate().compareTo(request.dateTo) <= 0)
+                        .collect(Collectors.toSet());
             }
 
-            if(members != null && !members.isEmpty()){
-//                transactionsSet.retainAll(transactionRepository.findMemberTransactionsByUserGroupId(groupId, members));
+            if(request.getMembers() != null && !request.getMembers().isEmpty()){
+                transactionsSet = transactionsSet.stream()
+                        .filter(transaction -> request.getMembers().stream()
+                                .anyMatch(memberReadMemberResponse -> memberReadMemberResponse.getId()
+                                        .equals(transaction.getPayer().getId())))
+                        .collect(Collectors.toSet());
             }
 
             return transactionsSet.stream()
-                    .map(transactionMapper::entityToReadGroupTransactionsResponse)
-                    .collect(Collectors.toList());
+                    .map(transactionMapper::entityToReadGroupTransactionsResponse).toList();
         }
         catch (Exception e) {
             throw new Exception(e.getMessage());

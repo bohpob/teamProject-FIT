@@ -1,6 +1,5 @@
 package cz.cvut.fit.sp.chipin.base.usergroup;
 
-import cz.cvut.fit.sp.chipin.base.member.Member;
 import cz.cvut.fit.sp.chipin.base.transaction.*;
 import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionReadGroupTransactionResponse;
 import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionReadGroupTransactionsResponse;
@@ -10,7 +9,6 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -24,16 +22,12 @@ public class UserGroupController {
     private final TransactionService transactionService;
 
     //new
-    @GetMapping("/{groupId}/transactions/search/")
-    public List<TransactionReadGroupTransactionsResponse> readGroupTransactions(
-            @RequestParam Long groupId,
-            @RequestBody @RequestParam(required = false) List<Category> categories,
-            @RequestBody @RequestParam(required = false) String dateFrom,
-            @RequestBody @RequestParam(required = false) String dateTo,
-            @RequestBody @RequestParam(required = false) List<Member> members
-    ) throws Exception {
+    @PostMapping("/{groupId}/transactions/search")
+    public List<TransactionReadGroupTransactionsResponse> readGroupTransactionsSmart(
+            @PathVariable Long groupId,
+            @RequestBody TransactionReadGroupTransactionsSmartRequest request) throws Exception {
         try {
-            return transactionService.readGroupTransactions(groupId, categories, dateFrom, dateTo, members);
+            return transactionService.readGroupTransactions(groupId, request);
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
