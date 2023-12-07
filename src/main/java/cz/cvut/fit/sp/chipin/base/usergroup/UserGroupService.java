@@ -209,6 +209,11 @@ public class UserGroupService {
         return TransactionConverter.toDto(transaction.get());
     }
 
+    public UserGroup read(Long id) throws Exception {
+        return userGroupRepository.findById(id)
+                .orElseThrow(() -> new Exception("Group not found"));
+    }
+
     public TransactionReadGroupTransactionResponse readGroupTransaction(Long transactionId, Long groupId) throws Exception {
         return transactionService.readGroupTransaction(transactionId, groupId);
     }
@@ -217,6 +222,17 @@ public class UserGroupService {
         UserGroup userGroup = userGroupRepository.findById(groupId)
                 .orElseThrow(() -> new Exception("Group not found"));
         return userGroupMapper.entityToReadGroupTransactionsResponse(userGroup);
+    }
+
+    public GroupReadGroupTransactionsResponse readGroupTransactionsByCategories(Long groupId, List<Category> categories) throws Exception {
+        List<Transaction> transactions1 = read(groupId)
+                .getTransactions()
+                .stream()
+                .filter(transaction -> categories.contains(transaction.getCategory()))
+                .toList();
+
+        List<Transaction> transactions = transactionService.readAllByCategories(groupId, categories);
+        return userGroupMapper.transactionsToReadGroupTransactionsResponse(0, transactions);
     }
 
     public TransactionResponse updateTransaction(TransactionUpdateRequest transactionUpdateRequest,

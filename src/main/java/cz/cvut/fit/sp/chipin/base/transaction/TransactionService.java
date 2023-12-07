@@ -24,6 +24,8 @@ public class TransactionService {
 
     public Transaction create(TransactionCreateRequest request, UserAccount payer, UserGroup userGroup) throws Exception {
         Transaction transaction = TransactionConverter.fromCreateDto(request, payer, userGroup);
+        //TODO: replace with Request field
+        transaction.setCategory(Category.NO_CATEGORY);
 
         try {
             List<Amount> amounts = amountService.setAmounts(request.getSpenderIds(), transaction);
@@ -50,6 +52,10 @@ public class TransactionService {
         Transaction transaction = read(transactionId, groupId)
                 .orElseThrow(() -> new Exception("Transaction not found"));
         return transactionMapper.entityToReadGroupTransactionResponse(transaction);
+    }
+
+    public List<Transaction> readAllByCategories(Long groupId, List<Category> categories) throws Exception {
+        return transactionRepository.findTransactionByUserGroupIdAndCategoryIn(groupId, categories);
     }
 
     @Transactional

@@ -3,10 +3,13 @@ package cz.cvut.fit.sp.chipin.base.usergroup.mapper;
 import cz.cvut.fit.sp.chipin.base.debt.mapper.DebtMapper;
 import cz.cvut.fit.sp.chipin.base.log.mapper.LogMapper;
 import cz.cvut.fit.sp.chipin.base.member.mapper.MemberMapper;
+import cz.cvut.fit.sp.chipin.base.transaction.Transaction;
 import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionMapper;
 import cz.cvut.fit.sp.chipin.base.usergroup.UserGroup;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+
+import java.util.List;
 
 @Mapper(
         componentModel = "spring",
@@ -19,6 +22,8 @@ public interface UserGroupMapper {
 
     @Mapping(source = "userGroup.transactions", target = "transactions")
     GroupReadGroupTransactionsResponse entityToReadGroupTransactionsResponse(UserGroup userGroup);
+
+    GroupReadGroupTransactionsResponse transactionsToReadGroupTransactionsResponse(Integer dummy, List<Transaction> transactions);
 
     @Mapping(source = "userGroup.logs", target = "logs")
     GroupReadGroupLogsResponse entityToReadGroupLogsResponse(UserGroup userGroup);

@@ -1,8 +1,6 @@
 package cz.cvut.fit.sp.chipin.base.usergroup;
 
-import cz.cvut.fit.sp.chipin.base.transaction.TransactionCreateRequest;
-import cz.cvut.fit.sp.chipin.base.transaction.TransactionResponse;
-import cz.cvut.fit.sp.chipin.base.transaction.TransactionUpdateRequest;
+import cz.cvut.fit.sp.chipin.base.transaction.*;
 import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionReadGroupTransactionResponse;
 import cz.cvut.fit.sp.chipin.base.usergroup.mapper.*;
 import jakarta.validation.Valid;
@@ -10,9 +8,11 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/user-groups")
@@ -75,6 +75,17 @@ public class UserGroupController {
     public ResponseEntity<GroupReadGroupTransactionsResponse> readGroupTransactions(@PathVariable Long groupId) throws Exception {
         try {
             return ResponseEntity.ok(userGroupService.readGroupTransactions(groupId));
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+    }
+
+    @GetMapping("/{groupId}/transactions/categories")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<GroupReadGroupTransactionsResponse> readGroupTransactionsByCategories(@PathVariable Long groupId,
+                                                                                                @RequestBody List<Category> categories) throws Exception {
+        try {
+            return ResponseEntity.ok(userGroupService.readGroupTransactionsByCategories(groupId, categories));
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }

@@ -35,6 +35,8 @@ public class Transaction {
     private String name;
     private Float amount;
     private String date;
+    @Enumerated(EnumType.STRING)
+    private Category category;
     @ManyToOne
     @JoinColumn(name = "user_group_id")
     private UserGroup userGroup;

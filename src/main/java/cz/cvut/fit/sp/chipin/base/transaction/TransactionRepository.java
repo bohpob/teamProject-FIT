@@ -8,4 +8,6 @@ import java.util.List;
 @Repository
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
     List<Transaction> findTransactionsByUserGroupId(Long groupId);
+
+    List<Transaction> findTransactionByUserGroupIdAndCategoryIn(Long groupId, List<Category> categories);
 }
