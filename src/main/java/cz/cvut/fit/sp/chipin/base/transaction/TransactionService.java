@@ -3,16 +3,17 @@ package cz.cvut.fit.sp.chipin.base.transaction;
 import cz.cvut.fit.sp.chipin.authentication.useraccount.UserAccount;
 import cz.cvut.fit.sp.chipin.base.amount.Amount;
 import cz.cvut.fit.sp.chipin.base.amount.AmountService;
+import cz.cvut.fit.sp.chipin.base.member.Member;
 import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionMapper;
 import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionReadGroupTransactionResponse;
 import cz.cvut.fit.sp.chipin.base.usergroup.UserGroup;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -38,9 +39,27 @@ public class TransactionService {
     }
 
     //new
-    public List<TransactionReadGroupTransactionResponse> readGroupTransactionsByCategories(Long groupId, List<Category> categories) throws Exception {
-        List<Transaction> transactions = transactionRepository.findTransactionByUserGroupIdAndCategoryIn(groupId, categories);
-        return transactions.stream()
+    public List<TransactionReadGroupTransactionResponse> readGroupTransactions(
+            Long groupId,
+            @RequestBody @RequestParam(required = false) List<Category> categories,
+            @RequestBody @RequestParam(required = false) String dateFrom,
+            @RequestBody @RequestParam(required = false) String dateTo,
+            @RequestBody @RequestParam(required = false) List<Member> members
+    ) throws Exception {
+        Set<Transaction> transactionsSet = new HashSet<>(transactionRepository.findTransactionsByUserGroupId(groupId));
+
+        if (categories != null && !categories.isEmpty()) {
+            transactionsSet.retainAll(transactionRepository.findTransactionByUserGroupIdAndCategoryIn(groupId, categories));
+        }
+        if (dateFrom != null && dateTo != null) {
+            transactionsSet.retainAll(transactionRepository.findTransactionsByUserGroupIdAndDateBetween(groupId, dateFrom, dateTo));
+        }
+
+        if(members != null && !members.isEmpty()){
+            transactionsSet.retainAll(transactionRepository.findMemberTransactionsByUserGroupId(groupId, members));
+        }
+
+        return transactionsSet.stream()
                 .map(transactionMapper::entityToReadGroupTransactionResponse)
                 .collect(Collectors.toList());
     }
