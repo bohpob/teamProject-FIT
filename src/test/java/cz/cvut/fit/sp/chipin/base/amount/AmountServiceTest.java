@@ -1,12 +1,12 @@
 //package cz.cvut.fit.sp.chipin.base.amount;
 //
-//import cz.cvut.fit.sp.chipin.authentication.useraccount.UserAccount;
-//import cz.cvut.fit.sp.chipin.authentication.useraccount.UserAccountService;
+//import cz.cvut.fit.sp.chipin.authentication.useraccount.User;
+//import cz.cvut.fit.sp.chipin.authentication.useraccount.UserService;
 //import cz.cvut.fit.sp.chipin.base.amount.calculator.*;
 //import cz.cvut.fit.sp.chipin.base.transaction.Transaction;
 //import cz.cvut.fit.sp.chipin.base.transaction.TransactionType;
 //import cz.cvut.fit.sp.chipin.base.transaction.spender.*;
-//import cz.cvut.fit.sp.chipin.base.usergroup.UserGroup;
+//import cz.cvut.fit.sp.chipin.base.usergroup.Group;
 //import org.junit.jupiter.api.Assertions;
 //import org.junit.jupiter.api.Test;
 //import org.mockito.InjectMocks;
@@ -21,19 +21,19 @@
 //import static org.mockito.Mockito.mockStatic;
 //import static org.mockito.Mockito.when;
 //
-//@SpringBootTest(classes = {UserAccountService.class, AmountService.class})
+//@SpringBootTest(classes = {UserService.class, AmountService.class})
 //public class AmountServiceTest {
 //
 //    @MockBean
-//    private UserAccountService userAccountService;
+//    private UserService userService;
 //
 //    @InjectMocks
 //    private AmountService amountService;
 //
 //    @Test
 //    public void testSetAmountsWithValidEqualInputs_1() throws Exception {
-//        UserAccount payer = new UserAccount();
-//        UserGroup group = new UserGroup();
+//        User payer = new User();
+//        Group group = new Group();
 //
 //        Transaction transaction = new Transaction("Transaction1", 300f, payer, group);
 //        List<MemberAbstractRequest> spenders = Arrays.asList(
@@ -43,7 +43,7 @@
 //        );
 //
 //        try (MockedStatic<AmountSplitterProvider> mocked = mockStatic(AmountSplitterProvider.class)) {
-//            when(userAccountService.getUserAccount(anyString())).thenReturn(new UserAccount());
+//            when(userService.getUser(anyString())).thenReturn(new User());
 //            mocked.when(() -> AmountSplitterProvider.getStrategy(TransactionType.EQUALLY))
 //                    .thenReturn(new EqualAmountCalculator());
 //
@@ -59,8 +59,8 @@
 //
 //    @Test
 //    public void testSetAmountsWithValidEqualInputs_2() throws Exception {
-//        UserAccount payer = new UserAccount();
-//        UserGroup group = new UserGroup();
+//        User payer = new User();
+//        Group group = new Group();
 //
 //        Transaction transaction = new Transaction("Transaction1", 2000f, payer, group);
 //        List<MemberAbstractRequest> spenders = Arrays.asList(
@@ -70,7 +70,7 @@
 //        );
 //
 //        try (MockedStatic<AmountSplitterProvider> mocked = mockStatic(AmountSplitterProvider.class)) {
-//            when(userAccountService.getUserAccount(anyString())).thenReturn(new UserAccount());
+//            when(userService.getUser(anyString())).thenReturn(new User());
 //            mocked.when(() -> AmountSplitterProvider.getStrategy(TransactionType.EQUALLY))
 //                    .thenReturn(new EqualAmountCalculator());
 //
@@ -87,8 +87,8 @@
 //
 //    @Test
 //    public void testSetAmountsWithValidUnequalInputs_1() throws Exception {
-//        UserAccount payer = new UserAccount();
-//        UserGroup group = new UserGroup();
+//        User payer = new User();
+//        Group group = new Group();
 //
 //        Transaction transaction = new Transaction("Transaction1", 300f, payer, group);
 //        List<MemberAbstractRequest> spenders = Arrays.asList(
@@ -97,7 +97,7 @@
 //        );
 //
 //        try (MockedStatic<AmountSplitterProvider> mocked = mockStatic(AmountSplitterProvider.class)) {
-//            when(userAccountService.getUserAccount(anyString())).thenReturn(new UserAccount());
+//            when(userService.getUser(anyString())).thenReturn(new User());
 //            mocked.when(() -> AmountSplitterProvider.getStrategy(TransactionType.UNEQUALLY))
 //                    .thenReturn(new UnequalAmountCalculator());
 //
@@ -112,8 +112,8 @@
 //
 //    @Test
 //    public void testSetAmountsWithValidByAdjustmentInputs_1() throws Exception {
-//        UserAccount payer = new UserAccount();
-//        UserGroup group = new UserGroup();
+//        User payer = new User();
+//        Group group = new Group();
 //
 //        Transaction transaction = new Transaction("Transaction1", 300f, payer, group);
 //        List<MemberAbstractRequest> spenders = Arrays.asList(
@@ -123,7 +123,7 @@
 //        );
 //
 //        try (MockedStatic<AmountSplitterProvider> mocked = mockStatic(AmountSplitterProvider.class)) {
-//            when(userAccountService.getUserAccount(anyString())).thenReturn(new UserAccount());
+//            when(userService.getUser(anyString())).thenReturn(new User());
 //            mocked.when(() -> AmountSplitterProvider.getStrategy(TransactionType.BY_ADJUSTMENT))
 //                    .thenReturn(new AdjustmentBasedAmountCalculator());
 //
@@ -140,8 +140,8 @@
 //
 //    @Test
 //    public void testSetAmountsWithValidByAdjustmentInputs_2() throws Exception {
-//        UserAccount payer = new UserAccount();
-//        UserGroup group = new UserGroup();
+//        User payer = new User();
+//        Group group = new Group();
 //
 //        Transaction transaction = new Transaction("Transaction1", 300f, payer, group);
 //        List<MemberAbstractRequest> spenders = Arrays.asList(
@@ -151,7 +151,7 @@
 //        );
 //
 //        try (MockedStatic<AmountSplitterProvider> mocked = mockStatic(AmountSplitterProvider.class)) {
-//            when(userAccountService.getUserAccount(anyString())).thenReturn(new UserAccount());
+//            when(userService.getUser(anyString())).thenReturn(new User());
 //            mocked.when(() -> AmountSplitterProvider.getStrategy(TransactionType.BY_ADJUSTMENT))
 //                    .thenReturn(new AdjustmentBasedAmountCalculator());
 //
@@ -168,8 +168,8 @@
 //
 //    @Test
 //    public void testSetAmountsWithValidByAdjustmentInputs_3() throws Exception {
-//        UserAccount payer = new UserAccount();
-//        UserGroup group = new UserGroup();
+//        User payer = new User();
+//        Group group = new Group();
 //
 //        Transaction transaction = new Transaction("Transaction1", 300f, payer, group);
 //        List<MemberAbstractRequest> spenders = Arrays.asList(
@@ -179,7 +179,7 @@
 //        );
 //
 //        try (MockedStatic<AmountSplitterProvider> mocked = mockStatic(AmountSplitterProvider.class)) {
-//            when(userAccountService.getUserAccount(anyString())).thenReturn(new UserAccount());
+//            when(userService.getUser(anyString())).thenReturn(new User());
 //            mocked.when(() -> AmountSplitterProvider.getStrategy(TransactionType.BY_ADJUSTMENT))
 //                    .thenReturn(new AdjustmentBasedAmountCalculator());
 //
@@ -196,8 +196,8 @@
 //
 //    @Test
 //    public void testSetAmountsWithValidByPercentagesInputs() throws Exception {
-//        UserAccount payer = new UserAccount();
-//        UserGroup group = new UserGroup();
+//        User payer = new User();
+//        Group group = new Group();
 //
 //        Transaction transaction = new Transaction("Transaction1", 300f, payer, group);
 //        List<MemberAbstractRequest> spenders = Arrays.asList(
@@ -207,7 +207,7 @@
 //        );
 //
 //        try (MockedStatic<AmountSplitterProvider> mocked = mockStatic(AmountSplitterProvider.class)) {
-//            when(userAccountService.getUserAccount(anyString())).thenReturn(new UserAccount());
+//            when(userService.getUser(anyString())).thenReturn(new User());
 //            mocked.when(() -> AmountSplitterProvider.getStrategy(TransactionType.BY_PERCENTAGES))
 //                    .thenReturn(new PercentBasedAmountCalculator());
 //
@@ -223,8 +223,8 @@
 //
 //    @Test
 //    public void testSetAmountsWithValidBySharesInputs() throws Exception {
-//        UserAccount payer = new UserAccount();
-//        UserGroup group = new UserGroup();
+//        User payer = new User();
+//        Group group = new Group();
 //
 //        Transaction transaction = new Transaction("Transaction1", 300f, payer, group);
 //        List<MemberAbstractRequest> spenders = Arrays.asList(
@@ -234,7 +234,7 @@
 //        );
 //
 //        try (MockedStatic<AmountSplitterProvider> mocked = mockStatic(AmountSplitterProvider.class)) {
-//            when(userAccountService.getUserAccount(anyString())).thenReturn(new UserAccount());
+//            when(userService.getUser(anyString())).thenReturn(new User());
 //            mocked.when(() -> AmountSplitterProvider.getStrategy(TransactionType.BY_SHARES))
 //                    .thenReturn(new ShareBasedAmountCalculator());
 //

@@ -6,7 +6,7 @@ import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface LogMapper {
-    @Mapping(source = "userAccount.userEntity.id", target = "userId")
-    @Mapping(source = "userAccount.userEntity.firstName", target = "userName")
+    @Mapping(source = "user.id", target = "userId")
+    @Mapping(source = "user.firstName", target = "userName")
     LogReadLogResponse entityToReadLogResponse(Log log);
 }

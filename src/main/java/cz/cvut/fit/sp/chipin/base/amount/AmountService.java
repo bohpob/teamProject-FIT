@@ -1,7 +1,7 @@
 package cz.cvut.fit.sp.chipin.base.amount;
 
-import cz.cvut.fit.sp.chipin.authentication.useraccount.UserAccount;
-import cz.cvut.fit.sp.chipin.authentication.useraccount.UserAccountService;
+import cz.cvut.fit.sp.chipin.authentication.user.User;
+import cz.cvut.fit.sp.chipin.authentication.user.UserService;
 import cz.cvut.fit.sp.chipin.base.transaction.Transaction;
 import cz.cvut.fit.sp.chipin.base.transaction.TransactionType;
 import cz.cvut.fit.sp.chipin.base.amount.calculator.AmountSplitterProvider;
@@ -16,23 +16,23 @@ import java.util.List;
 @AllArgsConstructor
 public class AmountService {
     private final AmountRepository amountRepository;
-    private final UserAccountService userAccountService;
+    private final UserService userService;
 
     public List<Amount> setAmounts(Transaction transaction, List<MemberAbstractRequest> spenders, TransactionType splitStrategy) throws Exception {
         if (spenders.isEmpty()) {
-            throw new Exception("UserAccounts not found.");
+            throw new Exception("Users not found.");
         }
 
-        List<UserAccount> userAccounts = new ArrayList<>();
+        List<User> users = new ArrayList<>();
         for (MemberAbstractRequest spender : spenders) {
             try {
-                userAccounts.add(userAccountService.getUserAccount(spender.getSpenderId()));
+                users.add(userService.getUser(spender.getSpenderId()));
             } catch (Exception e) {
-                throw new Exception("UserAccount not found.");
+                throw new Exception("User not found.");
             }
         }
 
-        List<Amount> amounts = AmountSplitterProvider.getStrategy(splitStrategy).calculateAmounts(userAccounts, transaction, spenders);
+        List<Amount> amounts = AmountSplitterProvider.getStrategy(splitStrategy).calculateAmounts(users, transaction, spenders);
 
         transaction.setAmounts(amounts);
         return amounts;

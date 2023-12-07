@@ -16,8 +16,8 @@ import java.io.Serializable;
 public class MemberKey implements Serializable {
 
     @NotNull
-    @Column(name = "user_account_id")
-    private String userAccountId;
+    @Column(name = "user_entity_id")
+    private String userId;
 
     @NotNull
     @Column(name = "user_group_id")

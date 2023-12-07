@@ -4,7 +4,7 @@ import cz.cvut.fit.sp.chipin.base.debt.mapper.DebtMapper;
 import cz.cvut.fit.sp.chipin.base.log.mapper.LogMapper;
 import cz.cvut.fit.sp.chipin.base.member.mapper.MemberMapper;
 import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionMapper;
-import cz.cvut.fit.sp.chipin.base.usergroup.UserGroup;
+import cz.cvut.fit.sp.chipin.base.usergroup.Group;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -12,18 +12,18 @@ import org.mapstruct.Mapping;
         componentModel = "spring",
         uses = {DebtMapper.class, MemberMapper.class, TransactionMapper.class, LogMapper.class}
 )
-public interface UserGroupMapper {
-    GroupCreateGroupResponse entityToCreateGroupResponse(UserGroup userGroup);
+public interface GroupMapper {
+    GroupCreateGroupResponse entityToCreateGroupResponse(Group group);
 
-    GroupReadGroupResponse entityToReadGroupResponse(UserGroup userGroup);
+    GroupReadGroupResponse entityToReadGroupResponse(Group group);
 
-    @Mapping(source = "userGroup.transactions", target = "transactions")
-    GroupReadGroupTransactionsResponse entityToReadGroupTransactionsResponse(UserGroup userGroup);
+    @Mapping(source = "group.transactions", target = "transactions")
+    GroupReadGroupTransactionsResponse entityToReadGroupTransactionsResponse(Group group);
 
-    @Mapping(source = "userGroup.logs", target = "logs")
-    GroupReadGroupLogsResponse entityToReadGroupLogsResponse(UserGroup userGroup);
+    @Mapping(source = "group.logs", target = "logs")
+    GroupReadGroupLogsResponse entityToReadGroupLogsResponse(Group group);
 
-    GroupUpdateGroupNameResponse entityToUpdateGroupNameResponse(UserGroup userGroup);
+    GroupUpdateGroupNameResponse entityToUpdateGroupNameResponse(Group group);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "debts", ignore = true)
@@ -31,5 +31,5 @@ public interface UserGroupMapper {
     @Mapping(target = "members", ignore = true)
     @Mapping(target = "transactions", ignore = true)
     @Mapping(target = "hexCode", ignore = true)
-    UserGroup createGroupRequestToEntity(GroupCreateGroupRequest groupCreateGroupRequest);
+    Group createGroupRequestToEntity(GroupCreateGroupRequest groupCreateGroupRequest);
 }

@@ -1,4 +1,4 @@
-package cz.cvut.fit.sp.chipin.authentication.useraccount.mapper;
+package cz.cvut.fit.sp.chipin.authentication.user.mapper;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
