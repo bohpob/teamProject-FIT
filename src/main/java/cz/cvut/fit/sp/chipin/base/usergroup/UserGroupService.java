@@ -3,6 +3,8 @@ package cz.cvut.fit.sp.chipin.base.usergroup;
 import cz.cvut.fit.sp.chipin.authentication.useraccount.UserAccount;
 import cz.cvut.fit.sp.chipin.authentication.useraccount.UserAccountService;
 import cz.cvut.fit.sp.chipin.base.amount.Amount;
+import cz.cvut.fit.sp.chipin.base.transaction.spender.UnequalTransactionMember;
+import cz.cvut.fit.sp.chipin.base.transaction.TransactionType;
 import cz.cvut.fit.sp.chipin.base.debt.Debt;
 import cz.cvut.fit.sp.chipin.base.debt.DebtService;
 import cz.cvut.fit.sp.chipin.base.log.LogService;
@@ -12,6 +14,8 @@ import cz.cvut.fit.sp.chipin.base.member.MemberService;
 import cz.cvut.fit.sp.chipin.base.transaction.*;
 import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionReadGroupTransactionResponse;
 import cz.cvut.fit.sp.chipin.base.usergroup.mapper.*;
+import cz.cvut.fit.sp.chipin.base.transaction.TransactionCreateRequest;
+import cz.cvut.fit.sp.chipin.base.transaction.spender.MemberAbstractRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -154,16 +158,18 @@ public class UserGroupService {
             throw new Exception("Debt not found");
         }
 
-        List<String> amounts = new ArrayList<>();
-        amounts.add(lenderId);
-        TransactionCreateRequest transactionCreateRequest = new TransactionCreateRequest(
+        List<MemberAbstractRequest> amounts = new ArrayList<>();
+        amounts.add(new UnequalTransactionMember(lenderId, debt.get().getAmount()));
+
+        TransactionCreateRequest request = new TransactionCreateRequest(
                 borrower.get().getUserAccount().getName() + " repaid "
                         + lender.get().getUserAccount().getName() + "'s " + "debt",
-                debt.get().getAmount(), borrower.get().getUserAccount().getId(), amounts);
+                debt.get().getAmount(), borrower.get().getUserAccount().getId(), TransactionType.UNEQUALLY, amounts);
+
 
         try {
-            if (allSpendersFromGroup(transactionCreateRequest.getSpenderIds(), groupId)) {
-                Transaction transaction = transactionService.create(transactionCreateRequest,
+            if (allSpendersFromGroup(request.getSpenders(), groupId)) {
+                Transaction transaction = transactionService.create(request,
                         borrower.get().getUserAccount(), group.get());
                 acceptTxCreate(transaction);
                 //
@@ -172,25 +178,25 @@ public class UserGroupService {
         } catch (Exception e) {
             throw new Exception(e);
         }
+
     }
 
-    public TransactionResponse createTransaction(TransactionCreateRequest transactionCreateRequest,
-                                                 Long groupId) throws Exception {
+    public TransactionResponse createTransaction(TransactionCreateRequest request, Long groupId) throws Exception {
         Optional<UserGroup> group = userGroupRepository.findById(groupId);
         if (group.isEmpty()) {
             throw new Exception("Group not found.");
         }
-        Optional<Member> payer = memberService.readMember(transactionCreateRequest.getPayerId(), groupId);
+        Optional<Member> payer = memberService.readMember(request.getPayerId(), groupId);
         if (payer.isEmpty()) {
             throw new Exception("Payer not found.");
         }
 
         Transaction transaction = new Transaction();
         try {
-            if (allSpendersFromGroup(transactionCreateRequest.getSpenderIds(), groupId)) {
-                transaction = transactionService.create(transactionCreateRequest, payer.get().getUserAccount(), group.get());
+            if (allSpendersFromGroup(request.getSpenders(), groupId)) {
+                transaction = transactionService.create(request, payer.get().getUserAccount(), group.get());
                 acceptTxCreate(transaction);
-                // change to the userAccount who will actually delete the transaction
+
                 logService.create("made a payment: " + transaction.getAmount(),
                         transaction.getUserGroup(), transaction.getPayer());
             }
@@ -258,7 +264,7 @@ public class UserGroupService {
         }
 
         try {
-            if (allSpendersFromGroup(transactionUpdateRequest.getSpenderIds(), groupId)) {
+            if (allSpendersFromGroup(transactionUpdateRequest.getSpenders(), groupId)) {
                 acceptTxDelete(transaction.get());
                 transactionService.update(transaction.get(), transactionUpdateRequest, nextPayer.get().getUserAccount());
                 acceptTxCreate(transaction.get());
@@ -286,7 +292,8 @@ public class UserGroupService {
         logService.create("deleted transaction", payer.get().getUserGroup(), payer.get().getUserAccount());
     }
 
-    private boolean allSpendersFromGroup(List<String> ids, Long groupId) throws Exception {
+    private boolean allSpendersFromGroup(List<MemberAbstractRequest> spenders, Long groupId) throws Exception {
+        List<String> ids = spenders.stream().map(MemberAbstractRequest::getSpenderId).toList();
         for (String id : ids) {
             if (memberService.readMember(id, groupId).isEmpty()) {
                 throw new Exception("UserAccount is not from this group");

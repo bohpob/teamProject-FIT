@@ -8,12 +8,12 @@
     "database.password": "postgres",
     "database.dbname": "keycloak",
     "database.server.name": "keycloak-db-server",
+    "topic.prefix": "keycloak-db-server",
     "table.include.list": "public.user_entity",
     "plugin.name": "pgoutput",
     "snapshot.mode": "initial",
-    "transforms": "route",
-    "transforms.route.type": "org.apache.kafka.connect.transforms.RegexRouter",
-    "transforms.route.regex": "([^.]+)\\.([^.]+)\\.([^.]+)",
-    "transforms.route.replacement": "$3"
+    "table.name.format": "user_entity",
+    "transforms": "unwrap",
+    "transforms.unwrap.type": "io.debezium.transforms.ExtractNewRecordState"
   }
 }
