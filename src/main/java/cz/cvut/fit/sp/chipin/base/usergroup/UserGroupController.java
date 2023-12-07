@@ -23,6 +23,7 @@ public class UserGroupController {
     private final UserGroupService userGroupService;
     private final TransactionService transactionService;
 
+    //new
     @GetMapping("/{groupId}/transactions/search/")
     public List<TransactionReadGroupTransactionsResponse> readGroupTransactions(
             @RequestParam Long groupId,

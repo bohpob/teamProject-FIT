@@ -51,7 +51,7 @@ public class TransactionService {
             }
 
             if(members != null && !members.isEmpty()){
-                transactionsSet.retainAll(transactionRepository.findMemberTransactionsByUserGroupId(groupId, members));
+//                transactionsSet.retainAll(transactionRepository.findMemberTransactionsByUserGroupId(groupId, members));
             }
 
             return transactionsSet.stream()

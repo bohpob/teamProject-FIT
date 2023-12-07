@@ -14,6 +14,6 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
 
     List<Transaction> findTransactionsByUserGroupIdAndDateBetween(Long groupId, String dateFrom, String dateTo);
 
-    List<Transaction> findMemberTransactionsByUserGroupId(Long groupId, List<Member> members);
+//    List<Transaction> findMemberTransactionsByUserGroupId(Long groupId, List<Member> members);
 
 }
