@@ -1,7 +1,9 @@
 package cz.cvut.fit.sp.chipin.base.usergroup;
 
+import cz.cvut.fit.sp.chipin.base.member.Member;
 import cz.cvut.fit.sp.chipin.base.transaction.*;
 import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionReadGroupTransactionResponse;
+import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionReadGroupTransactionsResponse;
 import cz.cvut.fit.sp.chipin.base.usergroup.mapper.*;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -19,6 +21,22 @@ import java.util.List;
 @AllArgsConstructor
 public class UserGroupController {
     private final UserGroupService userGroupService;
+    private final TransactionService transactionService;
+
+    @GetMapping("/{groupId}/transactions/search/")
+    public List<TransactionReadGroupTransactionsResponse> readGroupTransactions(
+            @RequestParam Long groupId,
+            @RequestBody @RequestParam(required = false) List<Category> categories,
+            @RequestBody @RequestParam(required = false) String dateFrom,
+            @RequestBody @RequestParam(required = false) String dateTo,
+            @RequestBody @RequestParam(required = false) List<Member> members
+    ) throws Exception {
+        try {
+            return transactionService.readGroupTransactions(groupId, categories, dateFrom, dateTo, members);
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+    }
 
     @PostMapping
     public ResponseEntity<GroupCreateGroupResponse> createGroup(@Valid @RequestBody GroupCreateGroupRequest request,
