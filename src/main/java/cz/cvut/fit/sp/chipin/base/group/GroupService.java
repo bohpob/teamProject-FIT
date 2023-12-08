@@ -90,7 +90,7 @@ public class GroupService {
         groupRepository.save(group);
 
         logService.create("joined the group.", group, user);
-        return "UserAccount joined";
+        return "User joined";
     }
 
     public void acceptTxCreate(Transaction transaction) throws Exception {
@@ -286,7 +286,7 @@ public class GroupService {
 
         acceptTxDelete(transaction.get());
         transactionService.delete(transaction.get());
-        // change to the userAccount who will actually delete the transaction
+        // change to the user who will actually delete the transaction
         logService.create("deleted transaction", payer.get().getGroup(), payer.get().getUser());
     }
 
@@ -294,7 +294,7 @@ public class GroupService {
         List<String> ids = spenders.stream().map(MemberAbstractRequest::getSpenderId).toList();
         for (String id : ids) {
             if (memberService.readMember(id, groupId).isEmpty()) {
-                throw new Exception("UserAccount is not from this group");
+                throw new Exception("User is not from this group");
             }
         }
         return true;
