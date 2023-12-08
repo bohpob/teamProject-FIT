@@ -52,9 +52,9 @@ public class GroupController {
     }
 
     @PatchMapping("/{groupId}/join")
-    public String addMember(@Valid @RequestParam String userAccountId, @PathVariable Long groupId) throws Exception {
+    public String addMember(@Valid @RequestParam String userId, @PathVariable Long groupId) throws Exception {
         try {
-            return groupService.addMember(userAccountId, groupId);
+            return groupService.addMember(userId, groupId);
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }

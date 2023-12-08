@@ -71,8 +71,8 @@ public class GroupService {
         return groupMapper.entityToReadGroupResponse(group);
     }
 
-    public String addMember(String userAccountId, Long groupId) throws Exception {
-        User user = userService.getUser(userAccountId);
+    public String addMember(String userId, Long groupId) throws Exception {
+        User user = userService.getUser(userId);
         Group group = groupRepository.findById(groupId).orElseThrow(() -> new Exception("Group not found"));
 
         for (Member member : group.getMembers()) {
