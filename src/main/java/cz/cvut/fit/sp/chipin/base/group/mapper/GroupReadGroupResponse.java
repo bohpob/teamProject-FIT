@@ -1,4 +1,5 @@
-package cz.cvut.fit.sp.chipin.base.usergroup.mapper;
+package cz.cvut.fit.sp.chipin.base.group.mapper;
+
 import cz.cvut.fit.sp.chipin.base.debt.mapper.DebtReadUserDebtsResponse;
 import cz.cvut.fit.sp.chipin.base.log.mapper.LogReadLogResponse;
 import cz.cvut.fit.sp.chipin.base.member.mapper.MemberReadMemberResponse;

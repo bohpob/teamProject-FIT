@@ -1,4 +1,4 @@
-package cz.cvut.fit.sp.chipin.base.usergroup.mapper;
+package cz.cvut.fit.sp.chipin.base.group.mapper;
 
 import cz.cvut.fit.sp.chipin.base.log.mapper.LogReadLogResponse;
 import lombok.Data;

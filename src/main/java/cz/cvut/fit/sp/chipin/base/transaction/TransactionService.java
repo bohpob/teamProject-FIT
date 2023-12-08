@@ -1,14 +1,13 @@
 package cz.cvut.fit.sp.chipin.base.transaction;
 
-import cz.cvut.fit.sp.chipin.authentication.useraccount.UserAccount;
+import cz.cvut.fit.sp.chipin.authentication.user.User;
 import cz.cvut.fit.sp.chipin.base.amount.Amount;
 import cz.cvut.fit.sp.chipin.base.amount.AmountService;
-import cz.cvut.fit.sp.chipin.base.member.Member;
 import cz.cvut.fit.sp.chipin.base.member.MemberService;
 import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionMapper;
 import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionReadGroupTransactionResponse;
 import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionReadGroupTransactionsResponse;
-import cz.cvut.fit.sp.chipin.base.usergroup.UserGroup;
+import cz.cvut.fit.sp.chipin.base.group.Group;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,12 +19,11 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class TransactionService {
     private final TransactionRepository transactionRepository;
-    private final MemberService memberService;
     private final AmountService amountService;
     private final TransactionMapper transactionMapper;
 
-    public Transaction create(TransactionCreateRequest request, UserAccount payer, UserGroup userGroup) throws Exception {
-        Transaction transaction = TransactionConverter.fromCreateDto(request, payer, userGroup);
+    public Transaction create(TransactionCreateRequest request, User payer, Group group) throws Exception {
+        Transaction transaction = TransactionConverter.fromCreateDto(request, payer, group);
         //TODO: replace with Request field
         transaction.setCategory(Category.NO_CATEGORY);
 
@@ -39,7 +37,6 @@ public class TransactionService {
         return transaction;
     }
 
-    //new
     public List<TransactionReadGroupTransactionsResponse> readGroupTransactions(
             Long groupId, TransactionReadGroupTransactionsSmartRequest request) throws Exception {
         try {
@@ -51,7 +48,7 @@ public class TransactionService {
 //            String dateFrom = request.getDateFrom();
 //            String dateTo = request.getDateTo();
 
-            Set<Transaction> transactionsSet = new HashSet<>(transactionRepository.findTransactionsByUserGroupId(groupId));
+            Set<Transaction> transactionsSet = new HashSet<>(transactionRepository.findTransactionsByGroupId(groupId));
 
             if (!request.categories.isEmpty()) {
 //                transactionsSet.retainAll(transactionRepository.findTransactionByUserGroupIdAndCategoryIn(groupId, categories));
@@ -59,7 +56,7 @@ public class TransactionService {
                         .filter(transaction -> request.categories.contains(transaction.getCategory().name()))
                         .collect(Collectors.toSet());
             }
-            if (request.dateFrom != null && request.dateTo != null) {
+            if (!request.dateFrom.isBlank() && !request.dateTo.isBlank()) {
 //                transactionsSet.retainAll(transactionRepository.findTransactionsByUserGroupIdAndDateBetween(groupId, dateFrom, dateTo));
                 transactionsSet = transactionsSet.stream()
                         .filter(transaction -> transaction.getDate()
@@ -67,7 +64,7 @@ public class TransactionService {
                         .collect(Collectors.toSet());
             }
 
-            if(request.getMembers() != null && !request.getMembers().isEmpty()){
+            if(!request.getMembers().isEmpty()){
                 transactionsSet = transactionsSet.stream()
                         .filter(transaction -> request.getMembers().stream()
                                 .anyMatch(memberReadMemberResponse -> memberReadMemberResponse.getId()
@@ -88,7 +85,7 @@ public class TransactionService {
         if (transaction.isEmpty()) {
             throw new Exception("Transaction not found.");
         }
-        if (!Objects.equals(transaction.get().getUserGroup().getId(), groupId)) {
+        if (!Objects.equals(transaction.get().getGroup().getId(), groupId)) {
             throw new Exception("Transaction does not belong to this group.");
         }
         return transaction;
@@ -101,11 +98,11 @@ public class TransactionService {
     }
 
     public List<Transaction> readAllByCategories(Long groupId, List<Category> categories) throws Exception {
-        return transactionRepository.findTransactionByUserGroupIdAndCategoryIn(groupId, categories);
+        return transactionRepository.findTransactionByGroupIdAndCategoryIn(groupId, categories);
     }
 
     @Transactional
-    public void update(Transaction transaction, TransactionUpdateRequest request, UserAccount nextPayer) throws Exception {
+    public void update(Transaction transaction, TransactionUpdateRequest request, User nextPayer) throws Exception {
         try {
             amountService.deleteAllByTransactionId(transaction.getId());
             transaction.setName(request.getName());
@@ -127,7 +124,7 @@ public class TransactionService {
     }
 
     public List<Transaction> readTransactions(Long groupId) {
-        return transactionRepository.findTransactionsByUserGroupId(groupId);
+        return transactionRepository.findTransactionsByGroupId(groupId);
     }
 
 }

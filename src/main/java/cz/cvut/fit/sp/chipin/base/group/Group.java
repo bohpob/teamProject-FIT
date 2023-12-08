@@ -1,4 +1,4 @@
-package cz.cvut.fit.sp.chipin.base.usergroup;
+package cz.cvut.fit.sp.chipin.base.group;
 
 import cz.cvut.fit.sp.chipin.base.member.Member;
 import cz.cvut.fit.sp.chipin.base.debt.Debt;
@@ -21,7 +21,7 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 @Setter
-public class UserGroup {
+public class Group {
     @Id
     @SequenceGenerator(
             name = "user_group_sequence",
@@ -34,16 +34,16 @@ public class UserGroup {
     )
     private Long id;
 
-    @OneToMany(mappedBy = "userGroup")
+    @OneToMany(mappedBy = "group")
     private List<Debt> debts = new ArrayList<>();
 
-    @OneToMany(mappedBy = "userGroup")
+    @OneToMany(mappedBy = "group")
     private List<Log> logs = new ArrayList<>();
 
-    @OneToMany(mappedBy = "userGroup")
+    @OneToMany(mappedBy = "group")
     private List<Member> members = new ArrayList<>();
 
-    @OneToMany(mappedBy = "userGroup")
+    @OneToMany(mappedBy = "group")
     private List<Transaction> transactions = new ArrayList<>();
 
     @NotBlank
@@ -57,7 +57,7 @@ public class UserGroup {
     @NotBlank
     private String hexCode;
 
-    public UserGroup(String name, Currency currency, String hexCode) {
+    public Group(String name, Currency currency, String hexCode) {
         this.name = name;
         this.currency = currency;
         this.hexCode = hexCode;

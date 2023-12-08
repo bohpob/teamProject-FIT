@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -12,8 +11,8 @@ import java.util.Optional;
 public class MemberService {
     private final MemberRepository memberRepository;
 
-    public Optional<Member> readMember(String userAccountId, Long groupId) throws Exception {
-        return memberRepository.findByUserAccountIdAndUserGroupId(userAccountId, groupId);
+    public Optional<Member> readMember(String userId, Long groupId) throws Exception {
+        return memberRepository.findByUserIdAndGroupId(userId, groupId);
     }
 
     public void save(Member member) throws Exception {
@@ -21,7 +20,6 @@ public class MemberService {
     }
 
     public ArrayList<Member> readMembers(Long groupId) throws Exception {
-        return memberRepository.findMembersByUserGroupId(groupId);
+        return memberRepository.findMembersByGroupId(groupId);
     }
-
 }

@@ -1,6 +1,6 @@
 package cz.cvut.fit.sp.chipin.base.amount;
 
-import cz.cvut.fit.sp.chipin.authentication.useraccount.UserAccount;
+import cz.cvut.fit.sp.chipin.authentication.user.User;
 import cz.cvut.fit.sp.chipin.base.transaction.Transaction;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -18,9 +18,9 @@ public class Amount {
     private AmountKey id;
 
     @ManyToOne
-    @MapsId("userAccountId")
-    @JoinColumn(name = "user_account_id", nullable = false)
-    private UserAccount userAccount;
+    @MapsId("userId")
+    @JoinColumn(name = "user_entity_id", nullable = false)
+    private User user;
 
     @ManyToOne
     @MapsId("transactionId")
@@ -31,9 +31,9 @@ public class Amount {
     @Column
     private Float amount = 0f;
 
-    public Amount(UserAccount userAccount, Transaction transaction, Float amount) {
-        id = new AmountKey(userAccount.getId(), transaction.getId());
-        this.userAccount = userAccount;
+    public Amount(User user, Transaction transaction, Float amount) {
+        id = new AmountKey(user.getId(), transaction.getId());
+        this.user = user;
         this.transaction = transaction;
         this.amount = amount;
     }
@@ -43,7 +43,7 @@ public class Amount {
     }
 
     public String getUserName() {
-        return userAccount.getName();
+        return user.getName();
     }
 
 }

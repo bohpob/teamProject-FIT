@@ -1,22 +1,22 @@
 package cz.cvut.fit.sp.chipin.base.transaction;
 
-import cz.cvut.fit.sp.chipin.authentication.useraccount.UserAccount;
-import cz.cvut.fit.sp.chipin.authentication.useraccount.UserAccountDTO;
+import cz.cvut.fit.sp.chipin.authentication.user.User;
+import cz.cvut.fit.sp.chipin.authentication.user.UserDTO;
 import cz.cvut.fit.sp.chipin.base.amount.Amount;
 import cz.cvut.fit.sp.chipin.base.amount.AmountConverter;
-import cz.cvut.fit.sp.chipin.base.usergroup.UserGroup;
+import cz.cvut.fit.sp.chipin.base.group.Group;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 import java.util.stream.Collectors;
 
 public class TransactionConverter {
     public static TransactionResponse toDto(Transaction transaction) {
+        Float roundedAmount = BigDecimal.valueOf(transaction.getAmount()).setScale(2, RoundingMode.HALF_UP).floatValue();
         return new TransactionResponse(transaction.getId(), transaction.getName(),
-                /*Float.valueOf(String.format(Locale.getDefault(), "%.2f",
-                        transaction.getAmount()))*/transaction.getAmount(), transaction.getDate(),
-                new UserAccountDTO(transaction.getPayer().getName()),
+                roundedAmount, transaction.getDate(), new UserDTO(transaction.getPayer().getName()),
                 transaction.getAmounts().stream().map(AmountConverter::toDto).collect(Collectors.toList()));
     }
 
@@ -37,7 +37,7 @@ public class TransactionConverter {
         }
     }
 
-    public static Transaction fromCreateDto(TransactionCreateRequest createRequest, UserAccount payer, UserGroup userGroup) {
-        return new Transaction(createRequest.getName(), createRequest.getAmount(), payer, userGroup);
+    public static Transaction fromCreateDto(TransactionCreateRequest createRequest, User payer, Group group) {
+        return new Transaction(createRequest.getName(), createRequest.getAmount(), payer, group);
     }
 }

@@ -7,5 +7,5 @@ import java.util.List;
 
 @Repository
 public interface LogRepository extends JpaRepository<Log, Long> {
-    List<Log> findLogsByUserGroupId(Long groupId);
+    List<Log> findLogsByGroupId(Long groupId);
 }

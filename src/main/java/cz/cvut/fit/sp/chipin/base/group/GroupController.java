@@ -1,9 +1,9 @@
-package cz.cvut.fit.sp.chipin.base.usergroup;
+package cz.cvut.fit.sp.chipin.base.group;
 
 import cz.cvut.fit.sp.chipin.base.transaction.*;
 import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionReadGroupTransactionResponse;
 import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionReadGroupTransactionsResponse;
-import cz.cvut.fit.sp.chipin.base.usergroup.mapper.*;
+import cz.cvut.fit.sp.chipin.base.group.mapper.*;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -15,17 +15,16 @@ import java.security.Principal;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/user-groups")
+@RequestMapping("/api/v1/groups")
 @AllArgsConstructor
-public class UserGroupController {
-    private final UserGroupService userGroupService;
+public class GroupController {
+    private final GroupService groupService;
     private final TransactionService transactionService;
 
-    //new
     @PostMapping("/{groupId}/transactions/search")
     public List<TransactionReadGroupTransactionsResponse> readGroupTransactionsSmart(
             @PathVariable Long groupId,
-            @RequestBody TransactionReadGroupTransactionsSmartRequest request) throws Exception {
+            @Valid @RequestBody TransactionReadGroupTransactionsSmartRequest request) throws Exception {
         try {
             return transactionService.readGroupTransactions(groupId, request);
         } catch (Exception e) {
@@ -37,7 +36,7 @@ public class UserGroupController {
     public ResponseEntity<GroupCreateGroupResponse> createGroup(@Valid @RequestBody GroupCreateGroupRequest request,
                                                                 Principal principal) throws Exception {
         try {
-            return ResponseEntity.ok(userGroupService.createGroup(request, principal.getName()));
+            return ResponseEntity.ok(groupService.createGroup(request, principal.getName()));
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
@@ -46,7 +45,7 @@ public class UserGroupController {
     @GetMapping("/{groupId}")
     public ResponseEntity<GroupReadGroupResponse> readGroup(@PathVariable Long groupId) throws Exception {
         try {
-            return ResponseEntity.ok(userGroupService.readGroup(groupId));
+            return ResponseEntity.ok(groupService.readGroup(groupId));
         } catch (Exception e) {
             throw new Exception(e);
         }
@@ -55,7 +54,7 @@ public class UserGroupController {
     @PatchMapping("/{groupId}/join")
     public String addMember(@Valid @RequestParam String userAccountId, @PathVariable Long groupId) throws Exception {
         try {
-            return userGroupService.addMember(userAccountId, groupId);
+            return groupService.addMember(userAccountId, groupId);
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
@@ -66,7 +65,7 @@ public class UserGroupController {
     public ResponseEntity<TransactionResponse> createTransaction(@Valid @RequestBody TransactionCreateRequest request,
                                                                  @PathVariable Long groupId) throws Exception {
         try {
-            return ResponseEntity.ok(userGroupService.createTransaction(request, groupId));
+            return ResponseEntity.ok(groupService.createTransaction(request, groupId));
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
@@ -77,7 +76,7 @@ public class UserGroupController {
     public ResponseEntity<TransactionReadGroupTransactionResponse> readTransaction(@PathVariable Long groupId,
                                                                                    @PathVariable Long transactionId) throws Exception {
         try {
-            return ResponseEntity.ok(userGroupService.readGroupTransaction(transactionId, groupId));
+            return ResponseEntity.ok(groupService.readGroupTransaction(transactionId, groupId));
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
@@ -87,7 +86,7 @@ public class UserGroupController {
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<GroupReadGroupTransactionsResponse> readGroupTransactions(@PathVariable Long groupId) throws Exception {
         try {
-            return ResponseEntity.ok(userGroupService.readGroupTransactions(groupId));
+            return ResponseEntity.ok(groupService.readGroupTransactions(groupId));
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
@@ -98,7 +97,7 @@ public class UserGroupController {
     public ResponseEntity<GroupReadGroupTransactionsResponse> readGroupTransactionsByCategories(@PathVariable Long groupId,
                                                                                                 @RequestBody List<Category> categories) throws Exception {
         try {
-            return ResponseEntity.ok(userGroupService.readGroupTransactionsByCategories(groupId, categories));
+            return ResponseEntity.ok(groupService.readGroupTransactionsByCategories(groupId, categories));
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
@@ -110,7 +109,7 @@ public class UserGroupController {
                                                                  @PathVariable Long groupId,
                                                                  @PathVariable Long transactionId) throws Exception {
         try {
-            return ResponseEntity.ok(userGroupService.updateTransaction(request, groupId, transactionId));
+            return ResponseEntity.ok(groupService.updateTransaction(request, groupId, transactionId));
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
@@ -119,7 +118,7 @@ public class UserGroupController {
     @DeleteMapping("/{groupId}/transactions/{transactionId}")
     public void deleteTransaction(@PathVariable Long groupId, @PathVariable Long transactionId) throws Exception {
         try {
-            userGroupService.deleteTransaction(transactionId, groupId);
+            groupService.deleteTransaction(transactionId, groupId);
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
@@ -129,7 +128,7 @@ public class UserGroupController {
     public void settleDebt(@PathVariable Long groupId, @RequestParam String lenderId,
                            @RequestParam String borrowerId) throws Exception {
         try {
-            userGroupService.settleDebt(groupId, lenderId, borrowerId);
+            groupService.settleDebt(groupId, lenderId, borrowerId);
         } catch (Exception e) {
             throw new Exception(e);
         }
@@ -139,7 +138,7 @@ public class UserGroupController {
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<GroupReadGroupLogsResponse> readLogs(@PathVariable Long groupId) throws Exception {
         try {
-            return ResponseEntity.ok(userGroupService.readGroupLogs(groupId));
+            return ResponseEntity.ok(groupService.readGroupLogs(groupId));
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
@@ -149,7 +148,7 @@ public class UserGroupController {
     public ResponseEntity<GroupUpdateGroupNameResponse> updateGroupName(@PathVariable Long groupId,
                                                                   @RequestParam @NotBlank String name) throws Exception {
         try {
-            return ResponseEntity.ok(userGroupService.updateGroupName(groupId, name));
+            return ResponseEntity.ok(groupService.updateGroupName(groupId, name));
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }

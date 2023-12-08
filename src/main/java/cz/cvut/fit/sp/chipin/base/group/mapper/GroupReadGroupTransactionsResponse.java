@@ -1,4 +1,4 @@
-package cz.cvut.fit.sp.chipin.base.usergroup.mapper;
+package cz.cvut.fit.sp.chipin.base.group.mapper;
 
 import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionReadGroupTransactionsResponse;
 import lombok.Data;
