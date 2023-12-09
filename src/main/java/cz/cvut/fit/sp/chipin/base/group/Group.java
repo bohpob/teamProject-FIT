@@ -58,19 +58,10 @@ public class Group {
     @NotBlank
     private String hexCode;
 
-    public Group(String name, Currency currency) {
+    public Group(String name, Currency currency, String hexCode) {
         this.name = name;
         this.currency = currency;
-
-        String idStr = Long.toString(id);
-        Random random = new Random();
-        StringBuilder stringBuilder = new StringBuilder(idStr);
-        while (stringBuilder.length() < 8) {
-            char randomChar = (char) ('a' + random.nextInt(26));
-            stringBuilder.append(randomChar);
-        }
-        this.hexCode = stringBuilder.toString();
-
+        this.hexCode = hexCode;
     }
 
     public void addMembership(Member member) {

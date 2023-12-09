@@ -36,6 +36,7 @@ public class GroupService {
         User user = userService.getUser(userId);
 
         Group group = groupMapper.createGroupRequestToEntity(request);
+        group.setHexCode(generateRandomHexCode());
         groupRepository.save(group);
 
         Member member = new Member(user, group, GroupRole.ADMIN, 0f, 0f, 0f);
@@ -58,6 +59,16 @@ public class GroupService {
         Group group = groupRepository.findById(id)
                 .orElseThrow(() -> new Exception("Group not found"));
         return groupMapper.entityToReadGroupResponse(group);
+    }
+
+    private String generateRandomHexCode() {
+        Random random = new Random();
+        String hexCode = Long.toHexString(random.nextLong(0xffffff + 1));
+        if (groupRepository.findGroupByHexCode(hexCode).isEmpty()) {
+            return hexCode;
+        } else {
+            return generateRandomHexCode();
+        }
     }
 
     public String addMember(String userId, Long groupId) throws Exception {
