@@ -1,4 +1,4 @@
-package cz.cvut.fit.sp.chipin.base.usergroup;
+package cz.cvut.fit.sp.chipin.base.group;
 
 import cz.cvut.fit.sp.chipin.authentication.user.User;
 import cz.cvut.fit.sp.chipin.authentication.user.UserService;
@@ -13,7 +13,7 @@ import cz.cvut.fit.sp.chipin.base.member.Member;
 import cz.cvut.fit.sp.chipin.base.member.MemberService;
 import cz.cvut.fit.sp.chipin.base.transaction.*;
 import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionReadGroupTransactionResponse;
-import cz.cvut.fit.sp.chipin.base.usergroup.mapper.*;
+import cz.cvut.fit.sp.chipin.base.group.mapper.*;
 import cz.cvut.fit.sp.chipin.base.transaction.TransactionCreateRequest;
 import cz.cvut.fit.sp.chipin.base.transaction.spender.MemberAbstractRequest;
 import lombok.AllArgsConstructor;
@@ -72,7 +72,6 @@ public class GroupService {
     }
 
     public String addMember(String userId, Long groupId) throws Exception {
-
         User user = userService.getUser(userId);
         Group group = groupRepository.findById(groupId).orElseThrow(() -> new Exception("Group not found"));
 
@@ -172,7 +171,6 @@ public class GroupService {
                 Transaction transaction = transactionService.create(request,
                         borrower.get().getUser(), group.get());
                 acceptTxCreate(transaction);
-                //
                 logService.create(transaction.getName(), transaction.getGroup(), transaction.getPayer());
             }
         } catch (Exception e) {
@@ -215,6 +213,11 @@ public class GroupService {
         return TransactionConverter.toDto(transaction.get());
     }
 
+    public Group read(Long id) throws Exception {
+        return groupRepository.findById(id)
+                .orElseThrow(() -> new Exception("Group not found"));
+    }
+
     public TransactionReadGroupTransactionResponse readGroupTransaction(Long transactionId, Long groupId) throws Exception {
         return transactionService.readGroupTransaction(transactionId, groupId);
     }
@@ -223,6 +226,17 @@ public class GroupService {
         Group group = groupRepository.findById(groupId)
                 .orElseThrow(() -> new Exception("Group not found"));
         return groupMapper.entityToReadGroupTransactionsResponse(group);
+    }
+
+    public GroupReadGroupTransactionsResponse readGroupTransactionsByCategories(Long groupId, List<Category> categories) throws Exception {
+        List<Transaction> transactions1 = read(groupId)
+                .getTransactions()
+                .stream()
+                .filter(transaction -> categories.contains(transaction.getCategory()))
+                .toList();
+
+        List<Transaction> transactions = transactionService.readAllByCategories(groupId, categories);
+        return groupMapper.transactionsToReadGroupTransactionsResponse(0, transactions);
     }
 
     public TransactionResponse updateTransaction(TransactionUpdateRequest transactionUpdateRequest,

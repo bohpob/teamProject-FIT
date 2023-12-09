@@ -2,7 +2,7 @@ package cz.cvut.fit.sp.chipin.base.transaction;
 
 import cz.cvut.fit.sp.chipin.authentication.user.User;
 import cz.cvut.fit.sp.chipin.base.amount.Amount;
-import cz.cvut.fit.sp.chipin.base.usergroup.Group;
+import cz.cvut.fit.sp.chipin.base.group.Group;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -35,6 +35,8 @@ public class Transaction {
     private String name;
     private Float amount;
     private String date;
+    @Enumerated(EnumType.STRING)
+    private Category category;
     @ManyToOne
     @JoinColumn(name = "user_group_id")
     private Group group;

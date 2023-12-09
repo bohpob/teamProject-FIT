@@ -1,10 +1,11 @@
 package cz.cvut.fit.sp.chipin.base.amount;
 
-import java.util.Locale;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 public class AmountConverter {
     public static AmountDTO toDto(Amount amount) {
-        return new AmountDTO(amount.getUser().getName(), Float.valueOf(String.format(Locale.getDefault(),
-                "%.2f", amount.getAmount())));
+        Float roundedAmount = BigDecimal.valueOf(amount.getAmount()).setScale(2, RoundingMode.HALF_UP).floatValue();
+        return new AmountDTO(amount.getUser().getName(), roundedAmount);
     }
 }

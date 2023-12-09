@@ -18,4 +18,6 @@ public class TransactionReadGroupTransactionsResponse {
     private String payerName;
     @NotBlank
     private String date;
+    @NotBlank
+    private String category;
 }

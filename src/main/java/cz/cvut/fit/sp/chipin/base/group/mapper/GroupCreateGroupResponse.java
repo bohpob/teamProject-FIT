@@ -1,4 +1,4 @@
-package cz.cvut.fit.sp.chipin.base.usergroup.mapper;
+package cz.cvut.fit.sp.chipin.base.group.mapper;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

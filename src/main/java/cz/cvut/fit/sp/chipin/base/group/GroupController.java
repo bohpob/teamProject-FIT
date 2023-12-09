@@ -1,10 +1,9 @@
-package cz.cvut.fit.sp.chipin.base.usergroup;
+package cz.cvut.fit.sp.chipin.base.group;
 
-import cz.cvut.fit.sp.chipin.base.transaction.TransactionCreateRequest;
-import cz.cvut.fit.sp.chipin.base.transaction.TransactionResponse;
-import cz.cvut.fit.sp.chipin.base.transaction.TransactionUpdateRequest;
+import cz.cvut.fit.sp.chipin.base.transaction.*;
 import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionReadGroupTransactionResponse;
-import cz.cvut.fit.sp.chipin.base.usergroup.mapper.*;
+import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionReadGroupTransactionsResponse;
+import cz.cvut.fit.sp.chipin.base.group.mapper.*;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -13,12 +12,25 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/groups")
 @AllArgsConstructor
 public class GroupController {
     private final GroupService groupService;
+    private final TransactionService transactionService;
+
+    @PostMapping("/{groupId}/transactions/search")
+    public List<TransactionReadGroupTransactionsResponse> readGroupTransactionsSmart(
+            @PathVariable Long groupId,
+            @Valid @RequestBody TransactionReadGroupTransactionsSmartRequest request) throws Exception {
+        try {
+            return transactionService.readGroupTransactions(groupId, request);
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+    }
 
     @PostMapping
     public ResponseEntity<GroupCreateGroupResponse> createGroup(@Valid @RequestBody GroupCreateGroupRequest request,
@@ -75,6 +87,17 @@ public class GroupController {
     public ResponseEntity<GroupReadGroupTransactionsResponse> readGroupTransactions(@PathVariable Long groupId) throws Exception {
         try {
             return ResponseEntity.ok(groupService.readGroupTransactions(groupId));
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+    }
+
+    @GetMapping("/{groupId}/transactions/categories")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<GroupReadGroupTransactionsResponse> readGroupTransactionsByCategories(@PathVariable Long groupId,
+                                                                                                @RequestBody List<Category> categories) throws Exception {
+        try {
+            return ResponseEntity.ok(groupService.readGroupTransactionsByCategories(groupId, categories));
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }

@@ -1,7 +1,7 @@
 package cz.cvut.fit.sp.chipin.base.debt;
 
 import cz.cvut.fit.sp.chipin.authentication.user.User;
-import cz.cvut.fit.sp.chipin.base.usergroup.Group;
+import cz.cvut.fit.sp.chipin.base.group.Group;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
