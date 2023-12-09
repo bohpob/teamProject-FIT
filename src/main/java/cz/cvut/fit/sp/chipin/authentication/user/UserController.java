@@ -1,9 +1,11 @@
 package cz.cvut.fit.sp.chipin.authentication.user;
 
+import cz.cvut.fit.sp.chipin.authentication.user.mapper.UserReadUserResponse;
 import cz.cvut.fit.sp.chipin.base.member.MemberDTO;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
@@ -17,6 +19,17 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
+
+    @GetMapping("/{id}")
+    public UserReadUserResponse readUser(@PathVariable(value = "id") Principal principal) {
+        try {
+            return userService.readUser(principal.getName());
+        } catch (Exception e) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, e.getMessage(), e
+            );
+        }
+    }
 
     @GetMapping("/me")
     public String readMyself(Principal principal) {

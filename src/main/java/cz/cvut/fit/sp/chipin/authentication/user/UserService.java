@@ -1,5 +1,7 @@
 package cz.cvut.fit.sp.chipin.authentication.user;
 
+import cz.cvut.fit.sp.chipin.authentication.user.mapper.UserMapper;
+import cz.cvut.fit.sp.chipin.authentication.user.mapper.UserReadUserResponse;
 import cz.cvut.fit.sp.chipin.base.member.Member;
 import cz.cvut.fit.sp.chipin.base.member.MemberDTO;
 import lombok.AllArgsConstructor;
@@ -13,6 +15,22 @@ import java.util.List;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final UserMapper userMapper;
+
+    public UserReadUserResponse readUser(String id) throws Exception {
+        User userAccount = userRepository.findById(id).orElse(null);
+        if (userAccount != null) {
+            return userMapper.entityToReadUserResponse(userAccount);
+        } else {
+            throw new Exception("userAccount doesn't exists(getUserAccount() method in UserAccountService)");
+        }
+    }
+
+    public List<UserReadUserResponse> readAllUserAccounts() {
+        List<User> userAccounts = userRepository.findAll();
+        return userAccounts.stream().map(userMapper::entityToReadUserResponse).toList();
+    }
+
 
     public User getUser(String id) throws Exception {
         User user = userRepository.findById(id).orElse(null);

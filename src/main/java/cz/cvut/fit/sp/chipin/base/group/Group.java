@@ -14,6 +14,7 @@ import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 @Entity
 @Table(name = "user_group")
@@ -57,10 +58,19 @@ public class Group {
     @NotBlank
     private String hexCode;
 
-    public Group(String name, Currency currency, String hexCode) {
+    public Group(String name, Currency currency) {
         this.name = name;
         this.currency = currency;
-        this.hexCode = hexCode;
+
+        String idStr = Long.toString(id);
+        Random random = new Random();
+        StringBuilder stringBuilder = new StringBuilder(idStr);
+        while (stringBuilder.length() < 8) {
+            char randomChar = (char) ('a' + random.nextInt(26));
+            stringBuilder.append(randomChar);
+        }
+        this.hexCode = stringBuilder.toString();
+
     }
 
     public void addMembership(Member member) {
