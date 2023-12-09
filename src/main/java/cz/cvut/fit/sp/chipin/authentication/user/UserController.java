@@ -1,6 +1,7 @@
 package cz.cvut.fit.sp.chipin.authentication.user;
 
 import cz.cvut.fit.sp.chipin.authentication.user.mapper.UserReadUserResponse;
+import cz.cvut.fit.sp.chipin.base.group.mapper.GroupReadGroupMembersResponse;
 import cz.cvut.fit.sp.chipin.base.member.MemberDTO;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -31,7 +32,7 @@ public class UserController {
         }
     }
 
-    @GetMapping("/me")
+//    @GetMapping("/me")
     public String readMyself(Principal principal) {
         try {
             return "username: " + principal.getName();
@@ -42,16 +43,38 @@ public class UserController {
         }
     }
 
-    @GetMapping("/me/user-groups")
-    public List<Long> readMyGroups(Principal principal) {
+    @GetMapping("/me")
+    public UserReadUserResponse readMe(Principal principal) {
         try {
-            return userService.readMyGroups(principal.getName());
+            return userService.readUser(principal.getName());
         } catch (Exception e) {
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, e.getMessage(), e
             );
         }
     }
+
+    @GetMapping("/me/user-groups")
+    public List<GroupReadGroupMembersResponse> readMyGroups(Principal principal) {
+        try {
+            return userService.readUserGroups(principal.getName());
+        } catch (Exception e) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, e.getMessage(), e
+            );
+        }
+    }
+
+//    @GetMapping("/me/user-groups")
+//    public List<Long> readMyGroups(Principal principal) {
+//        try {
+//            return userService.readMyGroups(principal.getName());
+//        } catch (Exception e) {
+//            throw new ResponseStatusException(
+//                    HttpStatus.NOT_FOUND, e.getMessage(), e
+//            );
+//        }
+//    }
 
     @GetMapping
     public List<User> getAllUsers() {

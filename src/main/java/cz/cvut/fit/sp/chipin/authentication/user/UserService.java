@@ -2,6 +2,9 @@ package cz.cvut.fit.sp.chipin.authentication.user;
 
 import cz.cvut.fit.sp.chipin.authentication.user.mapper.UserMapper;
 import cz.cvut.fit.sp.chipin.authentication.user.mapper.UserReadUserResponse;
+import cz.cvut.fit.sp.chipin.base.group.Group;
+import cz.cvut.fit.sp.chipin.base.group.mapper.GroupMapper;
+import cz.cvut.fit.sp.chipin.base.group.mapper.GroupReadGroupMembersResponse;
 import cz.cvut.fit.sp.chipin.base.member.Member;
 import cz.cvut.fit.sp.chipin.base.member.MemberDTO;
 import lombok.AllArgsConstructor;
@@ -16,15 +19,28 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final GroupMapper groupMapper;
 
     public UserReadUserResponse readUser(String id) throws Exception {
-        User userAccount = userRepository.findById(id).orElse(null);
-        if (userAccount != null) {
-            return userMapper.entityToReadUserResponse(userAccount);
+        User user = userRepository.findById(id).orElse(null);
+        if (user != null) {
+            return userMapper.entityToReadUserResponse(user);
         } else {
-            throw new Exception("userAccount doesn't exists(getUserAccount() method in UserAccountService)");
+            throw new Exception("user doesn't exists(getUserAccount() method in UserAccountService)");
         }
     }
+
+    public List<GroupReadGroupMembersResponse> readUserGroups(String id) throws Exception {
+        User user = userRepository.findById(id).orElse(null);
+        if (user != null) {
+            List<Member> members = user.getMembers();
+            List<Group> groups = members.stream().map(Member::getGroup).toList();
+            return groups.stream().map(groupMapper::entityToReadGroupMembersResponse).toList();
+        } else {
+            throw new Exception("user doesn't exists(getUserAccount() method in UserAccountService)");
+        }
+    }
+
 
     public List<UserReadUserResponse> readAllUserAccounts() {
         List<User> userAccounts = userRepository.findAll();

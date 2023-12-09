@@ -37,4 +37,6 @@ public interface GroupMapper {
     @Mapping(target = "transactions", ignore = true)
     @Mapping(target = "hexCode", ignore = true)
     Group createGroupRequestToEntity(GroupCreateGroupRequest groupCreateGroupRequest);
+
+    GroupReadGroupMembersResponse entityToReadGroupMembersResponse(Group group);
 }
