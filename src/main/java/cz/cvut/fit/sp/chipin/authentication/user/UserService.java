@@ -2,6 +2,7 @@ package cz.cvut.fit.sp.chipin.authentication.user;
 
 import cz.cvut.fit.sp.chipin.authentication.user.mapper.UserMapper;
 import cz.cvut.fit.sp.chipin.authentication.user.mapper.UserReadUserResponse;
+import cz.cvut.fit.sp.chipin.authentication.user.mapper.UserReadUserTransactionsResponse;
 import cz.cvut.fit.sp.chipin.base.group.Group;
 import cz.cvut.fit.sp.chipin.base.group.mapper.GroupMapper;
 import cz.cvut.fit.sp.chipin.base.group.mapper.GroupReadGroupMembersResponse;
@@ -33,14 +34,21 @@ public class UserService {
     public List<GroupReadGroupMembersResponse> readUserGroups(String id) throws Exception {
         User user = userRepository.findById(id).orElse(null);
         if (user != null) {
-            List<Member> members = user.getMembers();
-            List<Group> groups = members.stream().map(Member::getGroup).toList();
+            List<Group> groups = user.getMembers().stream().map(Member::getGroup).toList();
             return groups.stream().map(groupMapper::entityToReadGroupMembersResponse).toList();
         } else {
-            throw new Exception("user doesn't exists(getUserAccount() method in UserAccountService)");
+            throw new Exception("user with id: " + id +" doesn't exists");
         }
     }
 
+    public UserReadUserTransactionsResponse readUserTransactions(String id) throws Exception {
+        User user = userRepository.findById(id).orElse(null);
+        if (user != null) {
+            return userMapper.entityToReadUserTransactionsResponse(user);
+        } else {
+            throw new Exception("user with id: " + id +" doesn't exists");
+        }
+    }
 
     public List<UserReadUserResponse> readAllUserAccounts() {
         List<User> userAccounts = userRepository.findAll();
