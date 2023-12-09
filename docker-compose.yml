@@ -78,7 +78,6 @@ services:
       - KEYCLOAK_ADMIN=admin
       - KEYCLOAK_ADMIN_PASSWORD=admin
       - KC_HOSTNAME_URL=auth.chipin.ninja
-      - KC_PROXY=edge
     depends_on:
       - keycloak-db
 
