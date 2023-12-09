@@ -66,6 +66,7 @@ public class UserController {
         }
     }
 
+    @GetMapping("/me/transactions")
     public UserReadUserTransactionsResponse readMyTransactions(Principal principal) {
         try {
             return userService.readUserTransactions(principal.getName());
