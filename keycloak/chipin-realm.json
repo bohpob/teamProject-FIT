@@ -359,7 +359,7 @@
   "otpPolicyLookAheadWindow" : 1,
   "otpPolicyPeriod" : 30,
   "otpPolicyCodeReusable" : false,
-  "otpSupportedApplications" : [ "totpAppFreeOTPName", "totpAppMicrosoftAuthenticatorName", "totpAppGoogleName" ],
+  "otpSupportedApplications" : [ "totpAppGoogleName", "totpAppFreeOTPName", "totpAppMicrosoftAuthenticatorName" ],
   "webAuthnPolicyRpEntityName" : "keycloak",
   "webAuthnPolicySignatureAlgorithms" : [ "ES256" ],
   "webAuthnPolicyRpId" : "",
@@ -1393,25 +1393,6 @@
   "identityProviderMappers" : [ ],
   "components" : {
     "org.keycloak.services.clientregistration.policy.ClientRegistrationPolicy" : [ {
-      "id" : "fb4b7305-9169-4cc6-b89c-b8815cbd3184",
-      "name" : "Allowed Client Scopes",
-      "providerId" : "allowed-client-templates",
-      "subType" : "anonymous",
-      "subComponents" : { },
-      "config" : {
-        "allow-default-scopes" : [ "true" ]
-      }
-    }, {
-      "id" : "6e23421b-954d-4745-8656-3238ed2fbbee",
-      "name" : "Trusted Hosts",
-      "providerId" : "trusted-hosts",
-      "subType" : "anonymous",
-      "subComponents" : { },
-      "config" : {
-        "host-sending-registration-request-must-match" : [ "true" ],
-        "client-uris-must-match" : [ "true" ]
-      }
-    }, {
       "id" : "eaba98e1-1533-4f71-a638-dcf583f80d28",
       "name" : "Full Scope Disabled",
       "providerId" : "scope",
@@ -1446,12 +1427,14 @@
         "allowed-protocol-mapper-types" : [ "oidc-address-mapper", "oidc-usermodel-attribute-mapper", "oidc-full-name-mapper", "oidc-sha256-pairwise-sub-mapper", "saml-role-list-mapper", "saml-user-attribute-mapper", "oidc-usermodel-property-mapper", "saml-user-property-mapper" ]
       }
     }, {
-      "id" : "c0082aa0-45b5-4374-b4bf-da009a909ed1",
-      "name" : "Consent Required",
-      "providerId" : "consent-required",
+      "id" : "fb4b7305-9169-4cc6-b89c-b8815cbd3184",
+      "name" : "Allowed Client Scopes",
+      "providerId" : "allowed-client-templates",
       "subType" : "anonymous",
       "subComponents" : { },
-      "config" : { }
+      "config" : {
+        "allow-default-scopes" : [ "true" ]
+      }
     }, {
       "id" : "a2aac32a-bd87-4db6-92fa-8f5dc9a9c9ff",
       "name" : "Allowed Protocol Mapper Types",
@@ -1469,17 +1452,6 @@
       "config" : { }
     } ],
     "org.keycloak.keys.KeyProvider" : [ {
-      "id" : "2aa48c27-5f52-4b25-8f64-36f33b6c88a3",
-      "name" : "rsa-generated",
-      "providerId" : "rsa-generated",
-      "subComponents" : { },
-      "config" : {
-        "privateKey" : [ "MIIEogIBAAKCAQEAkOciTpOyayl+noyRcqQ7w7bXt0jtQerOR8koa+IbleO8DxhxkhePKygC6W/8r7ZGGySm+5TLV9k4+xnU/fKnmDf3bsmXiBar6imhzPdU5zuQhBjlagSgBbEz/1QMFLJjz+Ooyu4UqiihtICVFVs+2z5GgVwzxiEBcQIRETubhhef58JVqjRqjt6QFG2SEZjY50KtpT4fiDklZpA/iw//A1ZLGkU0rW8VkzA6qlwyyzPiZrpH8RnM0GgO/wWf+mcNhggcYngQ3UJXThL0KCs5BA5sKkNmspBoQg9OAYxN2DxvIKLLpC0xakIeOjELl527z3usI8Kb7282kCD56q45VQIDAQABAoIBABTY/Emb3F6ooKwFA2QgFu0ooE6hcmk6dCVF3sfuxxNAqazuUmC3fQSzg/+7+fn52opLMq8dkEf6W8VcyRUkVVKEMthArsmIoYFWLg5EQ3XlTvyCbHddZPyMqzOADyDnLY8abQ2NRXHZ2LIUkd55u0hl5FT2RAisdP2iU3xMPCsFgbJXqmOpFBik4kqJcHzW1bX1ovEe/1hezQ/EWguOnC/WYZBw4LPFKKjPXOQaSgb/WmQmHGxRcgiq40NWi5qSkTmWIOXYLycBWrCywVJSgque+PSaIys6smkFIAmLMoxVa8ya4kTYQ2P8YMGKxSQnI1KXHHt3B+kHIHPg05cUQgECgYEAwuwjI5iUC4X3omCmtsLfjja4jBBXDbQiTPjBANaky6v8st1B/8mzJisRWHxEHv4AG/R2eOlCNs8BS2LkbkOQ+WrYTJIlQ2GMaUTUh+IJoEJwd4zbJOblcusQmlir7emiHaI6SGyMmSx+L9NNi9hiZN63lZSwmKWKoc+dZ5YVWtUCgYEAvk6jOJpsjEZRCJjFAoFE1Er2AH32V7QMRbGC2WHkKXk31gKSuBbco71fNe0QcdCxve9HPcPVkTlVR/0PtgOquZwx/2+jmhwZy/z8qhfRQlxNRsGKsJX+zucYFfPi5a/i8RUZ1aAyHSKYHiJfzTV2tFFT5rRVcacnMd7cQkRPpIECgYBiYPY3QAnwavQaIzfhZCeaymmIX7LgOrtZJ++ZcbwJA8vtpphp9i4SJIiDpWxoTABYG6Ez017U9NONbeMm97kS+Wcj9lsSUAijFNdDocUD+qRy4ke0r0i9IIDntbtIv7NPy5Io/YhUws0JbFdmLpcym+oCd+JNmLeIhZXHM0uh5QKBgAkqGEodhaSrrjNPyAz61Km0gmw7pKVMklq41ahKQoaMw9eWgCJFV5K7B96879HLTwPqhe+/goVf0W+KDDujqZEOqIm4gpRlTgi4wiIey4D6mO4TW+5tCrxD/LDx8bdF5RPfBEN5V3B3vgOVfC+Rp4m/cN7nSEYU2ppYNRsr1voBAoGATckzXzrsqGFA1Ud4/XquptQvCgbSFAVSFKkPSw1F5lA5nJA7jDC2SBcrAhclc2uduj3s7pzRdsz3SKWKk5ulY7qrujzu7mfCa+GGbZ4IVuH0+FUupEFN+TraoGzvUzwDbm6slfPe5L0tyFagID7EEBmR7qalM2l5S9/vTRc8CxI=" ],
-        "keyUse" : [ "SIG" ],
-        "certificate" : [ "MIICmzCCAYMCBgGLa+E5aDANBgkqhkiG9w0BAQsFADARMQ8wDQYDVQQDDAZjaGlwaW4wHhcNMjMxMDI2MTIwNTA0WhcNMzMxMDI2MTIwNjQ0WjARMQ8wDQYDVQQDDAZjaGlwaW4wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCQ5yJOk7JrKX6ejJFypDvDtte3SO1B6s5HyShr4huV47wPGHGSF48rKALpb/yvtkYbJKb7lMtX2Tj7GdT98qeYN/duyZeIFqvqKaHM91TnO5CEGOVqBKAFsTP/VAwUsmPP46jK7hSqKKG0gJUVWz7bPkaBXDPGIQFxAhERO5uGF5/nwlWqNGqO3pAUbZIRmNjnQq2lPh+IOSVmkD+LD/8DVksaRTStbxWTMDqqXDLLM+JmukfxGczQaA7/BZ/6Zw2GCBxieBDdQldOEvQoKzkEDmwqQ2aykGhCD04BjE3YPG8gosukLTFqQh46MQuXnbvPe6wjwpvvbzaQIPnqrjlVAgMBAAEwDQYJKoZIhvcNAQELBQADggEBAFvVKH5JAdxFZVfvbPvpKcMT8u4QrXiESBnFBzP5s/HIaF9cG2/qqIq7WXhqIxs4ik7xliyHGMRc9Onw9GGi7V2QyGIN2vht6OLzZhiXQeuzwtyrosXCjv/Ikh2AIgPdrCOUyWSHw7U92ki+4/vwZBriFSsEEicICCtjWN3EpfM/7sxpbP3HosrtUEr+bdvSxBUD9mdhsZLwhy1KDyIh9wCHMO8TT2SVhjtrleo39aZIRZhARHhUwKzDOK4NxgtIU1r/2IkkW3pcefog9WF5sD+UpY/Q5LCu9xhncHW2D556Ga0lxy5ECmPxrZvvzgQLKn0rjDUAgJzPkRpi70+uXrU=" ],
-        "priority" : [ "100" ]
-      }
-    }, {
       "id" : "f4aa41ef-1236-4fd0-9d4d-d66d6025a307",
       "name" : "aes-generated",
       "providerId" : "aes-generated",
@@ -1499,6 +1471,17 @@
         "secret" : [ "dwvt3BrpZPW18MkqcOwFntAEIZDDKfKlimw0XhEY8yiLnWzxT8BomSOaBt0C5W8LTrc7p6d8VvQcYhG2N0NJ-g" ],
         "priority" : [ "100" ],
         "algorithm" : [ "HS256" ]
+      }
+    }, {
+      "id" : "2aa48c27-5f52-4b25-8f64-36f33b6c88a3",
+      "name" : "rsa-generated",
+      "providerId" : "rsa-generated",
+      "subComponents" : { },
+      "config" : {
+        "privateKey" : [ "MIIEogIBAAKCAQEAkOciTpOyayl+noyRcqQ7w7bXt0jtQerOR8koa+IbleO8DxhxkhePKygC6W/8r7ZGGySm+5TLV9k4+xnU/fKnmDf3bsmXiBar6imhzPdU5zuQhBjlagSgBbEz/1QMFLJjz+Ooyu4UqiihtICVFVs+2z5GgVwzxiEBcQIRETubhhef58JVqjRqjt6QFG2SEZjY50KtpT4fiDklZpA/iw//A1ZLGkU0rW8VkzA6qlwyyzPiZrpH8RnM0GgO/wWf+mcNhggcYngQ3UJXThL0KCs5BA5sKkNmspBoQg9OAYxN2DxvIKLLpC0xakIeOjELl527z3usI8Kb7282kCD56q45VQIDAQABAoIBABTY/Emb3F6ooKwFA2QgFu0ooE6hcmk6dCVF3sfuxxNAqazuUmC3fQSzg/+7+fn52opLMq8dkEf6W8VcyRUkVVKEMthArsmIoYFWLg5EQ3XlTvyCbHddZPyMqzOADyDnLY8abQ2NRXHZ2LIUkd55u0hl5FT2RAisdP2iU3xMPCsFgbJXqmOpFBik4kqJcHzW1bX1ovEe/1hezQ/EWguOnC/WYZBw4LPFKKjPXOQaSgb/WmQmHGxRcgiq40NWi5qSkTmWIOXYLycBWrCywVJSgque+PSaIys6smkFIAmLMoxVa8ya4kTYQ2P8YMGKxSQnI1KXHHt3B+kHIHPg05cUQgECgYEAwuwjI5iUC4X3omCmtsLfjja4jBBXDbQiTPjBANaky6v8st1B/8mzJisRWHxEHv4AG/R2eOlCNs8BS2LkbkOQ+WrYTJIlQ2GMaUTUh+IJoEJwd4zbJOblcusQmlir7emiHaI6SGyMmSx+L9NNi9hiZN63lZSwmKWKoc+dZ5YVWtUCgYEAvk6jOJpsjEZRCJjFAoFE1Er2AH32V7QMRbGC2WHkKXk31gKSuBbco71fNe0QcdCxve9HPcPVkTlVR/0PtgOquZwx/2+jmhwZy/z8qhfRQlxNRsGKsJX+zucYFfPi5a/i8RUZ1aAyHSKYHiJfzTV2tFFT5rRVcacnMd7cQkRPpIECgYBiYPY3QAnwavQaIzfhZCeaymmIX7LgOrtZJ++ZcbwJA8vtpphp9i4SJIiDpWxoTABYG6Ez017U9NONbeMm97kS+Wcj9lsSUAijFNdDocUD+qRy4ke0r0i9IIDntbtIv7NPy5Io/YhUws0JbFdmLpcym+oCd+JNmLeIhZXHM0uh5QKBgAkqGEodhaSrrjNPyAz61Km0gmw7pKVMklq41ahKQoaMw9eWgCJFV5K7B96879HLTwPqhe+/goVf0W+KDDujqZEOqIm4gpRlTgi4wiIey4D6mO4TW+5tCrxD/LDx8bdF5RPfBEN5V3B3vgOVfC+Rp4m/cN7nSEYU2ppYNRsr1voBAoGATckzXzrsqGFA1Ud4/XquptQvCgbSFAVSFKkPSw1F5lA5nJA7jDC2SBcrAhclc2uduj3s7pzRdsz3SKWKk5ulY7qrujzu7mfCa+GGbZ4IVuH0+FUupEFN+TraoGzvUzwDbm6slfPe5L0tyFagID7EEBmR7qalM2l5S9/vTRc8CxI=" ],
+        "keyUse" : [ "SIG" ],
+        "certificate" : [ "MIICmzCCAYMCBgGLa+E5aDANBgkqhkiG9w0BAQsFADARMQ8wDQYDVQQDDAZjaGlwaW4wHhcNMjMxMDI2MTIwNTA0WhcNMzMxMDI2MTIwNjQ0WjARMQ8wDQYDVQQDDAZjaGlwaW4wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCQ5yJOk7JrKX6ejJFypDvDtte3SO1B6s5HyShr4huV47wPGHGSF48rKALpb/yvtkYbJKb7lMtX2Tj7GdT98qeYN/duyZeIFqvqKaHM91TnO5CEGOVqBKAFsTP/VAwUsmPP46jK7hSqKKG0gJUVWz7bPkaBXDPGIQFxAhERO5uGF5/nwlWqNGqO3pAUbZIRmNjnQq2lPh+IOSVmkD+LD/8DVksaRTStbxWTMDqqXDLLM+JmukfxGczQaA7/BZ/6Zw2GCBxieBDdQldOEvQoKzkEDmwqQ2aykGhCD04BjE3YPG8gosukLTFqQh46MQuXnbvPe6wjwpvvbzaQIPnqrjlVAgMBAAEwDQYJKoZIhvcNAQELBQADggEBAFvVKH5JAdxFZVfvbPvpKcMT8u4QrXiESBnFBzP5s/HIaF9cG2/qqIq7WXhqIxs4ik7xliyHGMRc9Onw9GGi7V2QyGIN2vht6OLzZhiXQeuzwtyrosXCjv/Ikh2AIgPdrCOUyWSHw7U92ki+4/vwZBriFSsEEicICCtjWN3EpfM/7sxpbP3HosrtUEr+bdvSxBUD9mdhsZLwhy1KDyIh9wCHMO8TT2SVhjtrleo39aZIRZhARHhUwKzDOK4NxgtIU1r/2IkkW3pcefog9WF5sD+UpY/Q5LCu9xhncHW2D556Ga0lxy5ECmPxrZvvzgQLKn0rjDUAgJzPkRpi70+uXrU=" ],
+        "priority" : [ "100" ]
       }
     }, {
       "id" : "91531cdf-25c6-4de3-8fb9-98d9e377ee7c",
