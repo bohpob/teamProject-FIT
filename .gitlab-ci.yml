@@ -34,7 +34,10 @@ test:
 vulnerability_check:
   stage: check
   only:
-    - manual
+    - master
+    - develop
+  when: manual
+  allow_failure: true  
   script:
     - chmod +x gradlew
     - ./gradlew dependencyCheckAnalyze
