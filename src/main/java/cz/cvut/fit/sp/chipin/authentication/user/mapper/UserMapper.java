@@ -9,4 +9,6 @@ public interface UserMapper {
     @Mapping(source = "firstName", target = "name")
     @Mapping(source = "email", target = "email")
     UserReadUserResponse entityToReadUserResponse(User user);
+
+    UserReadUserTransactionsResponse entityToReadUserTransactionsResponse(User user);
 }

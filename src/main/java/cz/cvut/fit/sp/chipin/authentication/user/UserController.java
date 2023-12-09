@@ -1,6 +1,7 @@
 package cz.cvut.fit.sp.chipin.authentication.user;
 
 import cz.cvut.fit.sp.chipin.authentication.user.mapper.UserReadUserResponse;
+import cz.cvut.fit.sp.chipin.authentication.user.mapper.UserReadUserTransactionsResponse;
 import cz.cvut.fit.sp.chipin.base.group.mapper.GroupReadGroupMembersResponse;
 import cz.cvut.fit.sp.chipin.base.member.MemberDTO;
 import lombok.AllArgsConstructor;
@@ -65,6 +66,16 @@ public class UserController {
         }
     }
 
+    @GetMapping("/me/transactions")
+    public UserReadUserTransactionsResponse readMyTransactions(Principal principal) {
+        try {
+            return userService.readUserTransactions(principal.getName());
+        } catch (Exception e) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, e.getMessage(), e
+            );
+        }
+    }
 //    @GetMapping("/me/user-groups")
 //    public List<Long> readMyGroups(Principal principal) {
 //        try {
