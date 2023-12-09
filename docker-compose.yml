@@ -77,7 +77,9 @@ services:
       - KC_DB_PASSWORD=postgres
       - KEYCLOAK_ADMIN=admin
       - KEYCLOAK_ADMIN_PASSWORD=admin
-      - KC_HOSTNAME_URL=http://157.230.116.219:8081/
+      - KC_HOSTNAME_URL=https://auth.chipin.ninja/
+      - KC_PROXY=edge
+      - KC_HOSTNAME_STRICT=false
     depends_on:
       - keycloak-db
 
