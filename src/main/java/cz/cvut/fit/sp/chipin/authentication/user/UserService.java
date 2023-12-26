@@ -37,7 +37,7 @@ public class UserService {
             List<Group> groups = user.getMembers().stream().map(Member::getGroup).toList();
             return groups.stream().map(groupMapper::entityToReadGroupMembersResponse).toList();
         } else {
-            throw new Exception("user with id: " + id +" doesn't exists");
+            throw new Exception("user with id: " + id + " doesn't exists");
         }
     }
 
@@ -46,15 +46,9 @@ public class UserService {
         if (user != null) {
             return userMapper.entityToReadUserTransactionsResponse(user);
         } else {
-            throw new Exception("user with id: " + id +" doesn't exists");
+            throw new Exception("user with id: " + id + " doesn't exists");
         }
     }
-
-    public List<UserReadUserResponse> readAllUserAccounts() {
-        List<User> userAccounts = userRepository.findAll();
-        return userAccounts.stream().map(userMapper::entityToReadUserResponse).toList();
-    }
-
 
     public User getUser(String id) throws Exception {
         User user = userRepository.findById(id).orElse(null);
@@ -63,10 +57,6 @@ public class UserService {
         } else {
             throw new Exception("user doesn't exists(getUser() method in UserService)");
         }
-    }
-
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
     }
 
     public List<MemberDTO> getMemberships(String id) throws Exception {
@@ -88,14 +78,5 @@ public class UserService {
 
     public void save(User user) {
         userRepository.save(user);
-    }
-
-    public List<Long> readMyGroups(String id) throws Exception {
-        List<Member> members = getUser(id).getMembers();
-        List<Long> result = new ArrayList<>();
-        for (Member member : members) {
-            result.add(member.getId().getGroupId());
-        }
-        return result;
     }
 }
