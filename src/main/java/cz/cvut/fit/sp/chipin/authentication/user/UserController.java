@@ -6,6 +6,7 @@ import cz.cvut.fit.sp.chipin.base.group.mapper.GroupReadGroupMembersResponse;
 import cz.cvut.fit.sp.chipin.base.member.MemberDTO;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,21 +23,10 @@ public class UserController {
 
     private final UserService userService;
 
-    @GetMapping("/{id}")
-    public UserReadUserResponse readUser(@PathVariable(value = "id") Principal principal) {
+    @GetMapping("/{userId}")
+    public ResponseEntity<UserReadUserResponse> readUser(@PathVariable String userId) {
         try {
-            return userService.readUser(principal.getName());
-        } catch (Exception e) {
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, e.getMessage(), e
-            );
-        }
-    }
-
-//    @GetMapping("/me")
-    public String readMyself(Principal principal) {
-        try {
-            return "username: " + principal.getName();
+            return ResponseEntity.ok(userService.readUser(userId));
         } catch (Exception e) {
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, e.getMessage(), e
@@ -45,9 +35,9 @@ public class UserController {
     }
 
     @GetMapping("/me")
-    public UserReadUserResponse readMe(Principal principal) {
+    public ResponseEntity<UserReadUserResponse> readMyself(Principal principal) {
         try {
-            return userService.readUser(principal.getName());
+            return ResponseEntity.ok(userService.readUser(principal.getName()));
         } catch (Exception e) {
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, e.getMessage(), e
@@ -55,10 +45,10 @@ public class UserController {
         }
     }
 
-    @GetMapping("/me/user-groups")
-    public List<GroupReadGroupMembersResponse> readMyGroups(Principal principal) {
+    @GetMapping("/me/groups")
+    public ResponseEntity<List<GroupReadGroupMembersResponse>> readMyGroups(Principal principal) {
         try {
-            return userService.readUserGroups(principal.getName());
+            return ResponseEntity.ok(userService.readUserGroups(principal.getName()));
         } catch (Exception e) {
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, e.getMessage(), e
@@ -67,34 +57,24 @@ public class UserController {
     }
 
     @GetMapping("/me/transactions")
-    public UserReadUserTransactionsResponse readMyTransactions(Principal principal) {
+    public ResponseEntity<UserReadUserTransactionsResponse> readMyTransactions(Principal principal) {
         try {
-            return userService.readUserTransactions(principal.getName());
+            return ResponseEntity.ok(userService.readUserTransactions(principal.getName()));
         } catch (Exception e) {
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, e.getMessage(), e
             );
         }
     }
-//    @GetMapping("/me/user-groups")
-//    public List<Long> readMyGroups(Principal principal) {
-//        try {
-//            return userService.readMyGroups(principal.getName());
-//        } catch (Exception e) {
-//            throw new ResponseStatusException(
-//                    HttpStatus.NOT_FOUND, e.getMessage(), e
-//            );
-//        }
-//    }
 
-    @GetMapping
-    public List<User> getAllUsers() {
-        return userService.getAllUsers();
+    @GetMapping("/me/memberships")
+    ResponseEntity<List<MemberDTO>> readMyMemberships(Principal principal) {
+        try {
+            return ResponseEntity.ok(userService.getMemberships(principal.getName()));
+        } catch (Exception e) {
+            throw new ResponseStatusException(
+                    HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e
+            );
+        }
     }
-
-    @GetMapping("/memberships")
-    List<MemberDTO> getMemberships(Principal principal) throws Exception {
-        return userService.getMemberships(principal.getName());
-    }
-
 }
