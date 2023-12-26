@@ -8,7 +8,9 @@ public class MemberReadMemberResponse {
     @NotBlank
     private String id;
     @NotBlank
-    private String name;
+    private String firstName;
     @NotBlank
-    private String userRole;
+    private String lastName;
+    @NotBlank
+    private String role;
 }
