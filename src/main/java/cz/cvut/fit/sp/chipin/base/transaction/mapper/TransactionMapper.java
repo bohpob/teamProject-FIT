@@ -1,20 +1,22 @@
 package cz.cvut.fit.sp.chipin.base.transaction.mapper;
 
-import cz.cvut.fit.sp.chipin.authentication.user.UserDTO;
+import cz.cvut.fit.sp.chipin.authentication.user.mapper.UserMapper;
 import cz.cvut.fit.sp.chipin.base.amount.AmountService;
 import cz.cvut.fit.sp.chipin.base.amount.mapper.AmountMapper;
 import cz.cvut.fit.sp.chipin.base.transaction.Transaction;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-@Mapper(componentModel = "spring", imports = {AmountService.class, UserDTO.class}, uses = {AmountMapper.class})
+@Mapper(
+        componentModel = "spring",
+        imports = {AmountService.class},
+        uses = {AmountMapper.class, UserMapper.class}
+)
 public interface TransactionMapper {
     @Mapping(expression = "java(AmountService.roundAmount(transaction.getAmount()))", target = "amount")
-    @Mapping(expression = "java(new UserDTO(transaction.getPayer().getName()))", target = "payer")
     TransactionCreateTransactionResponse entityToCreateTransactionResponse(Transaction transaction);
 
     @Mapping(expression = "java(AmountService.roundAmount(transaction.getAmount()))", target = "amount")
-    @Mapping(expression = "java(new UserDTO(transaction.getPayer().getName()))", target = "payer")
     TransactionUpdateTransactionResponse entityToUpdateTransactionResponse(Transaction transaction);
 
     @Mapping(expression = "java(AmountService.roundAmount(transaction.getAmount()))", target = "amount")

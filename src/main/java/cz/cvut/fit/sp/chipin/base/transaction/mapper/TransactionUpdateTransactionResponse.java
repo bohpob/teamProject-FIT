@@ -1,6 +1,6 @@
 package cz.cvut.fit.sp.chipin.base.transaction.mapper;
 
-import cz.cvut.fit.sp.chipin.authentication.user.UserDTO;
+import cz.cvut.fit.sp.chipin.authentication.user.mapper.UserCreateTransactionResponse;
 import cz.cvut.fit.sp.chipin.base.amount.mapper.AmountCreateAmountResponse;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -19,7 +19,7 @@ public class TransactionUpdateTransactionResponse {
     @NotBlank
     private String date;
     @NotNull
-    private UserDTO payer;
+    private UserCreateTransactionResponse payer;
     @NotNull
     private List<AmountCreateAmountResponse> amounts;
 }
