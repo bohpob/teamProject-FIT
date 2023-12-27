@@ -9,6 +9,8 @@ import cz.cvut.fit.sp.chipin.base.transaction.spender.MemberAbstractRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,5 +50,9 @@ public class AmountService {
 
     public void deleteAllByTransactionId(Long transactionId) throws Exception {
         amountRepository.deleteAmountsByTransactionId(transactionId);
+    }
+
+    public static Float roundAmount(Float amount) {
+        return BigDecimal.valueOf(amount).setScale(2, RoundingMode.HALF_UP).floatValue();
     }
 }

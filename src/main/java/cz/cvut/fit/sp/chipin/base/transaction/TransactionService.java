@@ -3,6 +3,7 @@ package cz.cvut.fit.sp.chipin.base.transaction;
 import cz.cvut.fit.sp.chipin.authentication.user.User;
 import cz.cvut.fit.sp.chipin.base.amount.Amount;
 import cz.cvut.fit.sp.chipin.base.amount.AmountService;
+import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionCreateTransactionRequest;
 import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionMapper;
 import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionReadGroupTransactionResponse;
 import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionReadGroupTransactionsResponse;
@@ -21,8 +22,11 @@ public class TransactionService {
     private final AmountService amountService;
     private final TransactionMapper transactionMapper;
 
-    public Transaction create(TransactionCreateRequest request, User payer, Group group) throws Exception {
-        Transaction transaction = TransactionConverter.fromCreateDto(request, payer, group);
+    public Transaction create(TransactionCreateTransactionRequest request, User payer, Group group) throws Exception {
+        Transaction transaction = transactionMapper.createTransactionRequestToEntity(request);
+        transaction.setPayer(payer);
+        transaction.setGroup(group);
+        //TODO: set current date
         //TODO: replace with Request field
         transaction.setCategory(Category.NO_CATEGORY);
 

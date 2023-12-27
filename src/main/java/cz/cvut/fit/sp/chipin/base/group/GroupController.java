@@ -1,8 +1,7 @@
 package cz.cvut.fit.sp.chipin.base.group;
 
 import cz.cvut.fit.sp.chipin.base.transaction.*;
-import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionReadGroupTransactionResponse;
-import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionReadGroupTransactionsResponse;
+import cz.cvut.fit.sp.chipin.base.transaction.mapper.*;
 import cz.cvut.fit.sp.chipin.base.group.mapper.*;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -62,8 +61,8 @@ public class GroupController {
 
     @PostMapping("/{groupId}/transactions")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<TransactionResponse> createTransaction(@Valid @RequestBody TransactionCreateRequest request,
-                                                                 @PathVariable Long groupId) throws Exception {
+    public ResponseEntity<TransactionCreateTransactionResponse> createTransaction(@Valid @RequestBody TransactionCreateTransactionRequest request,
+                                                                                  @PathVariable Long groupId) throws Exception {
         try {
             return ResponseEntity.ok(groupService.createTransaction(request, groupId));
         } catch (Exception e) {
@@ -105,9 +104,9 @@ public class GroupController {
 
     @PutMapping("/{groupId}/transactions/{transactionId}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<TransactionResponse> updateTransaction(@Valid @RequestBody TransactionUpdateRequest request,
-                                                                 @PathVariable Long groupId,
-                                                                 @PathVariable Long transactionId) throws Exception {
+    public ResponseEntity<TransactionUpdateTransactionResponse> updateTransaction(@Valid @RequestBody TransactionUpdateRequest request,
+                                                                                  @PathVariable Long groupId,
+                                                                                  @PathVariable Long transactionId) throws Exception {
         try {
             return ResponseEntity.ok(groupService.updateTransaction(request, groupId, transactionId));
         } catch (Exception e) {

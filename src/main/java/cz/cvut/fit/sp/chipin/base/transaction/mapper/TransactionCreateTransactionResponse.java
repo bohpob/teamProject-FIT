@@ -1,17 +1,15 @@
-package cz.cvut.fit.sp.chipin.base.transaction;
+package cz.cvut.fit.sp.chipin.base.transaction.mapper;
 
 import cz.cvut.fit.sp.chipin.authentication.user.UserDTO;
 import cz.cvut.fit.sp.chipin.base.amount.AmountDTO;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 
 import java.util.List;
 
-@Getter
-@AllArgsConstructor
-public class TransactionResponse {
+@Data
+public class TransactionCreateTransactionResponse {
     @NotNull
     private Long id;
     @NotBlank
