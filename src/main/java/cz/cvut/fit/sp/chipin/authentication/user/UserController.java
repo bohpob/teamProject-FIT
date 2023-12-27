@@ -67,6 +67,7 @@ public class UserController {
         }
     }
 
+    //TODO: update DTO
     @GetMapping("/me/memberships")
     ResponseEntity<List<MemberDTO>> readMyMemberships(Principal principal) {
         try {

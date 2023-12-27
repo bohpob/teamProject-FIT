@@ -1,19 +1,18 @@
-package cz.cvut.fit.sp.chipin.base.transaction;
+package cz.cvut.fit.sp.chipin.base.transaction.mapper;
 
+import cz.cvut.fit.sp.chipin.base.transaction.TransactionType;
 import cz.cvut.fit.sp.chipin.base.transaction.spender.MemberAbstractRequest;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.Data;
 
 import java.util.List;
 
 
-@Getter
-@NoArgsConstructor
+@Data
 @AllArgsConstructor
-public class TransactionCreateRequest {
+public class TransactionCreateTransactionRequest {
     @NotBlank
     private String name;
     @NotNull

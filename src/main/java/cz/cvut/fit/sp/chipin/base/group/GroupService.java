@@ -3,6 +3,9 @@ package cz.cvut.fit.sp.chipin.base.group;
 import cz.cvut.fit.sp.chipin.authentication.user.User;
 import cz.cvut.fit.sp.chipin.authentication.user.UserService;
 import cz.cvut.fit.sp.chipin.base.amount.Amount;
+import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionCreateTransactionResponse;
+import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionMapper;
+import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionUpdateTransactionResponse;
 import cz.cvut.fit.sp.chipin.base.transaction.spender.UnequalTransactionMember;
 import cz.cvut.fit.sp.chipin.base.transaction.TransactionType;
 import cz.cvut.fit.sp.chipin.base.debt.Debt;
@@ -14,7 +17,7 @@ import cz.cvut.fit.sp.chipin.base.member.MemberService;
 import cz.cvut.fit.sp.chipin.base.transaction.*;
 import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionReadGroupTransactionResponse;
 import cz.cvut.fit.sp.chipin.base.group.mapper.*;
-import cz.cvut.fit.sp.chipin.base.transaction.TransactionCreateRequest;
+import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionCreateTransactionRequest;
 import cz.cvut.fit.sp.chipin.base.transaction.spender.MemberAbstractRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -31,6 +34,7 @@ public class GroupService {
     private final MemberService memberService;
     private final TransactionService transactionService;
     private final GroupMapper groupMapper;
+    private final TransactionMapper transactionMapper;
 
     public GroupCreateGroupResponse createGroup(GroupCreateGroupRequest request, String userId) throws Exception {
         User user = userService.getUser(userId);
@@ -160,7 +164,7 @@ public class GroupService {
         List<MemberAbstractRequest> amounts = new ArrayList<>();
         amounts.add(new UnequalTransactionMember(lenderId, debt.get().getAmount()));
 
-        TransactionCreateRequest request = new TransactionCreateRequest(
+        TransactionCreateTransactionRequest request = new TransactionCreateTransactionRequest(
                 borrower.get().getUser().getName() + " repaid "
                         + lender.get().getUser().getName() + "'s " + "debt",
                 debt.get().getAmount(), borrower.get().getUser().getId(), TransactionType.UNEQUALLY, amounts);
@@ -179,7 +183,7 @@ public class GroupService {
 
     }
 
-    public TransactionResponse createTransaction(TransactionCreateRequest request, Long groupId) throws Exception {
+    public TransactionCreateTransactionResponse createTransaction(TransactionCreateTransactionRequest request, Long groupId) throws Exception {
         Optional<Group> group = groupRepository.findById(groupId);
         if (group.isEmpty()) {
             throw new Exception("Group not found.");
@@ -201,16 +205,7 @@ public class GroupService {
         } catch (Exception e) {
             throw new Exception(e);
         }
-        return TransactionConverter.toDto(transaction);
-    }
-
-    public TransactionResponse readTransaction(Long transactionId, Long groupId) throws Exception {
-        Optional<Transaction> transaction = transactionService.read(transactionId, groupId);
-        if (transaction.isEmpty()) {
-            throw new Exception("Transaction not found.");
-        }
-
-        return TransactionConverter.toDto(transaction.get());
+        return transactionMapper.entityToCreateTransactionResponse(transaction);
     }
 
     public Group read(Long id) throws Exception {
@@ -239,8 +234,8 @@ public class GroupService {
         return groupMapper.transactionsToReadGroupTransactionsResponse(0, transactions);
     }
 
-    public TransactionResponse updateTransaction(TransactionUpdateRequest transactionUpdateRequest,
-                                                 Long groupId, Long transactionId) throws Exception {
+    public TransactionUpdateTransactionResponse updateTransaction(TransactionUpdateRequest transactionUpdateRequest,
+                                                                  Long groupId, Long transactionId) throws Exception {
         Optional<Group> group = groupRepository.findById(groupId);
         if (group.isEmpty()) {
             throw new Exception("Group not found.");
@@ -271,7 +266,7 @@ public class GroupService {
             throw new Exception(e);
         }
 
-        return TransactionConverter.toDto(transaction.get());
+        return transactionMapper.entityToUpdateTransactionResponse(transaction.get());
     }
 
     public void deleteTransaction(Long transactionId, Long groupId) throws Exception {
