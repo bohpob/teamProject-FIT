@@ -1,24 +1,20 @@
 package cz.cvut.fit.sp.chipin.base.transaction.mapper;
 
 import cz.cvut.fit.sp.chipin.authentication.user.UserDTO;
-import cz.cvut.fit.sp.chipin.base.amount.AmountConverter;
 import cz.cvut.fit.sp.chipin.base.amount.AmountService;
+import cz.cvut.fit.sp.chipin.base.amount.mapper.AmountMapper;
 import cz.cvut.fit.sp.chipin.base.transaction.Transaction;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-import java.util.stream.Collectors;
-
-@Mapper(componentModel = "spring", imports = {AmountConverter.class, AmountService.class, Collectors.class, UserDTO.class})
+@Mapper(componentModel = "spring", imports = {AmountService.class, UserDTO.class}, uses = {AmountMapper.class})
 public interface TransactionMapper {
     @Mapping(expression = "java(AmountService.roundAmount(transaction.getAmount()))", target = "amount")
     @Mapping(expression = "java(new UserDTO(transaction.getPayer().getName()))", target = "payer")
-    @Mapping(expression = "java(transaction.getAmounts().stream().map(AmountConverter::toDto).collect(Collectors.toList()))", target = "amounts")
     TransactionCreateTransactionResponse entityToCreateTransactionResponse(Transaction transaction);
 
     @Mapping(expression = "java(AmountService.roundAmount(transaction.getAmount()))", target = "amount")
     @Mapping(expression = "java(new UserDTO(transaction.getPayer().getName()))", target = "payer")
-    @Mapping(expression = "java(transaction.getAmounts().stream().map(AmountConverter::toDto).collect(Collectors.toList()))", target = "amounts")
     TransactionUpdateTransactionResponse entityToUpdateTransactionResponse(Transaction transaction);
 
     @Mapping(expression = "java(AmountService.roundAmount(transaction.getAmount()))", target = "amount")

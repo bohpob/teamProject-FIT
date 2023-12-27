@@ -1,13 +1,11 @@
-package cz.cvut.fit.sp.chipin.base.amount;
+package cz.cvut.fit.sp.chipin.base.amount.mapper;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 
-@Getter
-@AllArgsConstructor
-public class AmountDTO {
+@Data
+public class AmountCreateAmountResponse {
     @NotBlank
     private String name;
     @NotNull
