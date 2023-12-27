@@ -9,6 +9,4 @@ public interface UserMapper {
     UserReadUserResponse entityToReadUserResponse(User user);
 
     UserReadUserTransactionsResponse entityToReadUserTransactionsResponse(User user);
-
-    UserCreateTransactionResponse entityToCreateTransactionResponse(User user);
 }
