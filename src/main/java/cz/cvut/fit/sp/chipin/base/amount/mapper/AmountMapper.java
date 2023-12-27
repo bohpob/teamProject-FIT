@@ -7,7 +7,9 @@ import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring", imports = {AmountService.class})
 public interface AmountMapper {
-    @Mapping(source = "user.name", target = "name")
+    @Mapping(source = "user.id", target = "id")
+    @Mapping(source = "user.firstName", target = "firstName")
+    @Mapping(source = "user.lastName", target = "lastName")
     @Mapping(expression = "java(AmountService.roundAmount(amount.getAmount()))", target = "amount")
     AmountCreateAmountResponse entityToCreateAmountResponse(Amount amount);
 }

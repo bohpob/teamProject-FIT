@@ -7,7 +7,11 @@ import lombok.Data;
 @Data
 public class AmountCreateAmountResponse {
     @NotBlank
-    private String name;
+    private String id;
+    @NotBlank
+    private String firstName;
+    @NotBlank
+    private String lastName;
     @NotNull
     private Float amount;
 }
