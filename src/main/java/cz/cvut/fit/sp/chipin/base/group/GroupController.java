@@ -2,7 +2,6 @@ package cz.cvut.fit.sp.chipin.base.group;
 
 import cz.cvut.fit.sp.chipin.base.group.mapper.*;
 import cz.cvut.fit.sp.chipin.base.transaction.Category;
-import cz.cvut.fit.sp.chipin.base.transaction.TransactionReadGroupTransactionsSmartRequest;
 import cz.cvut.fit.sp.chipin.base.transaction.TransactionService;
 import cz.cvut.fit.sp.chipin.base.transaction.TransactionUpdateRequest;
 import cz.cvut.fit.sp.chipin.base.transaction.mapper.*;
@@ -15,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/groups")
@@ -22,17 +22,6 @@ import java.util.List;
 public class GroupController {
     private final GroupService groupService;
     private final TransactionService transactionService;
-
-    @PostMapping("/{groupId}/transactions/search")
-    public List<TransactionReadGroupTransactionsResponse> readGroupTransactionsSmart(
-            @PathVariable Long groupId,
-            @Valid @RequestBody TransactionReadGroupTransactionsSmartRequest request) throws Exception {
-        try {
-            return transactionService.readGroupTransactions(groupId, request);
-        } catch (Exception e) {
-            throw new Exception(e.getMessage());
-        }
-    }
 
     @PostMapping
     public ResponseEntity<GroupCreateGroupResponse> createGroup(@Valid @RequestBody GroupCreateGroupRequest request,
@@ -103,6 +92,21 @@ public class GroupController {
         }
     }
 
+    @GetMapping("/{groupId}/transactions/search")
+    public List<TransactionReadGroupTransactionsResponse> readGroupTransactionsFiltered(
+            @PathVariable Long groupId,
+            @RequestParam Optional<String> categories,
+            @RequestParam Optional<String> dateTimeFrom,
+            @RequestParam Optional<String> dateTimeTo,
+            @RequestParam Optional<String> memberIds
+    ) throws Exception {
+        try {
+            return transactionService.readGroupTransactions(groupId, categories, dateTimeFrom, dateTimeTo, memberIds);
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+    }
+
     @GetMapping("/{groupId}/transactions/categories")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<GroupReadGroupTransactionsResponse> readGroupTransactionsByCategories(@PathVariable Long groupId,
@@ -157,7 +161,7 @@ public class GroupController {
 
     @PatchMapping("/{groupId}")
     public ResponseEntity<GroupUpdateGroupNameResponse> updateGroupName(@PathVariable Long groupId,
-                                                                  @RequestParam @NotBlank String name) throws Exception {
+                                                                        @RequestParam @NotBlank String name) throws Exception {
         try {
             return ResponseEntity.ok(groupService.updateGroupName(groupId, name));
         } catch (Exception e) {

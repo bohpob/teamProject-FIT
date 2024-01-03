@@ -45,34 +45,37 @@ public class TransactionService {
     }
 
     public List<TransactionReadGroupTransactionsResponse> readGroupTransactions(
-            Long groupId, TransactionReadGroupTransactionsSmartRequest request) throws Exception {
-        try {
-            Stream<Transaction> transactions = transactionRepository.findTransactionsByGroupId(groupId).stream();
+            Long groupId,
+            Optional<String> categoriesString,
+            Optional<String> dateTimeFrom,
+            Optional<String> dateTimeTo,
+            Optional<String> memberIdsString
+    ) {
+        Stream<Transaction> transactions = transactionRepository.findTransactionsByGroupId(groupId).stream();
 
-            if (!request.categories.isEmpty()) {
-                transactions = transactions.filter(transaction ->
-                        request.categories.contains(transaction.getCategory().name())
-                );
-            }
-
-            if (!request.getDateTimeFrom().isBlank() && !request.getDateTimeTo().isBlank()) {
-                LocalDateTime dateTimeFrom = parseDateTime(request.getDateTimeFrom());
-                LocalDateTime dateTimeTo = parseDateTime(request.getDateTimeTo());
-                transactions = transactions.filter(transaction ->
-                        !transaction.getDateTime().isBefore(dateTimeFrom) &&
-                                !transaction.getDateTime().isAfter(dateTimeTo)
-                );
-            }
-
-            if (!request.getMembers().isEmpty()) {
-                List<String> memberIds = request.getMembers().stream().map(MemberReadMemberResponse::getId).toList();
-                transactions = transactions.filter(transaction -> memberIds.contains(transaction.getPayer().getId()));
-            }
-
-            return transactions.map(transactionMapper::entityToReadGroupTransactionsResponse).toList();
-        } catch (Exception e) {
-            throw new Exception(e.getMessage());
+        if (categoriesString.isPresent()) {
+            List<String> categories = Arrays.asList(categoriesString.get().toUpperCase().split(","));
+            transactions = transactions.filter(transaction ->
+                    categories.contains(transaction.getCategory().name())
+            );
         }
+
+        if (dateTimeFrom.isPresent() && dateTimeTo.isPresent()) {
+            LocalDateTime from = parseDateTime(dateTimeFrom.get());
+            LocalDateTime to = parseDateTime(dateTimeTo.get());
+            transactions = transactions.filter(transaction ->
+                    !transaction.getDateTime().isBefore(from) && !transaction.getDateTime().isAfter(to)
+            );
+        }
+
+        if (memberIdsString.isPresent()) {
+            List<String> memberIds = Arrays.asList(memberIdsString.get().split(","));
+            transactions = transactions.filter(transaction ->
+                    memberIds.contains(transaction.getPayer().getId())
+            );
+        }
+
+        return transactions.map(transactionMapper::entityToReadGroupTransactionsResponse).toList();
     }
 
     public Optional<Transaction> read(Long transactionId, Long groupId) throws Exception {
