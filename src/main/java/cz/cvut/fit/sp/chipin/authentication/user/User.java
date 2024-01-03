@@ -3,6 +3,7 @@ package cz.cvut.fit.sp.chipin.authentication.user;
 import cz.cvut.fit.sp.chipin.base.amount.Amount;
 import cz.cvut.fit.sp.chipin.base.debt.Debt;
 import cz.cvut.fit.sp.chipin.base.member.Member;
+import cz.cvut.fit.sp.chipin.base.notification.Notification;
 import cz.cvut.fit.sp.chipin.base.transaction.Transaction;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -36,6 +37,9 @@ public class User {
 
     @OneToMany(mappedBy = "payer")
     private List<Transaction> transactions = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
+    private List<Notification> notifications = new ArrayList<>();
 
     private String email;
     private String emailConstraint;
