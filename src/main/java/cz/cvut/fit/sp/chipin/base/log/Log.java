@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "log")
 @NoArgsConstructor
@@ -25,7 +27,7 @@ public class Log {
     )
     private Long id;
     private String action;
-    private String date;
+    private LocalDateTime dateTime;
 
     @ManyToOne
     @JoinColumn(name = "user_group_id")
@@ -35,9 +37,9 @@ public class Log {
     @JoinColumn(name = "user_entity_id")
     private User user;
 
-    public Log(String action, String date, Group group, User user) {
+    public Log(String action, LocalDateTime dateTime, Group group, User user) {
         this.action = action;
-        this.date = date;
+        this.dateTime = dateTime;
         this.group = group;
         this.user = user;
     }
