@@ -4,18 +4,20 @@ import cz.cvut.fit.sp.chipin.authentication.user.User;
 import cz.cvut.fit.sp.chipin.base.amount.Amount;
 import cz.cvut.fit.sp.chipin.base.amount.AmountService;
 import cz.cvut.fit.sp.chipin.base.group.Group;
-import cz.cvut.fit.sp.chipin.base.member.mapper.MemberReadMemberResponse;
 import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionCreateTransactionRequest;
 import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionMapper;
 import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionReadGroupTransactionResponse;
-import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionReadGroupTransactionsResponse;
+import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionReadGroupTransactionsFilteredResponse;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -44,7 +46,7 @@ public class TransactionService {
         return transaction;
     }
 
-    public List<TransactionReadGroupTransactionsResponse> readGroupTransactions(
+    public TransactionReadGroupTransactionsFilteredResponse readGroupTransactions(
             Long groupId,
             Optional<String> categoriesString,
             Optional<String> dateTimeFrom,
@@ -75,7 +77,7 @@ public class TransactionService {
             );
         }
 
-        return transactions.map(transactionMapper::entityToReadGroupTransactionsResponse).toList();
+        return transactionMapper.entityToReadGroupTransactionsFilteredResponse(0, transactions.toList());
     }
 
     public Optional<Transaction> read(Long transactionId, Long groupId) throws Exception {

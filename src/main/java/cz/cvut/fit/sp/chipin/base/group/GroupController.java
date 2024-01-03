@@ -93,7 +93,7 @@ public class GroupController {
     }
 
     @GetMapping("/{groupId}/transactions/search")
-    public List<TransactionReadGroupTransactionsResponse> readGroupTransactionsFiltered(
+    public ResponseEntity<TransactionReadGroupTransactionsFilteredResponse> readGroupTransactionsFiltered(
             @PathVariable Long groupId,
             @RequestParam Optional<String> categories,
             @RequestParam Optional<String> dateTimeFrom,
@@ -101,7 +101,7 @@ public class GroupController {
             @RequestParam Optional<String> memberIds
     ) throws Exception {
         try {
-            return transactionService.readGroupTransactions(groupId, categories, dateTimeFrom, dateTimeTo, memberIds);
+            return ResponseEntity.ok(transactionService.readGroupTransactions(groupId, categories, dateTimeFrom, dateTimeTo, memberIds));
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
