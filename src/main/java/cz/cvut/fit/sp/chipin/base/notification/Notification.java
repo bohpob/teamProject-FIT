@@ -11,6 +11,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "notification")
 @NoArgsConstructor
@@ -31,7 +33,7 @@ public class Notification {
     private Long id;
 
     @NotNull
-    private Long timestamp;
+    private LocalDateTime dateTime;
 
     @NotNull
     private Boolean read;
@@ -52,10 +54,10 @@ public class Notification {
     @JoinColumn(name = "transaction_id")
     private Transaction transaction;
 
-    // simple constructor with generated timestamp and read set to false
+    // simple constructor with generated LocalDateTime and read set to false
     public Notification(NotificationContent content, User user, Group group, Transaction transaction) {
         this.content = content;
-        this.timestamp = System.currentTimeMillis();
+        this.dateTime = LocalDateTime.now();
         this.read = false;
         this.user = user;
         this.groupName = group.getName();

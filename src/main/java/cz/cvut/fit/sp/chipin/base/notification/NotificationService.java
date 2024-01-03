@@ -55,7 +55,7 @@ public class NotificationService {
         notificationToUpdate.setGroupName(notification.getGroupName());
         notificationToUpdate.setUser(notification.getUser());
         notificationToUpdate.setRead(notification.getRead());
-        notificationToUpdate.setTimestamp(notification.getTimestamp());
+        notificationToUpdate.setDateTime(notification.getDateTime());
         notificationToUpdate.setTransaction(notification.getTransaction());
         notificationRepository.save(notificationToUpdate);
     }
