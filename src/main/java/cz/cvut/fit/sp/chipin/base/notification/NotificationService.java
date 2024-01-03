@@ -4,12 +4,10 @@ import cz.cvut.fit.sp.chipin.authentication.user.User;
 import cz.cvut.fit.sp.chipin.base.group.Group;
 import cz.cvut.fit.sp.chipin.base.notification.content.NotificationContent;
 import cz.cvut.fit.sp.chipin.base.notification.content.NotificationContentService;
-import cz.cvut.fit.sp.chipin.base.notification.mapper.NotificationGetUserNotificationsResponse;
+import cz.cvut.fit.sp.chipin.base.notification.mapper.NotificationReadNotificationsResponse;
+import cz.cvut.fit.sp.chipin.base.notification.mapper.NotificationListWithCountResponse;
 import cz.cvut.fit.sp.chipin.base.notification.mapper.NotificationMapper;
-import cz.cvut.fit.sp.chipin.base.transaction.Transaction;
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,24 +19,27 @@ public class NotificationService {
     private final NotificationRepository notificationRepository;
     private final NotificationContentService notificationContentService;
 
-    public Page<NotificationGetUserNotificationsResponse> getUserNotifications(String username, Pageable pageable) {
-        try {
-            Page<Notification> page = notificationRepository.findNotificationByUserId(username, pageable);
-            return page.map(notificationMapper::entityToGetUserNotificationsResponse);
-        } catch (Exception e) {
-            return Page.empty();
-        }
+    public NotificationListWithCountResponse readNotifications(String userId) {
+        List<Notification> notifications = notificationRepository.findNotificationsByUserId(userId);
+
+        Long count = notifications.stream().filter(notification -> Boolean.FALSE.equals(notification.getRead())).count();
+
+        List<NotificationReadNotificationsResponse> notificationResponses = notifications.stream()
+                .map(notificationMapper::entityToGetUserNotificationsResponse)
+                .toList();
+
+        return new NotificationListWithCountResponse(count, notificationResponses);
     }
 
-    public void markNotificationAsRead(Long notificationId, String username) throws Exception {
-         Notification notification = notificationRepository.findByIdAndUserId(notificationId, username)
-                 .orElseThrow(() -> new Exception("Group not found"));
-         notification.setRead(true);
-         notificationRepository.save(notification);
+    public void markNotificationAsRead(Long notificationId, String userId) throws Exception {
+        Notification notification = notificationRepository.findByIdAndUserId(notificationId, userId)
+                .orElseThrow(() -> new Exception("Group not found"));
+        notification.setRead(true);
+        notificationRepository.save(notification);
     }
 
-    public void markNotificationAsUnread(Long notificationId, String username) throws Exception {
-        Notification notification = notificationRepository.findByIdAndUserId(notificationId, username)
+    public void markNotificationAsUnread(Long notificationId, String userId) throws Exception {
+        Notification notification = notificationRepository.findByIdAndUserId(notificationId, userId)
                 .orElseThrow(() -> new Exception("Notification not found."));
         notification.setRead(false);
         notificationRepository.save(notification);
@@ -64,6 +65,7 @@ public class NotificationService {
         Notification notification = new Notification(content, user, group);
         notificationRepository.save(notification);
     }
+
     public void createNotifications(List<User> users, Group group, NotificationContent content) {
         notificationContentService.createNotificationContent(content);
         for (User user : users) {

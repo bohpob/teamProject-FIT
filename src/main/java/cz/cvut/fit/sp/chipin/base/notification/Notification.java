@@ -3,7 +3,6 @@ package cz.cvut.fit.sp.chipin.base.notification;
 import cz.cvut.fit.sp.chipin.authentication.user.User;
 import cz.cvut.fit.sp.chipin.base.group.Group;
 import cz.cvut.fit.sp.chipin.base.notification.content.NotificationContent;
-import cz.cvut.fit.sp.chipin.base.transaction.Transaction;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;

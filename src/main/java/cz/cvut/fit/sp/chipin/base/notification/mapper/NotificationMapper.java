@@ -12,7 +12,7 @@ public interface NotificationMapper {
     @Mapping(target = "dateTime", dateFormat = DATETIME_FORMAT)
     @Mapping(source = "user.id", target = "userId")
     @Mapping(source = "transaction.id", target = "transactionId")
-    NotificationGetUserNotificationsResponse entityToGetUserNotificationsResponse(Notification notification);
+    NotificationReadNotificationsResponse entityToGetUserNotificationsResponse(Notification notification);
 
 }
 

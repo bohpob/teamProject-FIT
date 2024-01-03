@@ -1,9 +1,7 @@
 package cz.cvut.fit.sp.chipin.base.notification;
 
-import cz.cvut.fit.sp.chipin.base.notification.mapper.NotificationGetUserNotificationsResponse;
+import cz.cvut.fit.sp.chipin.base.notification.mapper.NotificationListWithCountResponse;
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,12 +13,9 @@ import java.security.Principal;
 public class NotificationController {
     private final NotificationService notificationService;
 
-    // Get user notifications with pagination
-    @GetMapping("/user")
-    public ResponseEntity<Page<NotificationGetUserNotificationsResponse>> getUserNotifications(
-            Pageable pageable,
-            Principal principal) {
-        Page<NotificationGetUserNotificationsResponse> notifications = notificationService.getUserNotifications(principal.getName(), pageable);
+    @GetMapping()
+    public ResponseEntity<NotificationListWithCountResponse> readNotifications(Principal principal) {
+        NotificationListWithCountResponse notifications = notificationService.readNotifications(principal.getName());
         return ResponseEntity.ok(notifications);
     }
 
