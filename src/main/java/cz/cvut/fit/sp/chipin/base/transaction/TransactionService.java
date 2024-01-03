@@ -3,15 +3,17 @@ package cz.cvut.fit.sp.chipin.base.transaction;
 import cz.cvut.fit.sp.chipin.authentication.user.User;
 import cz.cvut.fit.sp.chipin.base.amount.Amount;
 import cz.cvut.fit.sp.chipin.base.amount.AmountService;
+import cz.cvut.fit.sp.chipin.base.group.Group;
 import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionCreateTransactionRequest;
 import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionMapper;
 import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionReadGroupTransactionResponse;
 import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionReadGroupTransactionsResponse;
-import cz.cvut.fit.sp.chipin.base.group.Group;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -26,7 +28,7 @@ public class TransactionService {
         Transaction transaction = transactionMapper.createTransactionRequestToEntity(request);
         transaction.setPayer(payer);
         transaction.setGroup(group);
-        //TODO: set current date
+        transaction.setDateTime(LocalDateTime.now());
         //TODO: replace with Request field
         transaction.setCategory(Category.NO_CATEGORY);
 
@@ -59,15 +61,19 @@ public class TransactionService {
                         .filter(transaction -> request.categories.contains(transaction.getCategory().name()))
                         .collect(Collectors.toSet());
             }
-            if (!request.dateFrom.isBlank() && !request.dateTo.isBlank()) {
+            if (!request.dateTimeFrom.isBlank() && !request.dateTimeTo.isBlank()) {
 //                transactionsSet.retainAll(transactionRepository.findTransactionsByUserGroupIdAndDateBetween(groupId, dateFrom, dateTo));
                 transactionsSet = transactionsSet.stream()
-                        .filter(transaction -> transaction.getDate()
-                                .compareTo(request.dateFrom) >= 0 && transaction.getDate().compareTo(request.dateTo) <= 0)
+                        .filter(transaction -> {
+                            LocalDateTime dateTimeFrom = parseDateTime(request.getDateTimeFrom());
+                            LocalDateTime dateTimeTo = parseDateTime(request.getDateTimeTo());
+                            return !transaction.getDateTime().isBefore(dateTimeFrom) &&
+                                    !transaction.getDateTime().isAfter(dateTimeTo);
+                        })
                         .collect(Collectors.toSet());
             }
 
-            if(!request.getMembers().isEmpty()){
+            if (!request.getMembers().isEmpty()) {
                 transactionsSet = transactionsSet.stream()
                         .filter(transaction -> request.getMembers().stream()
                                 .anyMatch(memberReadMemberResponse -> memberReadMemberResponse.getId()
@@ -77,8 +83,7 @@ public class TransactionService {
 
             return transactionsSet.stream()
                     .map(transactionMapper::entityToReadGroupTransactionsResponse).toList();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
     }
@@ -109,7 +114,7 @@ public class TransactionService {
         try {
             amountService.deleteAllByTransactionId(transaction.getId());
             transaction.setName(request.getName());
-            transaction.setDate(request.getDate());
+            transaction.setDateTime(parseDateTime(request.getDateTime()));
             transaction.setAmount(request.getAmount());
             transaction.setPayer(nextPayer);
 
@@ -130,4 +135,8 @@ public class TransactionService {
         return transactionRepository.findTransactionsByGroupId(groupId);
     }
 
+    private static LocalDateTime parseDateTime(String dateTime) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(TransactionMapper.DATETIME_FORMAT);
+        return LocalDateTime.parse(dateTime, formatter);
+    }
 }

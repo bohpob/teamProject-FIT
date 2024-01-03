@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,7 +33,7 @@ public class Transaction {
     private Long id;
     private String name;
     private Float amount;
-    private String date;
+    private LocalDateTime dateTime;
     @Enumerated(EnumType.STRING)
     private Category category;
     @ManyToOne
@@ -47,15 +46,4 @@ public class Transaction {
 
     @OneToMany(mappedBy = "transaction")
     private List<Amount> amounts = new ArrayList<>();
-
-    public Transaction(String name, Float amount, User payer, Group group) {
-        this.name = name;
-        this.amount = amount;
-        LocalDateTime currentDate = LocalDateTime.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d MMM yyyy, HH:mm");
-        this.date = currentDate.format(formatter);
-        this.payer = payer;
-        this.group = group;
-    }
-
 }

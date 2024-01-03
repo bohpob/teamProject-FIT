@@ -14,5 +14,5 @@ public class TransactionReadGroupTransactionResponse {
     @NotBlank
     private String payerName;
     @NotBlank
-    private String date;
+    private String dateTime;
 }
