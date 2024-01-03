@@ -4,6 +4,7 @@ import cz.cvut.fit.sp.chipin.authentication.user.User;
 import cz.cvut.fit.sp.chipin.base.amount.Amount;
 import cz.cvut.fit.sp.chipin.base.amount.AmountService;
 import cz.cvut.fit.sp.chipin.base.group.Group;
+import cz.cvut.fit.sp.chipin.base.member.mapper.MemberReadMemberResponse;
 import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionCreateTransactionRequest;
 import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionMapper;
 import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionReadGroupTransactionResponse;
@@ -16,6 +17,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @AllArgsConstructor
@@ -45,44 +47,29 @@ public class TransactionService {
     public List<TransactionReadGroupTransactionsResponse> readGroupTransactions(
             Long groupId, TransactionReadGroupTransactionsSmartRequest request) throws Exception {
         try {
-
-//            List<Category> categories = request.getCategories().stream().map(Category::valueOf).collect(Collectors.toList());
-//            List<Member> members = memberService.readMembers(groupId).stream()
-//                    .filter(member -> request.getMembers().stream()
-//                    .anyMatch(memberReadMemberResponse -> memberReadMemberResponse.getId().equals(member.getId().getUserAccountId()))).toList();
-//            String dateFrom = request.getDateFrom();
-//            String dateTo = request.getDateTo();
-
-            Set<Transaction> transactionsSet = new HashSet<>(transactionRepository.findTransactionsByGroupId(groupId));
+            Stream<Transaction> transactions = transactionRepository.findTransactionsByGroupId(groupId).stream();
 
             if (!request.categories.isEmpty()) {
-//                transactionsSet.retainAll(transactionRepository.findTransactionByUserGroupIdAndCategoryIn(groupId, categories));
-                transactionsSet = transactionsSet.stream()
-                        .filter(transaction -> request.categories.contains(transaction.getCategory().name()))
-                        .collect(Collectors.toSet());
+                transactions = transactions.filter(transaction ->
+                        request.categories.contains(transaction.getCategory().name())
+                );
             }
-            if (!request.dateTimeFrom.isBlank() && !request.dateTimeTo.isBlank()) {
-//                transactionsSet.retainAll(transactionRepository.findTransactionsByUserGroupIdAndDateBetween(groupId, dateFrom, dateTo));
-                transactionsSet = transactionsSet.stream()
-                        .filter(transaction -> {
-                            LocalDateTime dateTimeFrom = parseDateTime(request.getDateTimeFrom());
-                            LocalDateTime dateTimeTo = parseDateTime(request.getDateTimeTo());
-                            return !transaction.getDateTime().isBefore(dateTimeFrom) &&
-                                    !transaction.getDateTime().isAfter(dateTimeTo);
-                        })
-                        .collect(Collectors.toSet());
+
+            if (!request.getDateTimeFrom().isBlank() && !request.getDateTimeTo().isBlank()) {
+                LocalDateTime dateTimeFrom = parseDateTime(request.getDateTimeFrom());
+                LocalDateTime dateTimeTo = parseDateTime(request.getDateTimeTo());
+                transactions = transactions.filter(transaction ->
+                        !transaction.getDateTime().isBefore(dateTimeFrom) &&
+                                !transaction.getDateTime().isAfter(dateTimeTo)
+                );
             }
 
             if (!request.getMembers().isEmpty()) {
-                transactionsSet = transactionsSet.stream()
-                        .filter(transaction -> request.getMembers().stream()
-                                .anyMatch(memberReadMemberResponse -> memberReadMemberResponse.getId()
-                                        .equals(transaction.getPayer().getId())))
-                        .collect(Collectors.toSet());
+                List<String> memberIds = request.getMembers().stream().map(MemberReadMemberResponse::getId).toList();
+                transactions = transactions.filter(transaction -> memberIds.contains(transaction.getPayer().getId()));
             }
 
-            return transactionsSet.stream()
-                    .map(transactionMapper::entityToReadGroupTransactionsResponse).toList();
+            return transactions.map(transactionMapper::entityToReadGroupTransactionsResponse).toList();
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
