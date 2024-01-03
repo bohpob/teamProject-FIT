@@ -1,8 +1,11 @@
 package cz.cvut.fit.sp.chipin.base.group;
 
-import cz.cvut.fit.sp.chipin.base.transaction.*;
-import cz.cvut.fit.sp.chipin.base.transaction.mapper.*;
 import cz.cvut.fit.sp.chipin.base.group.mapper.*;
+import cz.cvut.fit.sp.chipin.base.transaction.Category;
+import cz.cvut.fit.sp.chipin.base.transaction.TransactionReadGroupTransactionsSmartRequest;
+import cz.cvut.fit.sp.chipin.base.transaction.TransactionService;
+import cz.cvut.fit.sp.chipin.base.transaction.TransactionUpdateRequest;
+import cz.cvut.fit.sp.chipin.base.transaction.mapper.*;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -50,10 +53,19 @@ public class GroupController {
         }
     }
 
-    @PatchMapping("/{groupId}/join")
-    public String addMember(@Valid @RequestParam String userId, @PathVariable Long groupId) throws Exception {
+    @GetMapping("/{groupId}/hexCode")
+    public ResponseEntity<String> readHexCode(@PathVariable Long groupId) throws Exception {
         try {
-            return groupService.addMember(userId, groupId);
+            return ResponseEntity.ok(groupService.readHexCode(groupId));
+        } catch (Exception e) {
+            throw new Exception(e);
+        }
+    }
+
+    @PatchMapping("/join")
+    public ResponseEntity<String> joinGroup(@RequestParam String hexCode, Principal principal) throws Exception {
+        try {
+            return ResponseEntity.ok(groupService.addMember(principal.getName(), hexCode));
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
