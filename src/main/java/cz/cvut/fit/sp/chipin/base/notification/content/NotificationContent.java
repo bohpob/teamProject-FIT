@@ -29,7 +29,5 @@ public class NotificationContent {
     @NotBlank
     private String title;
 
-    @NotBlank
     private String text;
-
 }

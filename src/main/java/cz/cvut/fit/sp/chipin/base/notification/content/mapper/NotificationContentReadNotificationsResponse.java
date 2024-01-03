@@ -1,8 +1,10 @@
 package cz.cvut.fit.sp.chipin.base.notification.content.mapper;
 
+import lombok.Data;
+
+@Data
 public class NotificationContentReadNotificationsResponse {
     private Long id;
-    private String text;
     private String title;
-
+    private String text;
 }

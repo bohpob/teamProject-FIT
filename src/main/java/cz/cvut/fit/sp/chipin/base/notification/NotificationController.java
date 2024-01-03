@@ -13,32 +13,19 @@ import java.security.Principal;
 public class NotificationController {
     private final NotificationService notificationService;
 
+    // Returns all user notifications
     @GetMapping()
     public ResponseEntity<NotificationListWithCountResponse> readNotifications(Principal principal) {
         NotificationListWithCountResponse notifications = notificationService.readNotifications(principal.getName());
         return ResponseEntity.ok(notifications);
     }
 
-    // Read notification
-    @PutMapping("/{notificationId}/read")
-    public ResponseEntity<Void> readNotification(
-            @PathVariable Long notificationId,
-            Principal principal) {
+    // (Un)read notification
+    @PatchMapping("/{notificationId}")
+    public ResponseEntity<Void> readNotification(@PathVariable Long notificationId, @RequestBody Boolean newStatus,
+                                                 Principal principal) {
         try {
-            notificationService.markNotificationAsRead(notificationId, principal.getName());
-            return ResponseEntity.ok().build();
-        } catch (Exception e) {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
-    // Unread notification
-    @DeleteMapping("/{notificationId}/read")
-    public ResponseEntity<Void> unreadNotification(
-            @PathVariable Long notificationId,
-            Principal principal) {
-        try {
-            notificationService.markNotificationAsUnread(notificationId, principal.getName());
+            notificationService.markNotification(notificationId, principal.getName(), newStatus);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             return ResponseEntity.notFound().build();

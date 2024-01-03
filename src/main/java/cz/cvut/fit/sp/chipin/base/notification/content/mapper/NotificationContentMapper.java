@@ -6,6 +6,6 @@ import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
 public interface NotificationContentMapper {
-    NotificationReadNotificationsResponse entityToGetUserNotificationsResponse(NotificationContent notificationContent);
+    NotificationReadNotificationsResponse entityToReadNotificationsResponse(NotificationContent notificationContent);
 }
 
