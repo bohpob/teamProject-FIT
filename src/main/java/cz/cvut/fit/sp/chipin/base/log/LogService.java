@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
@@ -15,11 +14,9 @@ public class LogService {
     private final LogRepository logRepository;
 
     public void create(String action, Group group, User user) {
-        LocalDateTime currentDate = LocalDateTime.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d MMM yyyy, HH:mm");
-        String date = currentDate.format(formatter);
-
-        logRepository.save(new Log(action, date, group, user));
+        LocalDateTime dateTime = LocalDateTime.now();
+        Log log = new Log(action, dateTime, group, user);
+        logRepository.save(log);
     }
 
     public List<Log> readLogs(Long groupId) {

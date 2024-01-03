@@ -16,7 +16,7 @@ public class TransactionCreateTransactionResponse {
     @NotNull
     private Float amount;
     @NotBlank
-    private String date;
+    private String dateTime;
     @NotNull
     private UserCreateTransactionResponse payer;
     @NotNull

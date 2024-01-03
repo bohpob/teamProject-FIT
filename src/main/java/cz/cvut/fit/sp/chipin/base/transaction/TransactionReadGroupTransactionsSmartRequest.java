@@ -9,7 +9,7 @@ import java.util.List;
 @Data
 public class TransactionReadGroupTransactionsSmartRequest {
     List<String> categories;
-    String dateFrom;
-    String dateTo;
+    String dateTimeFrom;
+    String dateTimeTo;
     List<MemberReadMemberResponse> members;
 }

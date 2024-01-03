@@ -18,7 +18,7 @@ public class TransactionUpdateRequest {
     @NotNull
     private Float amount;
     @NotBlank
-    private String date;
+    private String dateTime;
     @NotNull
     private String payerId;
     @NotNull

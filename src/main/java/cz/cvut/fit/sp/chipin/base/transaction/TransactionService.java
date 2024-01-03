@@ -3,17 +3,21 @@ package cz.cvut.fit.sp.chipin.base.transaction;
 import cz.cvut.fit.sp.chipin.authentication.user.User;
 import cz.cvut.fit.sp.chipin.base.amount.Amount;
 import cz.cvut.fit.sp.chipin.base.amount.AmountService;
+import cz.cvut.fit.sp.chipin.base.group.Group;
+import cz.cvut.fit.sp.chipin.base.member.mapper.MemberReadMemberResponse;
 import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionCreateTransactionRequest;
 import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionMapper;
 import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionReadGroupTransactionResponse;
 import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionReadGroupTransactionsResponse;
-import cz.cvut.fit.sp.chipin.base.group.Group;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @AllArgsConstructor
@@ -26,7 +30,7 @@ public class TransactionService {
         Transaction transaction = transactionMapper.createTransactionRequestToEntity(request);
         transaction.setPayer(payer);
         transaction.setGroup(group);
-        //TODO: set current date
+        transaction.setDateTime(LocalDateTime.now());
         //TODO: replace with Request field
         transaction.setCategory(Category.NO_CATEGORY);
 
@@ -43,42 +47,30 @@ public class TransactionService {
     public List<TransactionReadGroupTransactionsResponse> readGroupTransactions(
             Long groupId, TransactionReadGroupTransactionsSmartRequest request) throws Exception {
         try {
-
-//            List<Category> categories = request.getCategories().stream().map(Category::valueOf).collect(Collectors.toList());
-//            List<Member> members = memberService.readMembers(groupId).stream()
-//                    .filter(member -> request.getMembers().stream()
-//                    .anyMatch(memberReadMemberResponse -> memberReadMemberResponse.getId().equals(member.getId().getUserAccountId()))).toList();
-//            String dateFrom = request.getDateFrom();
-//            String dateTo = request.getDateTo();
-
-            Set<Transaction> transactionsSet = new HashSet<>(transactionRepository.findTransactionsByGroupId(groupId));
+            Stream<Transaction> transactions = transactionRepository.findTransactionsByGroupId(groupId).stream();
 
             if (!request.categories.isEmpty()) {
-//                transactionsSet.retainAll(transactionRepository.findTransactionByUserGroupIdAndCategoryIn(groupId, categories));
-                transactionsSet = transactionsSet.stream()
-                        .filter(transaction -> request.categories.contains(transaction.getCategory().name()))
-                        .collect(Collectors.toSet());
-            }
-            if (!request.dateFrom.isBlank() && !request.dateTo.isBlank()) {
-//                transactionsSet.retainAll(transactionRepository.findTransactionsByUserGroupIdAndDateBetween(groupId, dateFrom, dateTo));
-                transactionsSet = transactionsSet.stream()
-                        .filter(transaction -> transaction.getDate()
-                                .compareTo(request.dateFrom) >= 0 && transaction.getDate().compareTo(request.dateTo) <= 0)
-                        .collect(Collectors.toSet());
+                transactions = transactions.filter(transaction ->
+                        request.categories.contains(transaction.getCategory().name())
+                );
             }
 
-            if(!request.getMembers().isEmpty()){
-                transactionsSet = transactionsSet.stream()
-                        .filter(transaction -> request.getMembers().stream()
-                                .anyMatch(memberReadMemberResponse -> memberReadMemberResponse.getId()
-                                        .equals(transaction.getPayer().getId())))
-                        .collect(Collectors.toSet());
+            if (!request.getDateTimeFrom().isBlank() && !request.getDateTimeTo().isBlank()) {
+                LocalDateTime dateTimeFrom = parseDateTime(request.getDateTimeFrom());
+                LocalDateTime dateTimeTo = parseDateTime(request.getDateTimeTo());
+                transactions = transactions.filter(transaction ->
+                        !transaction.getDateTime().isBefore(dateTimeFrom) &&
+                                !transaction.getDateTime().isAfter(dateTimeTo)
+                );
             }
 
-            return transactionsSet.stream()
-                    .map(transactionMapper::entityToReadGroupTransactionsResponse).toList();
-        }
-        catch (Exception e) {
+            if (!request.getMembers().isEmpty()) {
+                List<String> memberIds = request.getMembers().stream().map(MemberReadMemberResponse::getId).toList();
+                transactions = transactions.filter(transaction -> memberIds.contains(transaction.getPayer().getId()));
+            }
+
+            return transactions.map(transactionMapper::entityToReadGroupTransactionsResponse).toList();
+        } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
     }
@@ -109,7 +101,7 @@ public class TransactionService {
         try {
             amountService.deleteAllByTransactionId(transaction.getId());
             transaction.setName(request.getName());
-            transaction.setDate(request.getDate());
+            transaction.setDateTime(parseDateTime(request.getDateTime()));
             transaction.setAmount(request.getAmount());
             transaction.setPayer(nextPayer);
 
@@ -130,4 +122,8 @@ public class TransactionService {
         return transactionRepository.findTransactionsByGroupId(groupId);
     }
 
+    private static LocalDateTime parseDateTime(String dateTime) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(TransactionMapper.DATETIME_FORMAT);
+        return LocalDateTime.parse(dateTime, formatter);
+    }
 }

@@ -9,26 +9,32 @@ import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring", imports = {AmountService.class}, uses = {AmountMapper.class})
 public interface TransactionMapper {
+    String DATETIME_FORMAT = "yyyy-MM-dd HH:mm";
+
     UserCreateTransactionResponse userEntityToCreateTransactionResponse(User user);
 
     @Mapping(expression = "java(AmountService.roundAmount(transaction.getAmount()))", target = "amount")
+    @Mapping(target = "dateTime", dateFormat = DATETIME_FORMAT)
     TransactionCreateTransactionResponse entityToCreateTransactionResponse(Transaction transaction);
 
     @Mapping(expression = "java(AmountService.roundAmount(transaction.getAmount()))", target = "amount")
+    @Mapping(target = "dateTime", dateFormat = DATETIME_FORMAT)
     TransactionUpdateTransactionResponse entityToUpdateTransactionResponse(Transaction transaction);
 
     @Mapping(expression = "java(AmountService.roundAmount(transaction.getAmount()))", target = "amount")
     @Mapping(source = "payer.id", target = "payerId")
     @Mapping(source = "payer.firstName", target = "payerName")
+    @Mapping(target = "dateTime", dateFormat = DATETIME_FORMAT)
     TransactionReadGroupTransactionResponse entityToReadGroupTransactionResponse(Transaction transaction);
 
     @Mapping(expression = "java(AmountService.roundAmount(transaction.getAmount()))", target = "amount")
     @Mapping(source = "payer.id", target = "payerId")
     @Mapping(source = "payer.firstName", target = "payerName")
+    @Mapping(target = "dateTime", dateFormat = DATETIME_FORMAT)
     TransactionReadGroupTransactionsResponse entityToReadGroupTransactionsResponse(Transaction transaction);
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "date", ignore = true)
+    @Mapping(target = "dateTime", ignore = true)
     @Mapping(target = "category", ignore = true)
     @Mapping(target = "payer", ignore = true)
     @Mapping(target = "group", ignore = true)

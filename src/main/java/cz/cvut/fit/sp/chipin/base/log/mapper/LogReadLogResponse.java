@@ -8,7 +8,7 @@ public class LogReadLogResponse {
     @NotBlank
     private String action;
     @NotBlank
-    private String date;
+    private String dateTime;
     @NotBlank
     private String userId;
     @NotBlank
