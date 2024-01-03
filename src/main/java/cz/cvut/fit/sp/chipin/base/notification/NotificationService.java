@@ -56,19 +56,18 @@ public class NotificationService {
         notificationToUpdate.setUser(notification.getUser());
         notificationToUpdate.setRead(notification.getRead());
         notificationToUpdate.setDateTime(notification.getDateTime());
-        notificationToUpdate.setTransaction(notification.getTransaction());
         notificationRepository.save(notificationToUpdate);
     }
 
-    public void createNotification(User user, Group group, Transaction transaction, NotificationContent content) {
+    public void createNotification(User user, Group group, NotificationContent content) {
         notificationContentService.createNotificationContent(content);
-        Notification notification = new Notification(content, user, group, transaction);
+        Notification notification = new Notification(content, user, group);
         notificationRepository.save(notification);
     }
-    public void createNotifications(List<User> users, Group group, Transaction transaction, NotificationContent content) {
+    public void createNotifications(List<User> users, Group group, NotificationContent content) {
         notificationContentService.createNotificationContent(content);
         for (User user : users) {
-            Notification notification = new Notification(content, user, group, transaction);
+            Notification notification = new Notification(content, user, group);
             notificationRepository.save(notification);
         }
     }

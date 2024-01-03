@@ -49,18 +49,12 @@ public class Notification {
     @JoinColumn(name = "notification_content_id")
     private NotificationContent content;
 
-    @NotNull
-    @ManyToOne
-    @JoinColumn(name = "transaction_id")
-    private Transaction transaction;
-
     // simple constructor with generated LocalDateTime and read set to false
-    public Notification(NotificationContent content, User user, Group group, Transaction transaction) {
+    public Notification(NotificationContent content, User user, Group group) {
         this.content = content;
         this.dateTime = LocalDateTime.now();
         this.read = false;
         this.user = user;
         this.groupName = group.getName();
-        this.transaction = transaction;
     }
 }
