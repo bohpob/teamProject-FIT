@@ -30,4 +30,13 @@ public class NotificationContent {
     private String title;
 
     private String text;
+
+    public NotificationContent(String title) {
+        this.title = title;
+    }
+
+    public NotificationContent(String title, String text) {
+        this.title = title;
+        this.text = text;
+    }
 }

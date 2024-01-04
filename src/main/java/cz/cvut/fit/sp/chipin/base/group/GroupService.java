@@ -3,6 +3,8 @@ package cz.cvut.fit.sp.chipin.base.group;
 import cz.cvut.fit.sp.chipin.authentication.user.User;
 import cz.cvut.fit.sp.chipin.authentication.user.UserService;
 import cz.cvut.fit.sp.chipin.base.amount.Amount;
+import cz.cvut.fit.sp.chipin.base.notification.NotificationService;
+import cz.cvut.fit.sp.chipin.base.notification.content.NotificationContent;
 import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionCreateTransactionResponse;
 import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionMapper;
 import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionUpdateTransactionResponse;
@@ -35,6 +37,7 @@ public class GroupService {
     private final TransactionService transactionService;
     private final GroupMapper groupMapper;
     private final TransactionMapper transactionMapper;
+    private final NotificationService notificationService;
 
     public GroupCreateGroupResponse createGroup(GroupCreateGroupRequest request, String userId) throws Exception {
         User user = userService.getUser(userId);
@@ -88,6 +91,9 @@ public class GroupService {
         Member member = new Member(user, group, GroupRole.USER, 0f, 0f, 0f);
         group.addMembership(member);
         user.addMembership(member);
+
+        notificationService.createNotification(user, group, new NotificationContent(
+                "You joined the group " + group.getName()));
 
         memberService.save(member);
         userService.save(user);
@@ -175,6 +181,19 @@ public class GroupService {
                 Transaction transaction = transactionService.create(request,
                         borrower.get().getUser(), group.get());
                 acceptTxCreate(transaction);
+
+                // Notifying the borrower of debt repayment
+                notificationService.createNotification(borrower.get().getUser(), group.get(), new NotificationContent(
+                        "Debt Repaid", "You repaid a debt of $" + debt.get().getAmount()
+                        + " to " + lender.get().getUser().getName()));
+                userService.save(borrower.get().getUser());
+
+                // Notifying the lender of debt settlement
+                notificationService.createNotification(lender.get().getUser(), group.get(), new NotificationContent(
+                        "Debt Settled", borrower.get().getUser().getName() + " repaid a debt of $"
+                        + debt.get().getAmount() + " to you"));
+                userService.save(lender.get().getUser());
+
                 logService.create(transaction.getName(), transaction.getGroup(), transaction.getPayer());
             }
         } catch (Exception e) {
@@ -199,6 +218,10 @@ public class GroupService {
                 transaction = transactionService.create(request, payer.get().getUser(), group.get());
                 acceptTxCreate(transaction);
 
+                // Create transaction notifications
+                transactionNotifications(transaction, group.get(),
+                        "Transaction created: " + transaction.getName() + " in " + group.get().getName());
+
                 logService.create("made a payment: " + transaction.getAmount(),
                         transaction.getGroup(), transaction.getPayer());
             }
@@ -206,6 +229,27 @@ public class GroupService {
             throw new Exception(e);
         }
         return transactionMapper.entityToCreateTransactionResponse(transaction);
+    }
+
+    // Creates transaction notifications for each participant based on their "share" in the transaction.
+    private void transactionNotifications(Transaction transaction, Group group, String title) {
+        for (Amount amount : transaction.getAmounts()) {
+            User user = amount.getUser();
+            Float userShare = amount.getAmount();
+
+            String notificationText;
+            if (user.equals(transaction.getPayer())) {
+                float payerShare = transaction.getAmount() - userShare;
+                notificationText = "You get back $" + payerShare;
+            } else
+                notificationText = "You owe $" + userShare;
+
+            NotificationContent notificationContent = new NotificationContent(title);
+            notificationContent.setText(notificationText);
+
+            notificationService.createNotification(user, group, notificationContent);
+            userService.save(user);
+        }
     }
 
     public Group read(Long id) throws Exception {
@@ -261,6 +305,9 @@ public class GroupService {
                 acceptTxDelete(transaction.get());
                 transactionService.update(transaction.get(), transactionUpdateRequest, nextPayer.get().getUser());
                 acceptTxCreate(transaction.get());
+
+                transactionNotifications(transaction.get(), group.get(),
+                        "Transaction updated: " + transaction.get().getName() + " in " + group.get().getName());
             }
         } catch (Exception e) {
             throw new Exception(e);
@@ -278,8 +325,15 @@ public class GroupService {
         if (payer.isEmpty()) {
             throw new Exception("Payer not found.");
         }
+        Group group = groupRepository.findById(groupId).orElseThrow(() -> new Exception("Group not found"));
 
         acceptTxDelete(transaction.get());
+
+        List<User> users = getUsersByGroupId(groupId);
+        notificationService.createNotifications(users, group,
+                new NotificationContent("Transaction deleted: " + transaction.get().getName() + " in " + group.getName()));
+        userService.saveAll(users);
+
         transactionService.delete(transaction.get());
         // change to the user who will actually delete the transaction
         logService.create("deleted transaction", payer.get().getGroup(), payer.get().getUser());
@@ -301,6 +355,10 @@ public class GroupService {
         return groupMapper.entityToReadGroupLogsResponse(group);
     }
 
+    public List<User> getUsersByGroupId(Long groupId) {
+        return groupRepository.findUsersByGroupId(groupId);
+    }
+
     public GroupUpdateGroupNameResponse updateGroupName(Long groupId, String name) throws Exception {
         Group group = groupRepository.findById(groupId)
                 .orElseThrow(() -> new Exception("Group not found"));
@@ -308,6 +366,14 @@ public class GroupService {
             throw new Exception("New name is empty");
         }
         group.setName(name);
+
+        NotificationContent notificationContent = new NotificationContent(
+                "Group name updated", "The group name has been changed from " + group.getName() + " to " + name);
+
+        List<User> users = getUsersByGroupId(groupId);
+        notificationService.createNotifications(users, group, notificationContent);
+
+        userService.saveAll(users);
         groupRepository.save(group);
         return groupMapper.entityToUpdateGroupNameResponse(group);
     }
