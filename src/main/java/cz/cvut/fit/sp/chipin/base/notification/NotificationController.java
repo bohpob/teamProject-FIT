@@ -1,6 +1,6 @@
 package cz.cvut.fit.sp.chipin.base.notification;
 
-import cz.cvut.fit.sp.chipin.base.notification.mapper.NotificationListWithCountResponse;
+import cz.cvut.fit.sp.chipin.base.notification.mapper.NotificationReadNotificationsResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,8 +15,8 @@ public class NotificationController {
 
     // Returns all user notifications
     @GetMapping()
-    public ResponseEntity<NotificationListWithCountResponse> readNotifications(Principal principal) {
-        NotificationListWithCountResponse notifications = notificationService.readNotifications(principal.getName());
+    public ResponseEntity<NotificationReadNotificationsResponse> readNotifications(Principal principal) {
+        NotificationReadNotificationsResponse notifications = notificationService.readNotifications(principal.getName());
         return ResponseEntity.ok(notifications);
     }
 

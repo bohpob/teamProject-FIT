@@ -4,8 +4,8 @@ import cz.cvut.fit.sp.chipin.authentication.user.User;
 import cz.cvut.fit.sp.chipin.base.group.Group;
 import cz.cvut.fit.sp.chipin.base.notification.content.NotificationContent;
 import cz.cvut.fit.sp.chipin.base.notification.content.NotificationContentService;
+import cz.cvut.fit.sp.chipin.base.notification.mapper.NotificationReadNotificationResponse;
 import cz.cvut.fit.sp.chipin.base.notification.mapper.NotificationReadNotificationsResponse;
-import cz.cvut.fit.sp.chipin.base.notification.mapper.NotificationListWithCountResponse;
 import cz.cvut.fit.sp.chipin.base.notification.mapper.NotificationMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,16 +19,16 @@ public class NotificationService {
     private final NotificationRepository notificationRepository;
     private final NotificationContentService notificationContentService;
 
-    public NotificationListWithCountResponse readNotifications(String userId) {
+    public NotificationReadNotificationsResponse readNotifications(String userId) {
         List<Notification> notifications = notificationRepository.findNotificationsByUserId(userId);
 
         Long count = notifications.stream().filter(notification -> Boolean.FALSE.equals(notification.getRead())).count();
 
-        List<NotificationReadNotificationsResponse> notificationResponses = notifications.stream()
-                .map(notificationMapper::entityToReadNotificationsResponse)
+        List<NotificationReadNotificationResponse> notificationResponses = notifications.stream()
+                .map(notificationMapper::entityToReadNotificationResponse)
                 .toList();
 
-        return new NotificationListWithCountResponse(count, notificationResponses);
+        return new NotificationReadNotificationsResponse(count, notificationResponses);
     }
 
     public void markNotification(Long notificationId, String userId, Boolean newStatus) throws Exception {

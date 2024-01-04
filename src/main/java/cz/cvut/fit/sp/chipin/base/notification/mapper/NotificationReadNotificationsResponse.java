@@ -1,17 +1,13 @@
 package cz.cvut.fit.sp.chipin.base.notification.mapper;
 
-import cz.cvut.fit.sp.chipin.base.notification.content.mapper.NotificationContentReadNotificationsResponse;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
-import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
+@AllArgsConstructor
 public class NotificationReadNotificationsResponse {
-    private Long id;
-    private NotificationContentReadNotificationsResponse content;
-    private LocalDateTime dateTime;
-    private Boolean read;
-    private String userId;
-    private String groupName;
-    private Long transactionId;
+    private Long count;
+    private List<NotificationReadNotificationResponse> notifications;
 }
