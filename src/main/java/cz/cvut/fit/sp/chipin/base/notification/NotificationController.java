@@ -20,12 +20,11 @@ public class NotificationController {
         return ResponseEntity.ok(notifications);
     }
 
-    // (Un)read notification
+    // Reverses the notification status to the opposite
     @PatchMapping("/{notificationId}")
-    public ResponseEntity<Void> readNotification(@PathVariable Long notificationId, @RequestBody Boolean newStatus,
-                                                 Principal principal) {
+    public ResponseEntity<Void> reverseNotificationStatus(@PathVariable Long notificationId, Principal principal) {
         try {
-            notificationService.markNotification(notificationId, principal.getName(), newStatus);
+            notificationService.reverseNotificationStatus(notificationId, principal.getName());
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             return ResponseEntity.notFound().build();

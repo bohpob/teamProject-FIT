@@ -31,10 +31,11 @@ public class NotificationService {
         return new NotificationReadNotificationsResponse(count, notificationResponses);
     }
 
-    public void markNotification(Long notificationId, String userId, Boolean newStatus) throws Exception {
+    public void reverseNotificationStatus(Long notificationId, String userId) throws Exception {
         Notification notification = notificationRepository.findByIdAndUserId(notificationId, userId)
                 .orElseThrow(() -> new Exception("Group not found"));
-        notification.setRead(newStatus);
+
+        notification.setRead(!notification.getRead());
         notificationRepository.save(notification);
     }
 
