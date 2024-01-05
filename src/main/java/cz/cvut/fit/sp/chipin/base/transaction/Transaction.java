@@ -59,7 +59,7 @@ public class Transaction {
         this.amount = amount;
         LocalDateTime currentDate = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d MMM yyyy, HH:mm");
-        DateTimeFormatter dateOnlyFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        DateTimeFormatter dateOnlyFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         this.date = currentDate.format(formatter);
         this.formattedDate = currentDate.format(dateOnlyFormatter);
         this.convertedAmount = ExchangeRate.getExchangeRate(currency, userGroup.getCurrency(), this.formattedDate) * amount;

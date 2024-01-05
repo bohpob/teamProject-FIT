@@ -269,7 +269,7 @@ public class GroupService {
         return transactionMapper.entityToUpdateTransactionResponse(transaction.get());
     }
 
-    public TransactionResponse updateCurrency(TransactionService.CurrencyUpdateRequest currencyUpdateRequest,
+    public TransactionResponse updateCurrency(String currencyUpdateRequest,
                                               Long groupId, Long transactionId) throws Exception {
         Optional<UserGroup> group = userGroupRepository.findById(groupId);
         if (group.isEmpty()) {

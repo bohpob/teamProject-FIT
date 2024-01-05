@@ -97,16 +97,16 @@ public class TransactionService {
                 .orElseThrow(() -> new Exception("Transaction not found"));
         return transactionMapper.entityToReadGroupTransactionResponse(transaction);
     }
-    @Getter
-    public static class CurrencyUpdateRequest { private String currency; }
+
     @Transactional
-    public void updateCurrency(Transaction transaction, CurrencyUpdateRequest request) throws Exception {
+    public void updateCurrency(Transaction transaction, String request) throws Exception {
         try {
             Currency baseCurrency = transaction.getCurrency();
-            Currency newCurrency = Currency.getInstance(request.getCurrency());
+            Currency newCurrency = Currency.getInstance(request);
             Float exchangeRate = ExchangeRate.getExchangeRate(baseCurrency, newCurrency, transaction.getFormattedDate());
             Float newAmount = exchangeRate * transaction.getAmount();
             transaction.setAmount(newAmount);
+            transaction.setCurrency(newCurrency);
             transactionRepository.save(transaction);
         } catch (Exception e) {
             throw new Exception(e.getMessage());
