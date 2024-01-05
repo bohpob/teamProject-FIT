@@ -9,6 +9,9 @@ import cz.cvut.fit.sp.chipin.base.group.mapper.GroupReadGroupMembersResponse;
 import cz.cvut.fit.sp.chipin.base.member.Member;
 import cz.cvut.fit.sp.chipin.base.member.MemberDTO;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -31,11 +34,26 @@ public class UserService {
         }
     }
 
-    public List<GroupReadGroupMembersResponse> readUserGroups(String id) throws Exception {
+    public Page<GroupReadGroupMembersResponse> readUserGroups(String id, Pageable pageable) throws Exception {
         User user = userRepository.findById(id).orElse(null);
         if (user != null) {
+            //get all user's groups and map them to GroupReadGroupMembersResponse and return page of them
             List<Group> groups = user.getMembers().stream().map(Member::getGroup).toList();
-            return groups.stream().map(groupMapper::entityToReadGroupMembersResponse).toList();
+            List<GroupReadGroupMembersResponse> groupResponses = groups.stream().map(groupMapper::entityToReadGroupMembersResponse).toList();
+            int pageSize = pageable.getPageSize();
+            int currentPage = pageable.getPageNumber();
+            int startItem = currentPage * pageSize;
+
+            List<GroupReadGroupMembersResponse> pageContent;
+
+            if (groupResponses.size() < startItem) {
+                pageContent = new ArrayList<>();
+            } else {
+                int toIndex = Math.min(startItem + pageSize, groupResponses.size());
+                pageContent = groupResponses.subList(startItem, toIndex);
+            }
+
+            return new PageImpl<>(pageContent, pageable, groupResponses.size());
         } else {
             throw new Exception("user with id: " + id + " doesn't exists");
         }
