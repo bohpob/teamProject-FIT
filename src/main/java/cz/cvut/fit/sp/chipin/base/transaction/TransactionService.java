@@ -60,10 +60,6 @@ public class TransactionService {
         return transactionMapper.entityToReadGroupTransactionResponse(transaction);
     }
 
-    public List<Transaction> readAllByCategories(Long groupId, List<Category> categories) throws Exception {
-        return transactionRepository.findTransactionByGroupIdAndCategoryIn(groupId, categories);
-    }
-
     @Transactional
     public void update(Transaction transaction, TransactionUpdateRequest request, User nextPayer) throws Exception {
         try {
@@ -85,10 +81,6 @@ public class TransactionService {
     public void delete(Transaction transaction) throws Exception {
         amountService.deleteAllByIds(transaction.getAmounts().stream().map(Amount::getId).collect(Collectors.toList()));
         transactionRepository.deleteById(transaction.getId());
-    }
-
-    public List<Transaction> readTransactions(Long groupId) {
-        return transactionRepository.findTransactionsByGroupId(groupId);
     }
 
     private static LocalDateTime parseDateTime(String dateTime) {
