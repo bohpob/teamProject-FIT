@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.security.Principal;
 
 @RestController
-@RequestMapping("/api/v1/notifications")
+@RequestMapping("/api/v1/me/notifications")
 @AllArgsConstructor
 public class NotificationController {
     private final NotificationService notificationService;
