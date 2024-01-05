@@ -11,5 +11,4 @@ public class NotificationReadNotificationResponse {
     private NotificationContentReadNotificationResponse content;
     private LocalDateTime dateTime;
     private Boolean read;
-    private String userId;
 }

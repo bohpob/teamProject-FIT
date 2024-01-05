@@ -297,7 +297,6 @@ public class GroupService {
         if (payer.isEmpty()) {
             throw new Exception("Payer not found.");
         }
-        Group group = groupRepository.findById(groupId).orElseThrow(() -> new Exception("Group not found"));
 
         acceptTxDelete(transaction.get());
         transactionService.delete(transaction.get());

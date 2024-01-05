@@ -10,6 +10,5 @@ public interface NotificationMapper {
     String DATETIME_FORMAT = "yyyy-MM-dd HH:mm";
 
     @Mapping(target = "dateTime", dateFormat = DATETIME_FORMAT)
-    @Mapping(source = "user.id", target = "userId")
     NotificationReadNotificationResponse entityToReadNotificationResponse(Notification notification);
 }
