@@ -35,7 +35,6 @@ public interface TransactionMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "dateTime", ignore = true)
-    @Mapping(target = "category", ignore = true)
     @Mapping(target = "payer", ignore = true)
     @Mapping(target = "group", ignore = true)
     @Mapping(target = "amounts", ignore = true)

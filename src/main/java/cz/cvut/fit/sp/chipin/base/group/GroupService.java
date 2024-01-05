@@ -10,10 +10,7 @@ import cz.cvut.fit.sp.chipin.base.log.LogService;
 import cz.cvut.fit.sp.chipin.base.member.GroupRole;
 import cz.cvut.fit.sp.chipin.base.member.Member;
 import cz.cvut.fit.sp.chipin.base.member.MemberService;
-import cz.cvut.fit.sp.chipin.base.transaction.Transaction;
-import cz.cvut.fit.sp.chipin.base.transaction.TransactionService;
-import cz.cvut.fit.sp.chipin.base.transaction.TransactionType;
-import cz.cvut.fit.sp.chipin.base.transaction.TransactionUpdateRequest;
+import cz.cvut.fit.sp.chipin.base.transaction.*;
 import cz.cvut.fit.sp.chipin.base.transaction.mapper.*;
 import cz.cvut.fit.sp.chipin.base.transaction.spender.MemberAbstractRequest;
 import cz.cvut.fit.sp.chipin.base.transaction.spender.UnequalTransactionMember;
@@ -170,8 +167,12 @@ public class GroupService {
         TransactionCreateTransactionRequest request = new TransactionCreateTransactionRequest(
                 borrower.get().getUser().getName() + " repaid "
                         + lender.get().getUser().getName() + "'s " + "debt",
-                debt.get().getAmount(), borrower.get().getUser().getId(), TransactionType.UNEQUALLY, amounts);
-
+                debt.get().getAmount(),
+                borrower.get().getUser().getId(),
+                Category.DEBT_REPAYMENT,
+                TransactionType.UNEQUALLY,
+                amounts
+        );
 
         try {
             if (allSpendersFromGroup(request.getSpenders(), groupId)) {

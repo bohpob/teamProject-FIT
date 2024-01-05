@@ -32,8 +32,6 @@ public class TransactionService {
         transaction.setPayer(payer);
         transaction.setGroup(group);
         transaction.setDateTime(LocalDateTime.now());
-        //TODO: replace with Request field
-        transaction.setCategory(Category.NO_CATEGORY);
 
         try {
             List<Amount> amounts = amountService.setAmounts(transaction, request.getSpenders(), request.getSplitStrategy());
@@ -74,6 +72,7 @@ public class TransactionService {
             transaction.setDateTime(parseDateTime(request.getDateTime()));
             transaction.setAmount(request.getAmount());
             transaction.setPayer(nextPayer);
+            transaction.setCategory(request.getCategory());
 
             List<Amount> amounts = amountService.setAmounts(transaction, request.getSpenders(), request.getSplitStrategy());
             amountService.saveAll(amounts);
