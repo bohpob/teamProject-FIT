@@ -10,13 +10,13 @@ import org.springframework.web.bind.annotation.*;
 import java.security.Principal;
 
 @RestController
-@RequestMapping("/api/v1/me/notifications")
+@RequestMapping("/api/v1/notifications")
 @AllArgsConstructor
 public class NotificationController {
     private final NotificationService notificationService;
 
     // Returns all user notifications
-    @GetMapping("/all")
+    @GetMapping("/me/all")
     public ResponseEntity<Page<NotificationReadNotificationsResponse>> readAllNotifications(Pageable pageable, Principal principal) {
         Page<NotificationReadNotificationsResponse> notifications =
                 notificationService.readAllNotifications(principal.getName(), pageable);
@@ -24,7 +24,7 @@ public class NotificationController {
     }
 
     // Returns only unread user notifications
-    @GetMapping("/unread")
+    @GetMapping("/me/unread")
     public ResponseEntity<Page<NotificationReadNotificationsResponse>> readUnreadNotifications(Pageable pageable, Principal principal) {
         Page<NotificationReadNotificationsResponse> notifications =
                 notificationService.readUnreadNotifications(principal.getName(), pageable);
@@ -32,7 +32,7 @@ public class NotificationController {
     }
 
     // Reverses the notification status to the opposite
-    @PatchMapping("/{notificationId}")
+    @PatchMapping("/me/{notificationId}")
     public ResponseEntity<Void> reverseNotificationStatus(@PathVariable Long notificationId, Principal principal) {
         try {
             notificationService.reverseNotificationStatus(notificationId, principal.getName());
