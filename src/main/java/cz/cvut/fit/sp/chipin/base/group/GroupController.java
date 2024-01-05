@@ -1,7 +1,6 @@
 package cz.cvut.fit.sp.chipin.base.group;
 
 import cz.cvut.fit.sp.chipin.base.group.mapper.*;
-import cz.cvut.fit.sp.chipin.base.transaction.Category;
 import cz.cvut.fit.sp.chipin.base.transaction.TransactionUpdateRequest;
 import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionCreateTransactionRequest;
 import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionCreateTransactionResponse;
@@ -15,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -103,17 +101,6 @@ public class GroupController {
     ) throws Exception {
         try {
             return ResponseEntity.ok(groupService.readGroupTransactions(groupId, categories, dateTimeFrom, dateTimeTo, memberIds));
-        } catch (Exception e) {
-            throw new Exception(e.getMessage());
-        }
-    }
-
-    @GetMapping("/{groupId}/transactions/categories")
-    @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<GroupReadGroupTransactionsResponse> readGroupTransactionsByCategories(@PathVariable Long groupId,
-                                                                                                @RequestBody List<Category> categories) throws Exception {
-        try {
-            return ResponseEntity.ok(groupService.readGroupTransactionsByCategories(groupId, categories));
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }

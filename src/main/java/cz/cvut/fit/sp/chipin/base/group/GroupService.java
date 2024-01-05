@@ -10,7 +10,10 @@ import cz.cvut.fit.sp.chipin.base.log.LogService;
 import cz.cvut.fit.sp.chipin.base.member.GroupRole;
 import cz.cvut.fit.sp.chipin.base.member.Member;
 import cz.cvut.fit.sp.chipin.base.member.MemberService;
-import cz.cvut.fit.sp.chipin.base.transaction.*;
+import cz.cvut.fit.sp.chipin.base.transaction.Transaction;
+import cz.cvut.fit.sp.chipin.base.transaction.TransactionService;
+import cz.cvut.fit.sp.chipin.base.transaction.TransactionType;
+import cz.cvut.fit.sp.chipin.base.transaction.TransactionUpdateRequest;
 import cz.cvut.fit.sp.chipin.base.transaction.mapper.*;
 import cz.cvut.fit.sp.chipin.base.transaction.spender.MemberAbstractRequest;
 import cz.cvut.fit.sp.chipin.base.transaction.spender.UnequalTransactionMember;
@@ -239,17 +242,6 @@ public class GroupService {
                 dateTimeTo,
                 memberIdsString
         );
-        return groupMapper.transactionsToReadGroupTransactionsResponse(0, transactions);
-    }
-
-    public GroupReadGroupTransactionsResponse readGroupTransactionsByCategories(Long groupId, List<Category> categories) throws Exception {
-        List<Transaction> transactions1 = read(groupId)
-                .getTransactions()
-                .stream()
-                .filter(transaction -> categories.contains(transaction.getCategory()))
-                .toList();
-
-        List<Transaction> transactions = transactionService.readAllByCategories(groupId, categories);
         return groupMapper.transactionsToReadGroupTransactionsResponse(0, transactions);
     }
 
