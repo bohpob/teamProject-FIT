@@ -2,6 +2,8 @@ package cz.cvut.fit.sp.chipin.base.notification;
 
 import cz.cvut.fit.sp.chipin.base.notification.mapper.NotificationReadNotificationsResponse;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,9 +16,18 @@ public class NotificationController {
     private final NotificationService notificationService;
 
     // Returns all user notifications
-    @GetMapping()
-    public ResponseEntity<NotificationReadNotificationsResponse> readNotifications(Principal principal) {
-        NotificationReadNotificationsResponse notifications = notificationService.readNotifications(principal.getName());
+    @GetMapping("/all")
+    public ResponseEntity<Page<NotificationReadNotificationsResponse>> readAllNotifications(Pageable pageable, Principal principal) {
+        Page<NotificationReadNotificationsResponse> notifications =
+                notificationService.readAllNotifications(principal.getName(), pageable);
+        return ResponseEntity.ok(notifications);
+    }
+
+    // Returns only unread user notifications
+    @GetMapping("/unread")
+    public ResponseEntity<Page<NotificationReadNotificationsResponse>> readUnreadNotifications(Pageable pageable, Principal principal) {
+        Page<NotificationReadNotificationsResponse> notifications =
+                notificationService.readUnreadNotifications(principal.getName(), pageable);
         return ResponseEntity.ok(notifications);
     }
 

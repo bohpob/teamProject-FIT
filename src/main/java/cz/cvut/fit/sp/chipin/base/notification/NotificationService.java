@@ -8,8 +8,12 @@ import cz.cvut.fit.sp.chipin.base.notification.mapper.NotificationReadNotificati
 import cz.cvut.fit.sp.chipin.base.notification.mapper.NotificationReadNotificationsResponse;
 import cz.cvut.fit.sp.chipin.base.notification.mapper.NotificationMapper;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -19,16 +23,28 @@ public class NotificationService {
     private final NotificationRepository notificationRepository;
     private final NotificationContentService notificationContentService;
 
-    public NotificationReadNotificationsResponse readNotifications(String userId) {
-        List<Notification> notifications = notificationRepository.findNotificationsByUserId(userId);
+    public Page<NotificationReadNotificationsResponse> readAllNotifications(String userId, Pageable pageable) {
+        Page<Notification> notifications = notificationRepository.findNotificationsByUserId(userId, pageable);
 
-        Long count = notifications.stream().filter(notification -> Boolean.FALSE.equals(notification.getRead())).count();
+        List<NotificationReadNotificationResponse> unreadNotificationResponses = notifications.stream()
+                .map(notificationMapper::entityToReadNotificationResponse).toList();
 
-        List<NotificationReadNotificationResponse> notificationResponses = notifications.stream()
-                .map(notificationMapper::entityToReadNotificationResponse)
-                .toList();
+        NotificationReadNotificationsResponse response = new NotificationReadNotificationsResponse(
+                notifications.getTotalElements(), unreadNotificationResponses);
+        return new PageImpl<>(Collections.singletonList(response), pageable, notifications.getTotalElements());
+    }
 
-        return new NotificationReadNotificationsResponse(count, notificationResponses);
+    public Page<NotificationReadNotificationsResponse> readUnreadNotifications(String userId, Pageable pageable) {
+        Page<Notification> notifications = notificationRepository.findNotificationsByUserId(userId, pageable);
+
+        long count = notifications.stream().filter(notification -> Boolean.FALSE.equals(notification.getRead())).count();
+
+        List<NotificationReadNotificationResponse> unreadNotificationResponses = notifications.stream()
+                .filter(notification -> Boolean.FALSE.equals(notification.getRead()))
+                .map(notificationMapper::entityToReadNotificationResponse).toList();
+
+        NotificationReadNotificationsResponse response = new NotificationReadNotificationsResponse(count, unreadNotificationResponses);
+        return new PageImpl<>(Collections.singletonList(response), pageable, count);
     }
 
     public void reverseNotificationStatus(Long notificationId, String userId) throws Exception {
