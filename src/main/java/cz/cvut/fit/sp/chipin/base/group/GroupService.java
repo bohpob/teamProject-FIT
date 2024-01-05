@@ -218,10 +218,6 @@ public class GroupService {
                 transaction = transactionService.create(request, payer.get().getUser(), group.get());
                 acceptTxCreate(transaction);
 
-                // Create transaction notifications
-                transactionNotifications(transaction, group.get(),
-                        "Transaction created: " + transaction.getName() + " in " + group.get().getName());
-
                 logService.create("made a payment: " + transaction.getAmount(),
                         transaction.getGroup(), transaction.getPayer());
             }
@@ -229,27 +225,6 @@ public class GroupService {
             throw new Exception(e);
         }
         return transactionMapper.entityToCreateTransactionResponse(transaction);
-    }
-
-    // Creates transaction notifications for each participant based on their "share" in the transaction.
-    private void transactionNotifications(Transaction transaction, Group group, String title) {
-        for (Amount amount : transaction.getAmounts()) {
-            User user = amount.getUser();
-            Float userShare = amount.getAmount();
-
-            String notificationText;
-            if (user.equals(transaction.getPayer())) {
-                float payerShare = transaction.getAmount() - userShare;
-                notificationText = "You get back $" + payerShare;
-            } else
-                notificationText = "You owe $" + userShare;
-
-            NotificationContent notificationContent = new NotificationContent(title);
-            notificationContent.setText(notificationText);
-
-            notificationService.createNotification(user, group, notificationContent);
-            userService.save(user);
-        }
     }
 
     public Group read(Long id) throws Exception {
@@ -305,9 +280,6 @@ public class GroupService {
                 acceptTxDelete(transaction.get());
                 transactionService.update(transaction.get(), transactionUpdateRequest, nextPayer.get().getUser());
                 acceptTxCreate(transaction.get());
-
-                transactionNotifications(transaction.get(), group.get(),
-                        "Transaction updated: " + transaction.get().getName() + " in " + group.get().getName());
             }
         } catch (Exception e) {
             throw new Exception(e);
@@ -328,12 +300,6 @@ public class GroupService {
         Group group = groupRepository.findById(groupId).orElseThrow(() -> new Exception("Group not found"));
 
         acceptTxDelete(transaction.get());
-
-        List<User> users = getUsersByGroupId(groupId);
-        notificationService.createNotifications(users, group,
-                new NotificationContent("Transaction deleted: " + transaction.get().getName() + " in " + group.getName()));
-        userService.saveAll(users);
-
         transactionService.delete(transaction.get());
         // change to the user who will actually delete the transaction
         logService.create("deleted transaction", payer.get().getGroup(), payer.get().getUser());
