@@ -9,6 +9,9 @@ import cz.cvut.fit.sp.chipin.base.transaction.mapper.*;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,11 +27,12 @@ public class GroupController {
     private final TransactionService transactionService;
 
     @PostMapping("/{groupId}/transactions/search")
-    public List<TransactionReadGroupTransactionsResponse> readGroupTransactionsSmart(
+    public Page<TransactionReadGroupTransactionsResponse> readGroupTransactionsSmart(
             @PathVariable Long groupId,
-            @Valid @RequestBody TransactionReadGroupTransactionsSmartRequest request) throws Exception {
+            @Valid @RequestBody TransactionReadGroupTransactionsSmartRequest request,
+            Pageable pageable) throws Exception {
         try {
-            return transactionService.readGroupTransactions(groupId, request);
+            return transactionService.readGroupTransactions(groupId, request, pageable);
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
@@ -95,7 +99,8 @@ public class GroupController {
 
     @GetMapping("/{groupId}/transactions")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<GroupReadGroupTransactionsResponse> readGroupTransactions(@PathVariable Long groupId) throws Exception {
+    public ResponseEntity<GroupReadGroupTransactionsResponse> readGroupTransactions(
+            @PathVariable Long groupId) throws Exception {
         try {
             return ResponseEntity.ok(groupService.readGroupTransactions(groupId));
         } catch (Exception e) {

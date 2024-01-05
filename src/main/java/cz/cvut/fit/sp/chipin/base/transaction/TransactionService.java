@@ -11,6 +11,9 @@ import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionReadGroupTransac
 import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionReadGroupTransactionsResponse;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -44,8 +47,8 @@ public class TransactionService {
         return transaction;
     }
 
-    public List<TransactionReadGroupTransactionsResponse> readGroupTransactions(
-            Long groupId, TransactionReadGroupTransactionsSmartRequest request) throws Exception {
+    public Page<TransactionReadGroupTransactionsResponse> readGroupTransactions(
+            Long groupId, TransactionReadGroupTransactionsSmartRequest request, Pageable pageable) throws Exception {
         try {
             Stream<Transaction> transactions = transactionRepository.findTransactionsByGroupId(groupId).stream();
 
@@ -69,7 +72,22 @@ public class TransactionService {
                 transactions = transactions.filter(transaction -> memberIds.contains(transaction.getPayer().getId()));
             }
 
-            return transactions.map(transactionMapper::entityToReadGroupTransactionsResponse).toList();
+            int pageSize = pageable.getPageSize();
+            int currentPage = pageable.getPageNumber();
+            int startItem = currentPage * pageSize;
+            List<TransactionReadGroupTransactionsResponse> pageContent;
+            List<TransactionReadGroupTransactionsResponse> groupResponses = transactions
+                    .map(transactionMapper::entityToReadGroupTransactionsResponse)
+                    .collect(Collectors.toList());
+            if (groupResponses.size() < startItem) {
+                pageContent = new ArrayList<>();
+            } else {
+                int toIndex = Math.min(startItem + pageSize, groupResponses.size());
+                pageContent = groupResponses.subList(startItem, toIndex);
+            }
+
+            return new PageImpl<>(pageContent, pageable, groupResponses.size());
+
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
