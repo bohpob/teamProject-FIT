@@ -7,7 +7,6 @@ import cz.cvut.fit.sp.chipin.base.group.Group;
 import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionCreateTransactionRequest;
 import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionMapper;
 import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionReadGroupTransactionResponse;
-import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionReadGroupTransactionsFilteredResponse;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -44,40 +43,6 @@ public class TransactionService {
             throw new Exception(e.getMessage());
         }
         return transaction;
-    }
-
-    public TransactionReadGroupTransactionsFilteredResponse readGroupTransactions(
-            Long groupId,
-            Optional<String> categoriesString,
-            Optional<String> dateTimeFrom,
-            Optional<String> dateTimeTo,
-            Optional<String> memberIdsString
-    ) {
-        Stream<Transaction> transactions = transactionRepository.findTransactionsByGroupId(groupId).stream();
-
-        if (categoriesString.isPresent()) {
-            List<String> categories = Arrays.asList(categoriesString.get().toUpperCase().split(","));
-            transactions = transactions.filter(transaction ->
-                    categories.contains(transaction.getCategory().name())
-            );
-        }
-
-        if (dateTimeFrom.isPresent() && dateTimeTo.isPresent()) {
-            LocalDateTime from = parseDateTime(dateTimeFrom.get());
-            LocalDateTime to = parseDateTime(dateTimeTo.get());
-            transactions = transactions.filter(transaction ->
-                    !transaction.getDateTime().isBefore(from) && !transaction.getDateTime().isAfter(to)
-            );
-        }
-
-        if (memberIdsString.isPresent()) {
-            List<String> memberIds = Arrays.asList(memberIdsString.get().split(","));
-            transactions = transactions.filter(transaction ->
-                    memberIds.contains(transaction.getPayer().getId())
-            );
-        }
-
-        return transactionMapper.entityToReadGroupTransactionsFilteredResponse(0, transactions.toList());
     }
 
     public Optional<Transaction> read(Long transactionId, Long groupId) throws Exception {
@@ -130,5 +95,39 @@ public class TransactionService {
     private static LocalDateTime parseDateTime(String dateTime) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(TransactionMapper.DATETIME_FORMAT);
         return LocalDateTime.parse(dateTime, formatter);
+    }
+
+    public static List<Transaction> filterTransactions(
+            List<Transaction> transactions,
+            Optional<String> categoriesString,
+            Optional<String> dateTimeFrom,
+            Optional<String> dateTimeTo,
+            Optional<String> memberIdsString
+    ) {
+        Stream<Transaction> transactionStream = transactions.stream();
+
+        if (categoriesString.isPresent()) {
+            List<String> categories = Arrays.asList(categoriesString.get().toUpperCase().split(","));
+            transactionStream = transactionStream.filter(transaction ->
+                    categories.contains(transaction.getCategory().name())
+            );
+        }
+
+        if (dateTimeFrom.isPresent() && dateTimeTo.isPresent()) {
+            LocalDateTime from = parseDateTime(dateTimeFrom.get());
+            LocalDateTime to = parseDateTime(dateTimeTo.get());
+            transactionStream = transactionStream.filter(transaction ->
+                    !transaction.getDateTime().isBefore(from) && !transaction.getDateTime().isAfter(to)
+            );
+        }
+
+        if (memberIdsString.isPresent()) {
+            List<String> memberIds = Arrays.asList(memberIdsString.get().split(","));
+            transactionStream = transactionStream.filter(transaction ->
+                    memberIds.contains(transaction.getPayer().getId())
+            );
+        }
+
+        return transactionStream.toList();
     }
 }

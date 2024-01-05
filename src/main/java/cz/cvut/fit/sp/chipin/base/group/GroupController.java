@@ -2,9 +2,11 @@ package cz.cvut.fit.sp.chipin.base.group;
 
 import cz.cvut.fit.sp.chipin.base.group.mapper.*;
 import cz.cvut.fit.sp.chipin.base.transaction.Category;
-import cz.cvut.fit.sp.chipin.base.transaction.TransactionService;
 import cz.cvut.fit.sp.chipin.base.transaction.TransactionUpdateRequest;
-import cz.cvut.fit.sp.chipin.base.transaction.mapper.*;
+import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionCreateTransactionRequest;
+import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionCreateTransactionResponse;
+import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionReadGroupTransactionResponse;
+import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionUpdateTransactionResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -21,7 +23,6 @@ import java.util.Optional;
 @AllArgsConstructor
 public class GroupController {
     private final GroupService groupService;
-    private final TransactionService transactionService;
 
     @PostMapping
     public ResponseEntity<GroupCreateGroupResponse> createGroup(@Valid @RequestBody GroupCreateGroupRequest request,
@@ -93,7 +94,7 @@ public class GroupController {
     }
 
     @GetMapping("/{groupId}/transactions/search")
-    public ResponseEntity<TransactionReadGroupTransactionsFilteredResponse> readGroupTransactionsFiltered(
+    public ResponseEntity<GroupReadGroupTransactionsResponse> readGroupTransactionsFiltered(
             @PathVariable Long groupId,
             @RequestParam Optional<String> categories,
             @RequestParam Optional<String> dateTimeFrom,
@@ -101,7 +102,7 @@ public class GroupController {
             @RequestParam Optional<String> memberIds
     ) throws Exception {
         try {
-            return ResponseEntity.ok(transactionService.readGroupTransactions(groupId, categories, dateTimeFrom, dateTimeTo, memberIds));
+            return ResponseEntity.ok(groupService.readGroupTransactions(groupId, categories, dateTimeFrom, dateTimeTo, memberIds));
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }

@@ -7,8 +7,6 @@ import cz.cvut.fit.sp.chipin.base.transaction.Transaction;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-import java.util.List;
-
 @Mapper(componentModel = "spring", imports = {AmountService.class}, uses = {AmountMapper.class})
 public interface TransactionMapper {
     String DATETIME_FORMAT = "yyyy-MM-dd HH:mm";
@@ -34,8 +32,6 @@ public interface TransactionMapper {
     @Mapping(source = "payer.firstName", target = "payerName")
     @Mapping(target = "dateTime", dateFormat = DATETIME_FORMAT)
     TransactionReadGroupTransactionsResponse entityToReadGroupTransactionsResponse(Transaction transaction);
-
-    TransactionReadGroupTransactionsFilteredResponse entityToReadGroupTransactionsFilteredResponse(Integer dummy, List<Transaction> transactions);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "dateTime", ignore = true)
