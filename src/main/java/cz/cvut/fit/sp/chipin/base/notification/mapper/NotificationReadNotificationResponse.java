@@ -12,6 +12,4 @@ public class NotificationReadNotificationResponse {
     private LocalDateTime dateTime;
     private Boolean read;
     private String userId;
-    private String groupName;
-    private Long transactionId;
 }
