@@ -1,11 +1,15 @@
 package cz.cvut.fit.sp.chipin.base.transaction.mapper;
 
+import cz.cvut.fit.sp.chipin.Common.ExchangeRate;
 import cz.cvut.fit.sp.chipin.authentication.user.User;
 import cz.cvut.fit.sp.chipin.base.amount.AmountService;
 import cz.cvut.fit.sp.chipin.base.amount.mapper.AmountMapper;
 import cz.cvut.fit.sp.chipin.base.transaction.Transaction;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.Named;
+import java.time.LocalDateTime;
+import java.util.Currency;
 
 @Mapper(componentModel = "spring", imports = {AmountService.class}, uses = {AmountMapper.class})
 public interface TransactionMapper {
@@ -34,10 +38,11 @@ public interface TransactionMapper {
     TransactionReadGroupTransactionsResponse entityToReadGroupTransactionsResponse(Transaction transaction);
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "dateTime", ignore = true)
     @Mapping(target = "category", ignore = true)
     @Mapping(target = "payer", ignore = true)
     @Mapping(target = "group", ignore = true)
     @Mapping(target = "amounts", ignore = true)
+    @Mapping(target = "dateTime", ignore = true)
+    @Mapping(target = "currency", ignore = true)
     Transaction createTransactionRequestToEntity(TransactionCreateTransactionRequest transactionCreateTransactionRequest);
 }

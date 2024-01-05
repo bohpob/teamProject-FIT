@@ -9,8 +9,8 @@ import java.util.List;
 
 public class TransactionCreateRequestDeserializer extends TransactionRequestDeserializer<TransactionCreateTransactionRequest> {
     @Override
-    protected TransactionCreateRequest createTransactionRequest(
+    protected TransactionCreateTransactionRequest createTransactionRequest(
             String name, float amount, String currency, String payerId, String splitStrategy, List<MemberAbstractRequest> spenders, JsonNode rootNode) {
-        return new TransactionCreateRequest(name, amount, currency, payerId, TransactionType.valueOf(splitStrategy), spenders);
+        return new TransactionCreateTransactionRequest(name, amount, currency, payerId, TransactionType.valueOf(splitStrategy), spenders);
     }
 }

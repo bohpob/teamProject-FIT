@@ -128,11 +128,11 @@ public class GroupController {
 
     @PatchMapping("/{groupId}/transactions/{transactionId}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<TransactionResponse> patchCurrency(@Valid @RequestParam String currency,
+    public ResponseEntity<TransactionUpdateTransactionResponse> patchCurrency(@Valid @RequestParam String currency,
                                                                  @PathVariable Long groupId,
                                                                  @PathVariable Long transactionId) throws Exception {
         try {
-            return ResponseEntity.ok(userGroupService.updateCurrency(currency, groupId, transactionId));
+            return ResponseEntity.ok(groupService.updateCurrency(currency, groupId, transactionId));
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }

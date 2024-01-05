@@ -2,7 +2,7 @@ package cz.cvut.fit.sp.chipin.base.transaction;
 
 import cz.cvut.fit.sp.chipin.Common.CurrencyData;
 import cz.cvut.fit.sp.chipin.Common.ExchangeRate;
-import cz.cvut.fit.sp.chipin.authentication.useraccount.UserAccount;
+import cz.cvut.fit.sp.chipin.authentication.user.User;
 import cz.cvut.fit.sp.chipin.base.amount.Amount;
 import cz.cvut.fit.sp.chipin.base.amount.AmountService;
 import cz.cvut.fit.sp.chipin.base.group.Group;
@@ -10,13 +10,9 @@ import cz.cvut.fit.sp.chipin.base.member.mapper.MemberReadMemberResponse;
 import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionCreateTransactionRequest;
 import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionMapper;
 import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionReadGroupTransactionResponse;
-import cz.cvut.fit.sp.chipin.base.transaction.spender.MemberAbstractRequest;
-import cz.cvut.fit.sp.chipin.base.usergroup.UserGroup;
-import cz.cvut.fit.sp.chipin.base.usergroup.UserGroupController;
 import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionReadGroupTransactionsResponse;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -40,6 +36,10 @@ public class TransactionService {
         //TODO: replace with Request field
         transaction.setCategory(Category.NO_CATEGORY);
 
+        LocalDateTime currentDate = LocalDateTime.now();
+        DateTimeFormatter dateOnlyFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        transaction.setFormattedDate(currentDate.format(dateOnlyFormatter));
+        transaction.setConvertedAmount(ExchangeRate.getExchangeRate(transaction.getCurrency(), group.getCurrency(), transaction.getFormattedDate()) * transaction.getAmount());
         try {
             List<Amount> amounts = amountService.setAmounts(transaction, request.getSpenders(), request.getSplitStrategy());
             transactionRepository.save(transaction);
