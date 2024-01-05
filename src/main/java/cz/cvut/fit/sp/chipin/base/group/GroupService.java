@@ -167,8 +167,12 @@ public class GroupService {
         TransactionCreateTransactionRequest request = new TransactionCreateTransactionRequest(
                 borrower.get().getUser().getName() + " repaid "
                         + lender.get().getUser().getName() + "'s " + "debt",
-                debt.get().getAmount(), borrower.get().getUser().getId(), TransactionType.UNEQUALLY, amounts);
-
+                debt.get().getAmount(),
+                borrower.get().getUser().getId(),
+                Category.DEBT_REPAYMENT,
+                TransactionType.UNEQUALLY,
+                amounts
+        );
 
         try {
             if (allSpendersFromGroup(request.getSpenders(), groupId)) {
@@ -223,14 +227,22 @@ public class GroupService {
         return groupMapper.entityToReadGroupTransactionsResponse(group);
     }
 
-    public GroupReadGroupTransactionsResponse readGroupTransactionsByCategories(Long groupId, List<Category> categories) throws Exception {
-        List<Transaction> transactions1 = read(groupId)
-                .getTransactions()
-                .stream()
-                .filter(transaction -> categories.contains(transaction.getCategory()))
-                .toList();
-
-        List<Transaction> transactions = transactionService.readAllByCategories(groupId, categories);
+    public GroupReadGroupTransactionsResponse readGroupTransactions(
+            Long groupId,
+            Optional<String> categoriesString,
+            Optional<String> dateTimeFrom,
+            Optional<String> dateTimeTo,
+            Optional<String> memberIdsString
+    ) throws Exception {
+        Group group = groupRepository.findById(groupId)
+                .orElseThrow(() -> new Exception("Group not found"));
+        List<Transaction> transactions = TransactionService.filterTransactions(
+                group.getTransactions(),
+                categoriesString,
+                dateTimeFrom,
+                dateTimeTo,
+                memberIdsString
+        );
         return groupMapper.transactionsToReadGroupTransactionsResponse(0, transactions);
     }
 
