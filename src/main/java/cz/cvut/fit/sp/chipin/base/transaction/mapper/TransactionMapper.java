@@ -11,6 +11,7 @@ import org.mapstruct.Mapping;
 public interface TransactionMapper {
     String DATETIME_FORMAT = "yyyy-MM-dd HH:mm";
 
+    @Mapping(source = "firstName", target = "name")
     UserCreateTransactionResponse userEntityToCreateTransactionResponse(User user);
 
     @Mapping(expression = "java(AmountService.roundAmount(transaction.getAmount()))", target = "amount")
