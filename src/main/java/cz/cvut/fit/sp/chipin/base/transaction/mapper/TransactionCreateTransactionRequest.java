@@ -1,5 +1,6 @@
 package cz.cvut.fit.sp.chipin.base.transaction.mapper;
 
+import cz.cvut.fit.sp.chipin.base.transaction.Category;
 import cz.cvut.fit.sp.chipin.base.transaction.TransactionType;
 import cz.cvut.fit.sp.chipin.base.transaction.spender.MemberAbstractRequest;
 import jakarta.validation.constraints.NotBlank;
@@ -19,6 +20,8 @@ public class TransactionCreateTransactionRequest {
     private Float amount;
     @NotBlank
     private String payerId;
+    @NotNull
+    private Category category;
     @NotNull
     private TransactionType splitStrategy;
     @NotNull

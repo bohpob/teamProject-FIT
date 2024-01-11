@@ -4,18 +4,19 @@ import cz.cvut.fit.sp.chipin.authentication.user.User;
 import cz.cvut.fit.sp.chipin.base.amount.Amount;
 import cz.cvut.fit.sp.chipin.base.amount.AmountService;
 import cz.cvut.fit.sp.chipin.base.group.Group;
-import cz.cvut.fit.sp.chipin.base.member.mapper.MemberReadMemberResponse;
 import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionCreateTransactionRequest;
 import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionMapper;
 import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionReadGroupTransactionResponse;
-import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionReadGroupTransactionsResponse;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -32,8 +33,6 @@ public class TransactionService {
         transaction.setPayer(payer);
         transaction.setGroup(group);
         transaction.setDateTime(LocalDateTime.now());
-        //TODO: replace with Request field
-        transaction.setCategory(Category.NO_CATEGORY);
 
         try {
             List<Amount> amounts = amountService.setAmounts(transaction, request.getSpenders(), request.getSplitStrategy());
@@ -43,37 +42,6 @@ public class TransactionService {
             throw new Exception(e.getMessage());
         }
         return transaction;
-    }
-
-    public List<TransactionReadGroupTransactionsResponse> readGroupTransactions(
-            Long groupId, TransactionReadGroupTransactionsSmartRequest request) throws Exception {
-        try {
-            Stream<Transaction> transactions = transactionRepository.findTransactionsByGroupId(groupId).stream();
-
-            if (!request.categories.isEmpty()) {
-                transactions = transactions.filter(transaction ->
-                        request.categories.contains(transaction.getCategory().name())
-                );
-            }
-
-            if (!request.getDateTimeFrom().isBlank() && !request.getDateTimeTo().isBlank()) {
-                LocalDateTime dateTimeFrom = parseDateTime(request.getDateTimeFrom());
-                LocalDateTime dateTimeTo = parseDateTime(request.getDateTimeTo());
-                transactions = transactions.filter(transaction ->
-                        !transaction.getDateTime().isBefore(dateTimeFrom) &&
-                                !transaction.getDateTime().isAfter(dateTimeTo)
-                );
-            }
-
-            if (!request.getMembers().isEmpty()) {
-                List<String> memberIds = request.getMembers().stream().map(MemberReadMemberResponse::getId).toList();
-                transactions = transactions.filter(transaction -> memberIds.contains(transaction.getPayer().getId()));
-            }
-
-            return transactions.map(transactionMapper::entityToReadGroupTransactionsResponse).toList();
-        } catch (Exception e) {
-            throw new Exception(e.getMessage());
-        }
     }
 
     public Optional<Transaction> read(Long transactionId, Long groupId) throws Exception {
@@ -93,10 +61,6 @@ public class TransactionService {
         return transactionMapper.entityToReadGroupTransactionResponse(transaction);
     }
 
-    public List<Transaction> readAllByCategories(Long groupId, List<Category> categories) throws Exception {
-        return transactionRepository.findTransactionByGroupIdAndCategoryIn(groupId, categories);
-    }
-
     @Transactional
     public void update(Transaction transaction, TransactionUpdateRequest request, User nextPayer) throws Exception {
         try {
@@ -105,6 +69,7 @@ public class TransactionService {
             transaction.setDateTime(parseDateTime(request.getDateTime()));
             transaction.setAmount(request.getAmount());
             transaction.setPayer(nextPayer);
+            transaction.setCategory(request.getCategory());
 
             List<Amount> amounts = amountService.setAmounts(transaction, request.getSpenders(), request.getSplitStrategy());
             amountService.saveAll(amounts);
@@ -119,12 +84,42 @@ public class TransactionService {
         transactionRepository.deleteById(transaction.getId());
     }
 
-    public List<Transaction> readTransactions(Long groupId) {
-        return transactionRepository.findTransactionsByGroupId(groupId);
-    }
-
     private static LocalDateTime parseDateTime(String dateTime) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(TransactionMapper.DATETIME_FORMAT);
         return LocalDateTime.parse(dateTime, formatter);
+    }
+
+    public static List<Transaction> filterTransactions(
+            List<Transaction> transactions,
+            Optional<String> categoriesString,
+            Optional<String> dateTimeFrom,
+            Optional<String> dateTimeTo,
+            Optional<String> memberIdsString
+    ) {
+        Stream<Transaction> transactionStream = transactions.stream();
+
+        if (categoriesString.isPresent()) {
+            List<String> categories = Arrays.asList(categoriesString.get().toUpperCase().split(","));
+            transactionStream = transactionStream.filter(transaction ->
+                    categories.contains(transaction.getCategory().name())
+            );
+        }
+
+        if (dateTimeFrom.isPresent() && dateTimeTo.isPresent()) {
+            LocalDateTime from = parseDateTime(dateTimeFrom.get());
+            LocalDateTime to = parseDateTime(dateTimeTo.get());
+            transactionStream = transactionStream.filter(transaction ->
+                    !transaction.getDateTime().isBefore(from) && !transaction.getDateTime().isAfter(to)
+            );
+        }
+
+        if (memberIdsString.isPresent()) {
+            List<String> memberIds = Arrays.asList(memberIdsString.get().split(","));
+            transactionStream = transactionStream.filter(transaction ->
+                    memberIds.contains(transaction.getPayer().getId())
+            );
+        }
+
+        return transactionStream.toList();
     }
 }

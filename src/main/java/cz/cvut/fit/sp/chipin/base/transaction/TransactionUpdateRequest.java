@@ -22,6 +22,8 @@ public class TransactionUpdateRequest {
     @NotNull
     private String payerId;
     @NotNull
+    private Category category;
+    @NotNull
     private TransactionType splitStrategy;
     @NotNull
     private List<MemberAbstractRequest> spenders;

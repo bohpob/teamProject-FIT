@@ -9,9 +9,7 @@ public class AmountCreateAmountResponse {
     @NotBlank
     private String id;
     @NotBlank
-    private String firstName;
-    @NotBlank
-    private String lastName;
+    private String name;
     @NotNull
     private Float amount;
 }
