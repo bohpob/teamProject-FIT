@@ -28,6 +28,7 @@ public class TransactionService {
 
     public Transaction create(TransactionCreateTransactionRequest request, User payer, Group group) throws Exception {
         Transaction transaction = transactionMapper.createTransactionRequestToEntity(request);
+        transaction.setCurrency(group.getCurrency());
         transaction.setPayer(payer);
         transaction.setGroup(group);
         transaction.setDateTime(LocalDateTime.now());
