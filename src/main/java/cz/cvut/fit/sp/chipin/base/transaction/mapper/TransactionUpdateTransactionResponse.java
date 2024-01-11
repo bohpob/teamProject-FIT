@@ -16,6 +16,8 @@ public class TransactionUpdateTransactionResponse {
     @NotNull
     private Float amount;
     @NotBlank
+    private String currency;
+    @NotBlank
     private String category;
     @NotBlank
     private String dateTime;
