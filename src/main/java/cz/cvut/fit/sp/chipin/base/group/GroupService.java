@@ -330,10 +330,12 @@ public class GroupService {
         if (name.isBlank()) {
             throw new Exception("New name is empty");
         }
+
+        String pastName = group.getName();
         group.setName(name);
 
         NotificationContent notificationContent = new NotificationContent(
-                "Group name updated", "The group name has been changed from " + group.getName() + " to " + name);
+                "Group name updated", "The group name has been changed from " + pastName + " to " + name);
 
         List<User> users = getUsersByGroupId(groupId);
         notificationService.createNotifications(users, group, notificationContent);
