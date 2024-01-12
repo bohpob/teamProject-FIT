@@ -8,6 +8,7 @@ import cz.cvut.fit.sp.chipin.base.group.mapper.GroupMapper;
 import cz.cvut.fit.sp.chipin.base.group.mapper.GroupReadGroupMembersResponse;
 import cz.cvut.fit.sp.chipin.base.member.Member;
 import cz.cvut.fit.sp.chipin.base.member.MemberDTO;
+import cz.cvut.fit.sp.chipin.base.member.MemberRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -16,12 +17,14 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
 public class UserService {
 
     private final UserRepository userRepository;
+    private final MemberRepository memberRepository;
     private final UserMapper userMapper;
     private final GroupMapper groupMapper;
 
@@ -78,8 +81,8 @@ public class UserService {
         }
     }
 
-    public List<MemberDTO> getMemberships(String id) throws Exception {
-        User user = getUser(id);
+    public Page<MemberDTO> getMemberships(String id, Pageable pageable) throws Exception {
+       /* User user = getUser(id);
 
         List<MemberDTO> memberships = new ArrayList<>();
 
@@ -92,7 +95,14 @@ public class UserService {
                     member.getBalance()));
         }
 
-        return memberships;
+        return memberships;*/
+        Page<Member> members = memberRepository.findByUserId(id, pageable);
+        return members.map(memberMapper -> new MemberDTO(
+                memberMapper.getId().getGroupId(),
+                memberMapper.getRole().name(),
+                memberMapper.getPaid(),
+                memberMapper.getSpent(),
+                memberMapper.getBalance()));
     }
 
     public void save(User user) {

@@ -75,9 +75,9 @@ public class UserController {
 
     //TODO: update DTO
     @GetMapping("/me/memberships")
-    ResponseEntity<List<MemberDTO>> readMyMemberships(Principal principal) {
+    ResponseEntity<Page<MemberDTO>> readMyMemberships(Principal principal, Pageable pageable) {
         try {
-            return ResponseEntity.ok(userService.getMemberships(principal.getName()));
+            return ResponseEntity.ok(userService .getMemberships(principal.getName(), pageable));
         } catch (Exception e) {
             throw new ResponseStatusException(
                     HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e
