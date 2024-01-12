@@ -2,6 +2,7 @@ package cz.cvut.fit.sp.chipin.base.transaction;
 
 import cz.cvut.fit.sp.chipin.authentication.user.User;
 import cz.cvut.fit.sp.chipin.base.amount.Amount;
+import cz.cvut.fit.sp.chipin.base.group.Currency;
 import cz.cvut.fit.sp.chipin.base.group.Group;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -33,6 +34,8 @@ public class Transaction {
     private Long id;
     private String name;
     private Float amount;
+    @Enumerated(EnumType.STRING)
+    private Currency currency;
     private LocalDateTime dateTime;
     @Enumerated(EnumType.STRING)
     private Category category;

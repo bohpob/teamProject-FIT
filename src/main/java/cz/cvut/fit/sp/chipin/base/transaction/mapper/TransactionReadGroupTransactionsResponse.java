@@ -13,6 +13,8 @@ public class TransactionReadGroupTransactionsResponse {
     @NotBlank
     private Float amount;
     @NotBlank
+    private String currency;
+    @NotBlank
     private String payerId;
     @NotBlank
     private String payerName;
