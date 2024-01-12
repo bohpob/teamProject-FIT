@@ -1,9 +1,12 @@
 package cz.cvut.fit.sp.chipin.base.transaction;
 
 import cz.cvut.fit.sp.chipin.authentication.user.User;
+import cz.cvut.fit.sp.chipin.authentication.user.UserService;
 import cz.cvut.fit.sp.chipin.base.amount.Amount;
 import cz.cvut.fit.sp.chipin.base.amount.AmountService;
 import cz.cvut.fit.sp.chipin.base.group.Group;
+import cz.cvut.fit.sp.chipin.base.notification.NotificationService;
+import cz.cvut.fit.sp.chipin.base.notification.content.NotificationContent;
 import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionCreateTransactionRequest;
 import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionMapper;
 import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionReadGroupTransactionResponse;
@@ -26,6 +29,8 @@ public class TransactionService {
     private final TransactionRepository transactionRepository;
     private final AmountService amountService;
     private final TransactionMapper transactionMapper;
+    private final UserService userService;
+    private final NotificationService notificationService;
 
     public Transaction create(TransactionCreateTransactionRequest request, User payer, Group group) throws Exception {
         Transaction transaction = transactionMapper.createTransactionRequestToEntity(request);
@@ -37,6 +42,10 @@ public class TransactionService {
             List<Amount> amounts = amountService.setAmounts(transaction, request.getSpenders(), request.getSplitStrategy());
             transactionRepository.save(transaction);
             amountService.saveAll(amounts);
+
+            // Create transaction notifications
+            createTransactionNotifications(transaction, group,
+                    "Transaction created: " + transaction.getName() + " in " + group.getName());
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
@@ -73,6 +82,9 @@ public class TransactionService {
             List<Amount> amounts = amountService.setAmounts(transaction, request.getSpenders(), request.getSplitStrategy());
             amountService.saveAll(amounts);
             transactionRepository.save(transaction);
+
+            createTransactionNotifications(transaction, transaction.getGroup(),
+                    "Transaction updated: " + transaction.getName() + " in " + transaction.getGroup().getName());
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
@@ -81,6 +93,32 @@ public class TransactionService {
     public void delete(Transaction transaction) throws Exception {
         amountService.deleteAllByIds(transaction.getAmounts().stream().map(Amount::getId).collect(Collectors.toList()));
         transactionRepository.deleteById(transaction.getId());
+
+        List<User> users = transaction.getAmounts().stream().map(Amount::getUser).collect(Collectors.toList());
+        notificationService.createNotifications(users, transaction.getGroup(),
+                new NotificationContent("Transaction deleted: " + transaction.getName() + " in " + transaction.getGroup().getName()));
+        userService.saveAll(users);
+    }
+
+    // Creates transaction notifications for each participant based on their "share" in the transaction.
+    private void createTransactionNotifications(Transaction transaction, Group group, String title) {
+        for (Amount amount : transaction.getAmounts()) {
+            User user = amount.getUser();
+            Float userShare = amount.getAmount();
+
+            String notificationText;
+            if (user.equals(transaction.getPayer())) {
+                float payerShare = transaction.getAmount() - userShare;
+                notificationText = "You get back $" + payerShare;
+            } else
+                notificationText = "You owe $" + userShare;
+
+            NotificationContent notificationContent = new NotificationContent(title);
+            notificationContent.setText(notificationText);
+
+            notificationService.createNotification(user, group, notificationContent);
+            userService.save(user);
+        }
     }
 
     private static LocalDateTime parseDateTime(String dateTime) {

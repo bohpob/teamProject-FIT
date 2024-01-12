@@ -2,6 +2,8 @@ package cz.cvut.fit.sp.chipin.base.debt;
 
 import cz.cvut.fit.sp.chipin.authentication.user.User;
 import cz.cvut.fit.sp.chipin.base.group.Group;
+import cz.cvut.fit.sp.chipin.base.notification.NotificationService;
+import cz.cvut.fit.sp.chipin.base.notification.content.NotificationContent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +16,7 @@ import java.util.Optional;
 @Service
 public class DebtService {
     private final DebtRepository debtRepository;
+    private final NotificationService notificationService;
 
     private void checkingForEmptyOrNegativeDebt(Debt debt, Group group, User spender, User payer) throws Exception {
         if (debt.getAmount() == 0) {
@@ -55,6 +58,17 @@ public class DebtService {
                 checkingForEmptyOrNegativeDebt(debt.get(), group, spender, payer);
             }
         }
+    }
+
+    public void notifyDebtRepayment(User borrower, User lender, Group group, Float debtAmount) {
+        notificationService.createNotification(borrower, group,
+                new NotificationContent("Debt Repaid", "You repaid a debt of $" + debtAmount +
+                                " to " + lender.getName()));
+
+        // Notifying the lender of debt settlement
+        notificationService.createNotification(lender, group,
+                new NotificationContent("Debt Settled", borrower.getName() + " repaid a debt of $" +
+                                debtAmount + " to you"));
     }
 
     public List<Debt> readDebts(Long groupId) throws Exception {

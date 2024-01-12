@@ -3,6 +3,13 @@ package cz.cvut.fit.sp.chipin.base.group;
 import cz.cvut.fit.sp.chipin.authentication.user.User;
 import cz.cvut.fit.sp.chipin.authentication.user.UserService;
 import cz.cvut.fit.sp.chipin.base.amount.Amount;
+import cz.cvut.fit.sp.chipin.base.notification.NotificationService;
+import cz.cvut.fit.sp.chipin.base.notification.content.NotificationContent;
+import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionCreateTransactionResponse;
+import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionMapper;
+import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionUpdateTransactionResponse;
+import cz.cvut.fit.sp.chipin.base.transaction.spender.UnequalTransactionMember;
+import cz.cvut.fit.sp.chipin.base.transaction.TransactionType;
 import cz.cvut.fit.sp.chipin.base.debt.Debt;
 import cz.cvut.fit.sp.chipin.base.debt.DebtService;
 import cz.cvut.fit.sp.chipin.base.group.mapper.*;
@@ -13,7 +20,6 @@ import cz.cvut.fit.sp.chipin.base.member.MemberService;
 import cz.cvut.fit.sp.chipin.base.transaction.*;
 import cz.cvut.fit.sp.chipin.base.transaction.mapper.*;
 import cz.cvut.fit.sp.chipin.base.transaction.spender.MemberAbstractRequest;
-import cz.cvut.fit.sp.chipin.base.transaction.spender.UnequalTransactionMember;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +36,7 @@ public class GroupService {
     private final TransactionService transactionService;
     private final GroupMapper groupMapper;
     private final TransactionMapper transactionMapper;
+    private final NotificationService notificationService;
 
     public GroupCreateGroupResponse createGroup(GroupCreateGroupRequest request, String userId) throws Exception {
         User user = userService.getUser(userId);
@@ -88,6 +95,9 @@ public class GroupService {
         Member member = new Member(user, group, GroupRole.USER, 0f, 0f, 0f);
         group.addMembership(member);
         user.addMembership(member);
+
+        notificationService.createNotification(user, group, new NotificationContent(
+                "You joined the group " + group.getName()));
 
         memberService.save(member);
         userService.save(user);
@@ -179,6 +189,12 @@ public class GroupService {
                 Transaction transaction = transactionService.create(request,
                         borrower.get().getUser(), group.get());
                 acceptTxCreate(transaction);
+
+                // Notifying the borrower of debt repayment
+                debtService.notifyDebtRepayment(borrower.get().getUser(), lender.get().getUser(),
+                        group.get(), debt.get().getAmount());
+                userService.save(borrower.get().getUser());
+                userService.save(lender.get().getUser());
                 logService.create(transaction.getName(), transaction.getGroup(), transaction.getPayer());
             }
         } catch (Exception e) {
@@ -313,13 +329,26 @@ public class GroupService {
         return groupMapper.entityToReadGroupLogsResponse(group);
     }
 
+    public List<User> getUsersByGroupId(Long groupId) {
+        return groupRepository.findUsersByGroupId(groupId);
+    }
+
     public GroupUpdateGroupNameResponse updateGroupName(Long groupId, String name) throws Exception {
         Group group = groupRepository.findById(groupId)
                 .orElseThrow(() -> new Exception("Group not found"));
         if (name.isBlank()) {
             throw new Exception("New name is empty");
         }
+
+        String pastName = group.getName();
         group.setName(name);
+
+        NotificationContent notificationContent = new NotificationContent(
+                "Group name updated", "The group name has been changed from " + pastName + " to " + name);
+
+        List<User> users = getUsersByGroupId(groupId);
+        notificationService.createNotifications(users, group, notificationContent);
+        userService.saveAll(users);
         groupRepository.save(group);
         return groupMapper.entityToUpdateGroupNameResponse(group);
     }

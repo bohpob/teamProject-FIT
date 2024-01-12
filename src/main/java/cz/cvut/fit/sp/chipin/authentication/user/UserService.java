@@ -79,4 +79,8 @@ public class UserService {
     public void save(User user) {
         userRepository.save(user);
     }
+
+    public void saveAll(List<User> users) {
+        userRepository.saveAll(users);
+    }
 }
