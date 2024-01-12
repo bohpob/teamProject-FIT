@@ -4,6 +4,7 @@ import cz.cvut.fit.sp.chipin.authentication.user.mapper.UserReadUserResponse;
 import cz.cvut.fit.sp.chipin.authentication.user.mapper.UserReadUserTransactionsResponse;
 import cz.cvut.fit.sp.chipin.base.group.mapper.GroupReadGroupMembersResponse;
 import cz.cvut.fit.sp.chipin.base.member.MemberDTO;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/users")
+@SecurityRequirement(name = "bearerAuth")
 @AllArgsConstructor
 public class UserController {
 
