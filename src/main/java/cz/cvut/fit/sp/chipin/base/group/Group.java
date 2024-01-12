@@ -1,8 +1,8 @@
 package cz.cvut.fit.sp.chipin.base.group;
 
-import cz.cvut.fit.sp.chipin.base.member.Member;
 import cz.cvut.fit.sp.chipin.base.debt.Debt;
 import cz.cvut.fit.sp.chipin.base.log.Log;
+import cz.cvut.fit.sp.chipin.base.member.Member;
 import cz.cvut.fit.sp.chipin.base.transaction.Transaction;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -46,6 +46,9 @@ public class Group {
     @OneToMany(mappedBy = "group")
     private List<Transaction> transactions = new ArrayList<>();
 
+    @OneToOne
+    private Member nextPayer;
+
     @NotBlank
     @Column(name = "name")
     private String name;
@@ -56,6 +59,13 @@ public class Group {
 
     @NotBlank
     private String hexCode;
+
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    private PayerStrategy payerStrategy;
+
+    @NotNull
+    private Boolean checkNextPayer;
 
     public Group(String name, Currency currency, String hexCode) {
         this.name = name;

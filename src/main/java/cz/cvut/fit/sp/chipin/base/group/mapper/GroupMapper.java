@@ -18,6 +18,7 @@ import java.util.List;
 public interface GroupMapper {
     GroupCreateGroupResponse entityToCreateGroupResponse(Group group);
 
+    @Mapping(source = "nextPayer.id.userId", target = "nextPayerId")
     GroupReadGroupResponse entityToReadGroupResponse(Group group);
 
     @Mapping(source = "group.transactions", target = "transactions")
@@ -35,7 +36,10 @@ public interface GroupMapper {
     @Mapping(target = "logs", ignore = true)
     @Mapping(target = "members", ignore = true)
     @Mapping(target = "transactions", ignore = true)
+    @Mapping(target = "nextPayer", ignore = true)
     @Mapping(target = "hexCode", ignore = true)
+    @Mapping(target = "payerStrategy", ignore = true)
+    @Mapping(target = "checkNextPayer", ignore = true)
     Group createGroupRequestToEntity(GroupCreateGroupRequest groupCreateGroupRequest);
 
     GroupReadGroupMembersResponse entityToReadGroupMembersResponse(Group group);
