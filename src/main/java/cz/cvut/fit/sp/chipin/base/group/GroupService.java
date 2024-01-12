@@ -223,7 +223,11 @@ public class GroupService {
     }
 
     public Page<TransactionReadGroupTransactionsResponse> readGroupTransactions(Long groupId, Pageable pageable) throws Exception {
-        return transactionService.readTransactions(groupId, pageable).map(transactionMapper::entityToReadGroupTransactionsResponse);
+        try {
+            return transactionService.readTransactions(groupId, pageable).map(transactionMapper::entityToReadGroupTransactionsResponse);
+        } catch (Exception e) {
+            throw new Exception("Group not found.");
+        }
     }
 
     public Page<TransactionReadGroupTransactionsResponse> readGroupTransactionsByCategories(Long groupId, List<Category> categories, Pageable pageable) throws Exception {
@@ -299,7 +303,11 @@ public class GroupService {
     }
 
     public Page<LogReadLogResponse> readGroupLogs(Long groupId, Pageable pageable) throws Exception {
-        return logService.readLogs(groupId, pageable).map(logMapper::entityToReadLogResponse);
+        try{
+            return logService.readLogs(groupId, pageable).map(logMapper::entityToReadLogResponse);
+        } catch (Exception e) {
+            throw new Exception(e);
+        }
     }
 
     public GroupUpdateGroupNameResponse updateGroupName(Long groupId, String name) throws Exception {
