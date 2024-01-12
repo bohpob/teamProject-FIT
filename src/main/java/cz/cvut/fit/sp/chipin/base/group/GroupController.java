@@ -1,6 +1,7 @@
 package cz.cvut.fit.sp.chipin.base.group;
 
 import cz.cvut.fit.sp.chipin.base.group.mapper.*;
+import cz.cvut.fit.sp.chipin.base.log.mapper.LogReadLogResponse;
 import cz.cvut.fit.sp.chipin.base.transaction.Category;
 import cz.cvut.fit.sp.chipin.base.transaction.TransactionReadGroupTransactionsSmartRequest;
 import cz.cvut.fit.sp.chipin.base.transaction.TransactionService;
@@ -153,9 +154,9 @@ public class GroupController {
 
     @GetMapping("/{groupId}/logs")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<GroupReadGroupLogsResponse> readLogs(@PathVariable Long groupId) throws Exception {
+    public ResponseEntity<Page<LogReadLogResponse>> readLogs(@PathVariable Long groupId, Pageable pageable) throws Exception {
         try {
-            return ResponseEntity.ok(groupService.readGroupLogs(groupId));
+            return ResponseEntity.ok(groupService.readGroupLogs(groupId, pageable));
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }

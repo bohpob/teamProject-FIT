@@ -3,6 +3,8 @@ package cz.cvut.fit.sp.chipin.base.log;
 import cz.cvut.fit.sp.chipin.authentication.user.User;
 import cz.cvut.fit.sp.chipin.base.group.Group;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -21,5 +23,8 @@ public class LogService {
 
     public List<Log> readLogs(Long groupId) {
         return logRepository.findLogsByGroupId(groupId);
+    }
+    public Page<Log> readLogs(Long groupId, Pageable pageable) {
+        return logRepository.findLogsByGroupId(groupId, pageable);
     }
 }

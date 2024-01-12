@@ -7,6 +7,8 @@ import cz.cvut.fit.sp.chipin.base.debt.Debt;
 import cz.cvut.fit.sp.chipin.base.debt.DebtService;
 import cz.cvut.fit.sp.chipin.base.group.mapper.*;
 import cz.cvut.fit.sp.chipin.base.log.LogService;
+import cz.cvut.fit.sp.chipin.base.log.mapper.LogMapper;
+import cz.cvut.fit.sp.chipin.base.log.mapper.LogReadLogResponse;
 import cz.cvut.fit.sp.chipin.base.member.GroupRole;
 import cz.cvut.fit.sp.chipin.base.member.Member;
 import cz.cvut.fit.sp.chipin.base.member.MemberService;
@@ -32,6 +34,7 @@ public class GroupService {
     private final TransactionService transactionService;
     private final GroupMapper groupMapper;
     private final TransactionMapper transactionMapper;
+    private final LogMapper logMapper;
 
     public GroupCreateGroupResponse createGroup(GroupCreateGroupRequest request, String userId) throws Exception {
         User user = userService.getUser(userId);
@@ -295,10 +298,8 @@ public class GroupService {
         return true;
     }
 
-    public GroupReadGroupLogsResponse readGroupLogs(Long groupId) throws Exception {
-        Group group = groupRepository.findById(groupId)
-                .orElseThrow(() -> new Exception("Group not found"));
-        return groupMapper.entityToReadGroupLogsResponse(group);
+    public Page<LogReadLogResponse> readGroupLogs(Long groupId, Pageable pageable) throws Exception {
+        return logService.readLogs(groupId, pageable).map(logMapper::entityToReadLogResponse);
     }
 
     public GroupUpdateGroupNameResponse updateGroupName(Long groupId, String name) throws Exception {
