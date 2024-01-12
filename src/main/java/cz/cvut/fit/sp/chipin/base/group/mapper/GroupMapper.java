@@ -35,7 +35,10 @@ public interface GroupMapper {
     @Mapping(target = "logs", ignore = true)
     @Mapping(target = "members", ignore = true)
     @Mapping(target = "transactions", ignore = true)
+    @Mapping(target = "nextPayer", ignore = true)
     @Mapping(target = "hexCode", ignore = true)
+    @Mapping(target = "payerStrategy", ignore = true)
+    @Mapping(target = "checkNextPayer", ignore = true)
     Group createGroupRequestToEntity(GroupCreateGroupRequest groupCreateGroupRequest);
 
     GroupReadGroupMembersResponse entityToReadGroupMembersResponse(Group group);

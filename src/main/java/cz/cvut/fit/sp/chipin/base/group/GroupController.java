@@ -59,6 +59,28 @@ public class GroupController {
         }
     }
 
+    @GetMapping("/{groupId}/next")
+    public ResponseEntity<String> readNextPayerId(@PathVariable Long groupId) throws Exception {
+        try {
+            return ResponseEntity.ok(groupService.readNextPayerId(groupId));
+        } catch (Exception e) {
+            throw new Exception(e);
+        }
+    }
+
+    @PatchMapping("/{groupId}/next")
+    public ResponseEntity<String> updateNextPayer(
+            @PathVariable Long groupId,
+            @RequestParam Optional<String> strategy,
+            @RequestParam Optional<Boolean> check
+    ) throws Exception {
+        try {
+            return ResponseEntity.ok(groupService.setCheckNextPayer(groupId, strategy, check));
+        } catch (Exception e) {
+            throw new Exception(e);
+        }
+    }
+
     @PostMapping("/{groupId}/transactions")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<TransactionCreateTransactionResponse> createTransaction(@Valid @RequestBody TransactionCreateTransactionRequest request,
@@ -66,6 +88,8 @@ public class GroupController {
         try {
             return ResponseEntity.ok(groupService.createTransaction(request, groupId));
         } catch (Exception e) {
+            if (e.getMessage().equals("Next payer check failed"))
+                return ResponseEntity.badRequest().build();
             throw new Exception(e.getMessage());
         }
     }

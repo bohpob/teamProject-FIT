@@ -3,13 +3,6 @@ package cz.cvut.fit.sp.chipin.base.group;
 import cz.cvut.fit.sp.chipin.authentication.user.User;
 import cz.cvut.fit.sp.chipin.authentication.user.UserService;
 import cz.cvut.fit.sp.chipin.base.amount.Amount;
-import cz.cvut.fit.sp.chipin.base.notification.NotificationService;
-import cz.cvut.fit.sp.chipin.base.notification.content.NotificationContent;
-import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionCreateTransactionResponse;
-import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionMapper;
-import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionUpdateTransactionResponse;
-import cz.cvut.fit.sp.chipin.base.transaction.spender.UnequalTransactionMember;
-import cz.cvut.fit.sp.chipin.base.transaction.TransactionType;
 import cz.cvut.fit.sp.chipin.base.debt.Debt;
 import cz.cvut.fit.sp.chipin.base.debt.DebtService;
 import cz.cvut.fit.sp.chipin.base.group.mapper.*;
@@ -17,9 +10,12 @@ import cz.cvut.fit.sp.chipin.base.log.LogService;
 import cz.cvut.fit.sp.chipin.base.member.GroupRole;
 import cz.cvut.fit.sp.chipin.base.member.Member;
 import cz.cvut.fit.sp.chipin.base.member.MemberService;
+import cz.cvut.fit.sp.chipin.base.notification.NotificationService;
+import cz.cvut.fit.sp.chipin.base.notification.content.NotificationContent;
 import cz.cvut.fit.sp.chipin.base.transaction.*;
 import cz.cvut.fit.sp.chipin.base.transaction.mapper.*;
 import cz.cvut.fit.sp.chipin.base.transaction.spender.MemberAbstractRequest;
+import cz.cvut.fit.sp.chipin.base.transaction.spender.UnequalTransactionMember;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -43,11 +39,14 @@ public class GroupService {
 
         Group group = groupMapper.createGroupRequestToEntity(request);
         group.setHexCode(generateRandomHexCode());
+        group.setPayerStrategy(PayerStrategy.LOWEST_BALANCE);
+        group.setCheckNextPayer(false);
         groupRepository.save(group);
 
         Member member = new Member(user, group, GroupRole.ADMIN, 0f, 0f, 0f);
         memberService.save(member);
 
+        group.setNextPayer(member);
         group.addMembership(member);
         user.addMembership(member);
 
@@ -203,6 +202,31 @@ public class GroupService {
 
     }
 
+    public String setCheckNextPayer(
+            Long groupId,
+            Optional<String> payerStrategyString,
+            Optional<Boolean> checkNextPayer
+    ) throws Exception {
+        Group group = groupRepository.findById(groupId)
+                .orElseThrow(() -> new Exception("Group not found"));
+        if (payerStrategyString.isPresent()) {
+            PayerStrategy payerStrategy = PayerStrategy.valueOf(payerStrategyString.get().toUpperCase());
+            group.setPayerStrategy(payerStrategy);
+            groupRepository.save(group);
+        }
+        if (checkNextPayer.isPresent()) {
+            group.setCheckNextPayer(checkNextPayer.get());
+            groupRepository.save(group);
+        }
+        return "Payer strategy = " + group.getPayerStrategy() + ", checking = " + group.getCheckNextPayer();
+    }
+
+    public String readNextPayerId(Long groupId) throws Exception {
+        Group group = groupRepository.findById(groupId)
+                .orElseThrow(() -> new Exception("Group not found"));
+        return group.getNextPayer().getId().getUserId();
+    }
+
     public TransactionCreateTransactionResponse createTransaction(TransactionCreateTransactionRequest request, Long groupId) throws Exception {
         Optional<Group> group = groupRepository.findById(groupId);
         if (group.isEmpty()) {
@@ -212,12 +236,18 @@ public class GroupService {
         if (payer.isEmpty()) {
             throw new Exception("Payer not found.");
         }
+        if (group.get().getCheckNextPayer() != null && group.get().getCheckNextPayer() &&
+                group.get().getNextPayer() != payer.get()) {
+            throw new Exception("Next payer check failed");
+        }
 
         Transaction transaction = new Transaction();
         try {
             if (allSpendersFromGroup(request.getSpenders(), groupId)) {
                 transaction = transactionService.create(request, payer.get().getUser(), group.get());
                 acceptTxCreate(transaction);
+                group.get().setNextPayer(findNextPayer(group.get()));
+                groupRepository.save(group.get());
 
                 logService.create("made a payment: " + transaction.getAmount(),
                         transaction.getGroup(), transaction.getPayer());
@@ -351,5 +381,38 @@ public class GroupService {
         userService.saveAll(users);
         groupRepository.save(group);
         return groupMapper.entityToUpdateGroupNameResponse(group);
+    }
+
+    public static Member findNextPayer(Group group) {
+        return switch (group.getPayerStrategy()) {
+            case LOWEST_BALANCE -> group.getMembers().stream()
+                    .min(Comparator.comparing(Member::getBalance))
+                    .orElseThrow(() -> new IllegalArgumentException("Group with no members"));
+            case WEIGHTED_RANDOM -> {
+                float highestBalance = group.getMembers().stream()
+                        .max(Comparator.comparing(Member::getBalance))
+                        .orElseThrow(() -> new IllegalArgumentException("Group with no members"))
+                        .getBalance();
+
+                float totalBalance = 0f;
+                NavigableMap<Float, Member> weightedMembers = new TreeMap<>();
+                for (Member member : group.getMembers()) {
+                    float adjustedBalance = highestBalance - member.getBalance();
+                    if (adjustedBalance != 0) {
+                        totalBalance += adjustedBalance;
+                        weightedMembers.put(totalBalance, member);
+                    }
+                }
+
+                Random random = new Random();
+                float randomValue = random.nextFloat() * totalBalance;
+                yield weightedMembers.higherEntry(randomValue).getValue();
+            }
+            case PURE_RANDOM -> {
+                Random random = new Random();
+                int randomIndex = random.nextInt(group.getMembers().size());
+                yield group.getMembers().get(randomIndex);
+            }
+        };
     }
 }
