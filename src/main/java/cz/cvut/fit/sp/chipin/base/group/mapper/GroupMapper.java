@@ -18,6 +18,7 @@ import java.util.List;
 public interface GroupMapper {
     GroupCreateGroupResponse entityToCreateGroupResponse(Group group);
 
+    @Mapping(source = "nextPayer.id.userId", target = "nextPayerId")
     GroupReadGroupResponse entityToReadGroupResponse(Group group);
 
     @Mapping(source = "group.transactions", target = "transactions")

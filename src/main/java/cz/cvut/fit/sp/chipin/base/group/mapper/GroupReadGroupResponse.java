@@ -15,8 +15,14 @@ public class GroupReadGroupResponse {
 
     @NotBlank
     private String name;
-    @NotNull
+    @NotBlank
     private String currency;
+    @NotBlank
+    private String nextPayerId;
+    @NotBlank
+    private String payerStrategy;
+    @NotNull
+    private Boolean checkNextPayer;
     @NotNull
     private List<MemberReadMemberResponse> members;
     @NotNull
