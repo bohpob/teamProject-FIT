@@ -63,9 +63,9 @@ public class UserController {
     }
 
     @GetMapping("/me/transactions")
-    public ResponseEntity<UserReadUserTransactionsResponse> readMyTransactions(Principal principal) {
+    public ResponseEntity<Page<UserReadUserTransactionsResponse>> readMyTransactions(Principal principal, Pageable pageable) {
         try {
-            return ResponseEntity.ok(userService.readUserTransactions(principal.getName()));
+            return ResponseEntity.ok(userService.readUserTransactions(principal.getName(), pageable));
         } catch (Exception e) {
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, e.getMessage(), e

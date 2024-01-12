@@ -59,11 +59,12 @@ public class UserService {
         }
     }
 
-    public UserReadUserTransactionsResponse readUserTransactions(String id) throws Exception {
-        User user = userRepository.findById(id).orElse(null);
-        if (user != null) {
-            return userMapper.entityToReadUserTransactionsResponse(user);
-        } else {
+    public Page<UserReadUserTransactionsResponse> readUserTransactions(String id, Pageable pageable) throws Exception {
+        try {
+            Page<User> user = userRepository.findById(id, pageable);
+            return user.map(userMapper::entityToReadUserTransactionsResponse);
+//            return userMapper.entityToReadUserTransactionsResponse(user);
+        } catch (Exception e){
             throw new Exception("user with id: " + id + " doesn't exists");
         }
     }
