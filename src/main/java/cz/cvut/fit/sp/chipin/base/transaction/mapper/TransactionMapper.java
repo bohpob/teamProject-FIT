@@ -39,5 +39,6 @@ public interface TransactionMapper {
     @Mapping(target = "payer", ignore = true)
     @Mapping(target = "group", ignore = true)
     @Mapping(target = "amounts", ignore = true)
+    @Mapping(target = "currency", ignore = true)
     Transaction createTransactionRequestToEntity(TransactionCreateTransactionRequest transactionCreateTransactionRequest);
 }

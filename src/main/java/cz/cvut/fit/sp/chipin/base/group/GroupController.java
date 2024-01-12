@@ -1,14 +1,18 @@
 package cz.cvut.fit.sp.chipin.base.group;
 
 import cz.cvut.fit.sp.chipin.base.group.mapper.*;
+import cz.cvut.fit.sp.chipin.base.log.mapper.LogReadLogResponse;
 import cz.cvut.fit.sp.chipin.base.transaction.TransactionUpdateRequest;
 import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionCreateTransactionRequest;
 import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionCreateTransactionResponse;
 import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionReadGroupTransactionResponse;
+import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionReadGroupTransactionsResponse;
 import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionUpdateTransactionResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -83,9 +87,10 @@ public class GroupController {
 
     @GetMapping("/{groupId}/transactions")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<GroupReadGroupTransactionsResponse> readGroupTransactions(@PathVariable Long groupId) throws Exception {
+    public ResponseEntity<Page<TransactionReadGroupTransactionsResponse>> readGroupTransactions(
+            @PathVariable Long groupId, Pageable pageable) throws Exception {
         try {
-            return ResponseEntity.ok(groupService.readGroupTransactions(groupId));
+            return ResponseEntity.ok(groupService.readGroupTransactions(groupId, pageable));
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
@@ -139,9 +144,9 @@ public class GroupController {
 
     @GetMapping("/{groupId}/logs")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<GroupReadGroupLogsResponse> readLogs(@PathVariable Long groupId) throws Exception {
+    public ResponseEntity<Page<LogReadLogResponse>> readLogs(@PathVariable Long groupId, Pageable pageable) throws Exception {
         try {
-            return ResponseEntity.ok(groupService.readGroupLogs(groupId));
+            return ResponseEntity.ok(groupService.readGroupLogs(groupId, pageable));
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }

@@ -12,6 +12,8 @@ import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionMapper;
 import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionReadGroupTransactionResponse;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -120,6 +122,10 @@ public class TransactionService {
             notificationService.createNotification(user, group, notificationContent);
             userService.save(user);
         }
+    }
+
+    public Page<Transaction> readTransactions(Long groupId, Pageable pageable) {
+        return transactionRepository.findTransactionsByGroupId(groupId, pageable);
     }
 
     private static LocalDateTime parseDateTime(String dateTime) {

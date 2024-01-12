@@ -8,7 +8,11 @@ import cz.cvut.fit.sp.chipin.base.group.mapper.GroupMapper;
 import cz.cvut.fit.sp.chipin.base.group.mapper.GroupReadGroupMembersResponse;
 import cz.cvut.fit.sp.chipin.base.member.Member;
 import cz.cvut.fit.sp.chipin.base.member.MemberDTO;
+import cz.cvut.fit.sp.chipin.base.member.MemberRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -19,6 +23,7 @@ import java.util.List;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final MemberRepository memberRepository;
     private final UserMapper userMapper;
     private final GroupMapper groupMapper;
 
@@ -31,21 +36,36 @@ public class UserService {
         }
     }
 
-    public List<GroupReadGroupMembersResponse> readUserGroups(String id) throws Exception {
+    public Page<GroupReadGroupMembersResponse> readUserGroups(String id, Pageable pageable) throws Exception {
         User user = userRepository.findById(id).orElse(null);
         if (user != null) {
+            //get all user's groups and map them to GroupReadGroupMembersResponse and return page of them
             List<Group> groups = user.getMembers().stream().map(Member::getGroup).toList();
-            return groups.stream().map(groupMapper::entityToReadGroupMembersResponse).toList();
+            List<GroupReadGroupMembersResponse> groupResponses = groups.stream().map(groupMapper::entityToReadGroupMembersResponse).toList();
+            int pageSize = pageable.getPageSize();
+            int currentPage = pageable.getPageNumber();
+            int startItem = currentPage * pageSize;
+
+            List<GroupReadGroupMembersResponse> pageContent;
+
+            if (groupResponses.size() < startItem) {
+                pageContent = new ArrayList<>();
+            } else {
+                int toIndex = Math.min(startItem + pageSize, groupResponses.size());
+                pageContent = groupResponses.subList(startItem, toIndex);
+            }
+
+            return new PageImpl<>(pageContent, pageable, groupResponses.size());
         } else {
             throw new Exception("user with id: " + id + " doesn't exists");
         }
     }
 
-    public UserReadUserTransactionsResponse readUserTransactions(String id) throws Exception {
-        User user = userRepository.findById(id).orElse(null);
-        if (user != null) {
-            return userMapper.entityToReadUserTransactionsResponse(user);
-        } else {
+    public Page<UserReadUserTransactionsResponse> readUserTransactions(String id, Pageable pageable) throws Exception {
+        try {
+            Page<User> user = userRepository.findById(id, pageable);
+            return user.map(userMapper::entityToReadUserTransactionsResponse);
+        } catch (Exception e) {
             throw new Exception("user with id: " + id + " doesn't exists");
         }
     }
@@ -59,21 +79,19 @@ public class UserService {
         }
     }
 
-    public List<MemberDTO> getMemberships(String id) throws Exception {
-        User user = getUser(id);
+    public Page<MemberDTO> getMemberships(String id, Pageable pageable) throws Exception {
 
-        List<MemberDTO> memberships = new ArrayList<>();
-
-        for (Member member : user.getMembers()) {
-            memberships.add(new MemberDTO(
-                    member.getId().getGroupId(),
-                    member.getRole().name(),
-                    member.getPaid(),
-                    member.getSpent(),
-                    member.getBalance()));
+        try {
+            Page<Member> members = memberRepository.findByUserId(id, pageable);
+            return members.map(memberMapper -> new MemberDTO(
+                    memberMapper.getId().getGroupId(),
+                    memberMapper.getRole().name(),
+                    memberMapper.getPaid(),
+                    memberMapper.getSpent(),
+                    memberMapper.getBalance()));
+        } catch (Exception e) {
+            throw new Exception("user with id: " + id + " doesn't exists");
         }
-
-        return memberships;
     }
 
     public void save(User user) {

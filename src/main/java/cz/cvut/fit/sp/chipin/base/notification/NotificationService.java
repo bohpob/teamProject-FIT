@@ -27,13 +27,13 @@ public class NotificationService {
     public Page<NotificationReadNotificationsResponse> readAllNotifications(String userId, Pageable pageable) {
         Page<Notification> notifications = notificationRepository.findNotificationsByUserId(userId, pageable);
 
-        List<NotificationReadNotificationResponse> unreadNotificationResponses = notifications.stream()
+        List<NotificationReadNotificationResponse> notificationResponses = notifications.stream()
                 .map(notificationMapper::entityToReadNotificationResponse)
                 .sorted(Comparator.comparing(NotificationReadNotificationResponse::getId).reversed())
                 .toList();
 
         NotificationReadNotificationsResponse response = new NotificationReadNotificationsResponse(
-                notifications.getTotalElements(), unreadNotificationResponses);
+                notifications.getTotalElements(), notificationResponses);
         return new PageImpl<>(Collections.singletonList(response), pageable, notifications.getTotalElements());
     }
 

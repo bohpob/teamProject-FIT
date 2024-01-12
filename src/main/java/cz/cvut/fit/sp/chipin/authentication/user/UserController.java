@@ -6,6 +6,10 @@ import cz.cvut.fit.sp.chipin.base.group.mapper.GroupReadGroupMembersResponse;
 import cz.cvut.fit.sp.chipin.base.member.MemberDTO;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,7 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.security.Principal;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/users")
@@ -48,9 +51,11 @@ public class UserController {
     }
 
     @GetMapping("/me/groups")
-    public ResponseEntity<List<GroupReadGroupMembersResponse>> readMyGroups(Principal principal) {
+    public ResponseEntity<Page<GroupReadGroupMembersResponse>> readMyGroups
+            (Principal principal, @PageableDefault(sort = {"id"},
+                    direction = Sort.Direction.DESC) Pageable pageable) {
         try {
-            return ResponseEntity.ok(userService.readUserGroups(principal.getName()));
+            return ResponseEntity.ok(userService.readUserGroups(principal.getName(), pageable));
         } catch (Exception e) {
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, e.getMessage(), e
@@ -59,9 +64,9 @@ public class UserController {
     }
 
     @GetMapping("/me/transactions")
-    public ResponseEntity<UserReadUserTransactionsResponse> readMyTransactions(Principal principal) {
+    public ResponseEntity<Page<UserReadUserTransactionsResponse>> readMyTransactions(Principal principal, Pageable pageable) {
         try {
-            return ResponseEntity.ok(userService.readUserTransactions(principal.getName()));
+            return ResponseEntity.ok(userService.readUserTransactions(principal.getName(), pageable));
         } catch (Exception e) {
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, e.getMessage(), e
@@ -71,9 +76,9 @@ public class UserController {
 
     //TODO: update DTO
     @GetMapping("/me/memberships")
-    ResponseEntity<List<MemberDTO>> readMyMemberships(Principal principal) {
+    ResponseEntity<Page<MemberDTO>> readMyMemberships(Principal principal, Pageable pageable) {
         try {
-            return ResponseEntity.ok(userService.getMemberships(principal.getName()));
+            return ResponseEntity.ok(userService.getMemberships(principal.getName(), pageable));
         } catch (Exception e) {
             throw new ResponseStatusException(
                     HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e

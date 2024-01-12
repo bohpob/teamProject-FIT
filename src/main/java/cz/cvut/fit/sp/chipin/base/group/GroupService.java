@@ -14,6 +14,8 @@ import cz.cvut.fit.sp.chipin.base.debt.Debt;
 import cz.cvut.fit.sp.chipin.base.debt.DebtService;
 import cz.cvut.fit.sp.chipin.base.group.mapper.*;
 import cz.cvut.fit.sp.chipin.base.log.LogService;
+import cz.cvut.fit.sp.chipin.base.log.mapper.LogMapper;
+import cz.cvut.fit.sp.chipin.base.log.mapper.LogReadLogResponse;
 import cz.cvut.fit.sp.chipin.base.member.GroupRole;
 import cz.cvut.fit.sp.chipin.base.member.Member;
 import cz.cvut.fit.sp.chipin.base.member.MemberService;
@@ -21,6 +23,8 @@ import cz.cvut.fit.sp.chipin.base.transaction.*;
 import cz.cvut.fit.sp.chipin.base.transaction.mapper.*;
 import cz.cvut.fit.sp.chipin.base.transaction.spender.MemberAbstractRequest;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -37,6 +41,7 @@ public class GroupService {
     private final GroupMapper groupMapper;
     private final TransactionMapper transactionMapper;
     private final NotificationService notificationService;
+    private final LogMapper logMapper;
 
     public GroupCreateGroupResponse createGroup(GroupCreateGroupRequest request, String userId) throws Exception {
         User user = userService.getUser(userId);
@@ -228,19 +233,16 @@ public class GroupService {
         return transactionMapper.entityToCreateTransactionResponse(transaction);
     }
 
-    public Group read(Long id) throws Exception {
-        return groupRepository.findById(id)
-                .orElseThrow(() -> new Exception("Group not found"));
-    }
-
     public TransactionReadGroupTransactionResponse readGroupTransaction(Long transactionId, Long groupId) throws Exception {
         return transactionService.readGroupTransaction(transactionId, groupId);
     }
 
-    public GroupReadGroupTransactionsResponse readGroupTransactions(Long groupId) throws Exception {
-        Group group = groupRepository.findById(groupId)
-                .orElseThrow(() -> new Exception("Group not found"));
-        return groupMapper.entityToReadGroupTransactionsResponse(group);
+    public Page<TransactionReadGroupTransactionsResponse> readGroupTransactions(Long groupId, Pageable pageable) throws Exception {
+        try {
+            return transactionService.readTransactions(groupId, pageable).map(transactionMapper::entityToReadGroupTransactionsResponse);
+        } catch (Exception e) {
+            throw new Exception("Group not found.");
+        }
     }
 
     public GroupReadGroupTransactionsResponse readGroupTransactions(
@@ -323,10 +325,12 @@ public class GroupService {
         return true;
     }
 
-    public GroupReadGroupLogsResponse readGroupLogs(Long groupId) throws Exception {
-        Group group = groupRepository.findById(groupId)
-                .orElseThrow(() -> new Exception("Group not found"));
-        return groupMapper.entityToReadGroupLogsResponse(group);
+    public Page<LogReadLogResponse> readGroupLogs(Long groupId, Pageable pageable) throws Exception {
+        try {
+            return logService.readLogs(groupId, pageable).map(logMapper::entityToReadLogResponse);
+        } catch (Exception e) {
+            throw new Exception(e);
+        }
     }
 
     public List<User> getUsersByGroupId(Long groupId) {
