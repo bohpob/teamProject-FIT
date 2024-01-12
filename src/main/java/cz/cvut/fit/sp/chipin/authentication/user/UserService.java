@@ -66,7 +66,6 @@ public class UserService {
         try {
             Page<User> user = userRepository.findById(id, pageable);
             return user.map(userMapper::entityToReadUserTransactionsResponse);
-//            return userMapper.entityToReadUserTransactionsResponse(user);
         } catch (Exception e){
             throw new Exception("user with id: " + id + " doesn't exists");
         }
@@ -82,20 +81,7 @@ public class UserService {
     }
 
     public Page<MemberDTO> getMemberships(String id, Pageable pageable) throws Exception {
-       /* User user = getUser(id);
 
-        List<MemberDTO> memberships = new ArrayList<>();
-
-        for (Member member : user.getMembers()) {
-            memberships.add(new MemberDTO(
-                    member.getId().getGroupId(),
-                    member.getRole().name(),
-                    member.getPaid(),
-                    member.getSpent(),
-                    member.getBalance()));
-        }
-
-        return memberships;*/
         Page<Member> members = memberRepository.findByUserId(id, pageable);
         return members.map(memberMapper -> new MemberDTO(
                 memberMapper.getId().getGroupId(),
