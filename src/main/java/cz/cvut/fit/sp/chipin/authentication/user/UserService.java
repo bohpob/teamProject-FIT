@@ -82,13 +82,17 @@ public class UserService {
 
     public Page<MemberDTO> getMemberships(String id, Pageable pageable) throws Exception {
 
-        Page<Member> members = memberRepository.findByUserId(id, pageable);
-        return members.map(memberMapper -> new MemberDTO(
-                memberMapper.getId().getGroupId(),
-                memberMapper.getRole().name(),
-                memberMapper.getPaid(),
-                memberMapper.getSpent(),
-                memberMapper.getBalance()));
+        try {
+            Page<Member> members = memberRepository.findByUserId(id, pageable);
+            return members.map(memberMapper -> new MemberDTO(
+                    memberMapper.getId().getGroupId(),
+                    memberMapper.getRole().name(),
+                    memberMapper.getPaid(),
+                    memberMapper.getSpent(),
+                    memberMapper.getBalance()));
+        } catch (Exception e){
+            throw new Exception("user with id: " + id + " doesn't exists");
+        }
     }
 
     public void save(User user) {
