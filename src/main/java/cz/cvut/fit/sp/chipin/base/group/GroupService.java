@@ -15,6 +15,8 @@ import cz.cvut.fit.sp.chipin.base.transaction.mapper.*;
 import cz.cvut.fit.sp.chipin.base.transaction.spender.MemberAbstractRequest;
 import cz.cvut.fit.sp.chipin.base.transaction.spender.UnequalTransactionMember;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -217,21 +219,19 @@ public class GroupService {
         return transactionService.readGroupTransaction(transactionId, groupId);
     }
 
-    public GroupReadGroupTransactionsResponse readGroupTransactions(Long groupId) throws Exception {
-        Group group = groupRepository.findById(groupId)
-                .orElseThrow(() -> new Exception("Group not found"));
-        return groupMapper.entityToReadGroupTransactionsResponse(group);
+    public Page<TransactionReadGroupTransactionsResponse> readGroupTransactions(Long groupId, Pageable pageable) throws Exception {
+        return transactionService.readTransactions(groupId, pageable).map(transactionMapper::entityToReadGroupTransactionsResponse);
     }
 
-    public GroupReadGroupTransactionsResponse readGroupTransactionsByCategories(Long groupId, List<Category> categories) throws Exception {
+    public Page<TransactionReadGroupTransactionsResponse> readGroupTransactionsByCategories(Long groupId, List<Category> categories, Pageable pageable) throws Exception {
         List<Transaction> transactions1 = read(groupId)
                 .getTransactions()
                 .stream()
                 .filter(transaction -> categories.contains(transaction.getCategory()))
                 .toList();
 
-        List<Transaction> transactions = transactionService.readAllByCategories(groupId, categories);
-        return groupMapper.transactionsToReadGroupTransactionsResponse(0, transactions);
+        Page<Transaction> transactions = transactionService.readAllByCategories(groupId, categories, pageable);
+        return transactions.map(transactionMapper::entityToReadGroupTransactionsResponse);
     }
 
     public TransactionUpdateTransactionResponse updateTransaction(TransactionUpdateRequest transactionUpdateRequest,

@@ -99,10 +99,10 @@ public class GroupController {
 
     @GetMapping("/{groupId}/transactions")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<GroupReadGroupTransactionsResponse> readGroupTransactions(
-            @PathVariable Long groupId) throws Exception {
+    public ResponseEntity<Page<TransactionReadGroupTransactionsResponse>> readGroupTransactions(
+            @PathVariable Long groupId, Pageable pageable) throws Exception {
         try {
-            return ResponseEntity.ok(groupService.readGroupTransactions(groupId));
+            return ResponseEntity.ok(groupService.readGroupTransactions(groupId, pageable));
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
@@ -110,10 +110,11 @@ public class GroupController {
 
     @GetMapping("/{groupId}/transactions/categories")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<GroupReadGroupTransactionsResponse> readGroupTransactionsByCategories(@PathVariable Long groupId,
-                                                                                                @RequestBody List<Category> categories) throws Exception {
+    public ResponseEntity<Page<TransactionReadGroupTransactionsResponse>> readGroupTransactionsByCategories(@PathVariable Long groupId,
+                                                                                                @RequestBody List<Category> categories,
+                                                                                                Pageable pageable) throws Exception {
         try {
-            return ResponseEntity.ok(groupService.readGroupTransactionsByCategories(groupId, categories));
+            return ResponseEntity.ok(groupService.readGroupTransactionsByCategories(groupId, categories, pageable));
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
