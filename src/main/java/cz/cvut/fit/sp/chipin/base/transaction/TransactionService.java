@@ -110,8 +110,8 @@ public class TransactionService {
         return transactionMapper.entityToReadGroupTransactionResponse(transaction);
     }
 
-    public List<Transaction> readAllByCategories(Long groupId, List<Category> categories) throws Exception {
-        return transactionRepository.findTransactionByGroupIdAndCategoryIn(groupId, categories);
+    public Page<Transaction> readAllByCategories(Long groupId, List<Category> categories, Pageable pageable) throws Exception {
+        return transactionRepository.findTransactionByGroupIdAndCategoryIn(groupId, categories, pageable);
     }
 
     @Transactional
@@ -138,6 +138,10 @@ public class TransactionService {
 
     public List<Transaction> readTransactions(Long groupId) {
         return transactionRepository.findTransactionsByGroupId(groupId);
+    }
+
+    public Page<Transaction> readTransactions(Long groupId, Pageable pageable) {
+        return transactionRepository.findTransactionsByGroupId(groupId, pageable);
     }
 
     private static LocalDateTime parseDateTime(String dateTime) {
