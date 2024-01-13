@@ -16,6 +16,8 @@ public class GroupReadGroupResponse {
     @NotBlank
     private String name;
     @NotBlank
+    private Float sumSpent;
+    @NotBlank
     private String currency;
     @NotBlank
     private String nextPayerId;

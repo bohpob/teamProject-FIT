@@ -68,7 +68,11 @@ public class GroupService {
     public GroupReadGroupResponse readGroup(Long id) throws Exception {
         Group group = groupRepository.findById(id)
                 .orElseThrow(() -> new Exception("Group not found"));
-        return groupMapper.entityToReadGroupResponse(group);
+        Float sumSpent = 0F;
+        for (Member member : group.getMembers()) {
+            sumSpent += member.getSpent();
+        }
+        return groupMapper.entityToReadGroupResponse(group, sumSpent);
     }
 
     private String generateRandomHexCode() {
