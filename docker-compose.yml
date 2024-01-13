@@ -42,6 +42,8 @@ services:
       - CHIPIN_HOST=https://auth.chipin.ninja/
       - DB_HOST=backend-db
       - DB_PORT=5432
+      - DB_USER=NyuH@CH_B3br&
+      - DB_PASS=H4ck3r-!IdI!-N4XY^_++
       - KC_HOST=keycloak
       - KC_PORT=8081
 

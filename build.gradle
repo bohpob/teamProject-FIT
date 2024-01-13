@@ -64,7 +64,7 @@ dependencies {
 
     // keycloak
     implementation "org.springframework.boot:spring-boot-starter-oauth2-resource-server"
-    implementation "org.keycloak:keycloak-spring-boot-starter"
+//    implementation "org.keycloak:keycloak-spring-boot-starter"
 
     // springdoc-openapi // swagger ui
     implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0"
