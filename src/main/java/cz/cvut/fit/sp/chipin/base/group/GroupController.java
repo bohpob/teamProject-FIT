@@ -16,6 +16,7 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -31,6 +32,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/v1/groups")
 @AllArgsConstructor
+@Tag(name = "Group Controller")
 public class GroupController {
     private final GroupService groupService;
 
@@ -106,10 +108,19 @@ public class GroupController {
         }
     }
 
+    @Operation(summary = "Read transaction by id")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Success",
+                    content = @Content(schema = @Schema(implementation = TransactionReadGroupTransactionResponse.class),
+                            mediaType = "application/json", examples = @ExampleObject(
+                            value = GroupSwaggerExamples.EXAMPLE_TRANSACTION_JSON))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - Invalid token", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Not found", content = @Content)})
     @GetMapping("/{groupId}/transactions/{transactionId}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<TransactionReadGroupTransactionResponse> readTransaction(@PathVariable Long groupId,
-                                                                                   @PathVariable Long transactionId) throws Exception {
+    public ResponseEntity<TransactionReadGroupTransactionResponse> readTransaction(
+            @Parameter(name = "Group ID") @PathVariable Long groupId,
+            @Parameter(name = "Transaction ID") @PathVariable Long transactionId) throws Exception {
         try {
             return ResponseEntity.ok(groupService.readGroupTransaction(transactionId, groupId));
         } catch (Exception e) {
@@ -117,10 +128,19 @@ public class GroupController {
         }
     }
 
+    @Operation(summary = "Read all group transactions")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Success",
+                    content = @Content(schema = @Schema(implementation = TransactionReadGroupTransactionsResponse.class),
+                            mediaType = "application/json", examples = @ExampleObject(
+                            value = GroupSwaggerExamples.EXAMPLE_ALL_TRANSACTIONS))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - Invalid token", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Not found", content = @Content)})
     @GetMapping("/{groupId}/transactions")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Page<TransactionReadGroupTransactionsResponse>> readGroupTransactions(
-            @PathVariable Long groupId, Pageable pageable) throws Exception {
+            @Parameter(name = "Group ID") @PathVariable Long groupId,
+            @Parameter(hidden = true) Pageable pageable) throws Exception {
         try {
             return ResponseEntity.ok(groupService.readGroupTransactions(groupId, pageable));
         } catch (Exception e) {
@@ -128,12 +148,20 @@ public class GroupController {
         }
     }
 
+    @Operation(summary = "Read group transaction filtered")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Success",
+                    content = @Content(schema = @Schema(implementation = GroupReadGroupTransactionsResponse.class),
+                            mediaType = "application/json", examples = @ExampleObject(
+                            value = GroupSwaggerExamples.EXAMPLE_TRANSACTION_WITH_FILTERS))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - Invalid token", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Not found", content = @Content)})
     @GetMapping("/{groupId}/transactions/search")
     public ResponseEntity<GroupReadGroupTransactionsResponse> readGroupTransactionsFiltered(
-            @PathVariable Long groupId,
-            @RequestParam Optional<String> categories,
-            @RequestParam Optional<String> dateTimeFrom,
-            @RequestParam Optional<String> dateTimeTo,
+            @Parameter(name = "Group ID") @PathVariable Long groupId,
+            @Parameter(name = "Categories") @RequestParam Optional<String> categories,
+            @Parameter(name = "Date time from") @RequestParam Optional<String> dateTimeFrom,
+            @Parameter(name = "Date time to") @RequestParam Optional<String> dateTimeTo,
             @RequestParam Optional<String> memberIds
     ) throws Exception {
         try {
@@ -143,11 +171,20 @@ public class GroupController {
         }
     }
 
+    @Operation(summary = "Update transaction")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Success",
+                    content = @Content(schema = @Schema(implementation = TransactionUpdateTransactionResponse.class),
+                            mediaType = "application/json", examples = @ExampleObject(
+                            value = GroupSwaggerExamples.EXAMPLE_UPDATE_TRANSACTION))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - Invalid token", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Not found", content = @Content)})
     @PutMapping("/{groupId}/transactions/{transactionId}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<TransactionUpdateTransactionResponse> updateTransaction(@Valid @RequestBody TransactionUpdateRequest request,
-                                                                                  @PathVariable Long groupId,
-                                                                                  @PathVariable Long transactionId) throws Exception {
+    public ResponseEntity<TransactionUpdateTransactionResponse> updateTransaction(
+            @Parameter(name = "Updated transaction") @Valid @RequestBody TransactionUpdateRequest request,
+            @Parameter(name = "Group ID") @PathVariable Long groupId,
+            @Parameter(name = "Transaction ID") @PathVariable Long transactionId) throws Exception {
         try {
             return ResponseEntity.ok(groupService.updateTransaction(request, groupId, transactionId));
         } catch (Exception e) {
@@ -155,8 +192,15 @@ public class GroupController {
         }
     }
 
+    @Operation(summary = "Delete transaction")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Success", content = @Content),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - Invalid token", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Not found", content = @Content)})
     @DeleteMapping("/{groupId}/transactions/{transactionId}")
-    public void deleteTransaction(@PathVariable Long groupId, @PathVariable Long transactionId) throws Exception {
+    public void deleteTransaction(
+            @Parameter(name = "Group ID") @PathVariable Long groupId,
+            @Parameter(name = "Transaction ID") @PathVariable Long transactionId) throws Exception {
         try {
             groupService.deleteTransaction(transactionId, groupId);
         } catch (Exception e) {
@@ -164,9 +208,16 @@ public class GroupController {
         }
     }
 
+    @Operation(summary = "Settle debt")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Success", content = @Content),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - Invalid token", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Not found", content = @Content)})
     @DeleteMapping("/{groupId}/debt/repayment")
-    public void settleDebt(@PathVariable Long groupId, @RequestParam String lenderId,
-                           @RequestParam String borrowerId) throws Exception {
+    public void settleDebt(
+            @Parameter(name = "Group ID") @PathVariable Long groupId,
+            @Parameter(name = "Lender ID") @RequestParam String lenderId,
+            @Parameter(name = "Borrower ID") @RequestParam String borrowerId) throws Exception {
         try {
             groupService.settleDebt(groupId, lenderId, borrowerId);
         } catch (Exception e) {
@@ -174,6 +225,14 @@ public class GroupController {
         }
     }
 
+    @Operation(summary = "Read group logs")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Success",
+                    content = @Content(schema = @Schema(implementation = LogReadLogResponse.class),
+                            mediaType = "application/json", examples = @ExampleObject(
+                            value = GroupSwaggerExamples.EXAMPLE_GROUP_LOGS))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - Invalid token", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Not found", content = @Content)})
     @GetMapping("/{groupId}/logs")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Page<LogReadLogResponse>> readLogs(
@@ -194,7 +253,6 @@ public class GroupController {
                             value = GroupSwaggerExamples.EXAMPLE_GROUP_UPDATE_NAME))),
             @ApiResponse(responseCode = "401", description = "Unauthorized - Invalid token", content = @Content),
             @ApiResponse(responseCode = "404", description = "Not found", content = @Content)})
-
     @PatchMapping("/{groupId}")
     public ResponseEntity<GroupUpdateGroupNameResponse> updateGroupName(
             @Parameter(name = "Group ID") @PathVariable Long groupId,
