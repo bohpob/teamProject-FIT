@@ -99,7 +99,7 @@ public class UserController {
     @Operation(summary = "Get the transactions you participated in")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Success",
-                    content = @Content(schema = @Schema(implementation = GroupReadGroupMembersResponse.class),
+                    content = @Content(schema = @Schema(implementation = UserReadUserTransactionsResponse.class),
                             mediaType = "application/json", examples = @ExampleObject(
                             value = UserSwaggerExamples.EXAMPLE_TRANSACTION_RESPONSE_JSON))),
             @ApiResponse(responseCode = "401", description = "Unauthorized - Invalid token", content = @Content),
@@ -119,7 +119,7 @@ public class UserController {
     @Operation(summary = "Get information about your membership in each group")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Success",
-                    content = @Content(schema = @Schema(implementation = GroupReadGroupMembersResponse.class),
+                    content = @Content(schema = @Schema(implementation = MemberDTO.class),
                             mediaType = "application/json", examples = @ExampleObject(
                             value = UserSwaggerExamples.EXAMPLE_MEMBERSHIP_RESPONSE_JSON))),
             @ApiResponse(responseCode = "401", description = "Unauthorized - Invalid token", content = @Content),
