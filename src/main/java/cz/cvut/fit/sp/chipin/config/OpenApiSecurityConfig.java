@@ -65,7 +65,7 @@ public class OpenApiSecurityConfig {
 
         private OAuthFlow createAuthorizationCodeFlow() {
                 return new OAuthFlow()
-                        .authorizationUrl(authServerUrl + "/realms/" + realm + "/protocol/openid-connect/auth")
-                        .tokenUrl(authServerUrl + "/realms/" + realm + "/protocol/openid-connect/token");
+                        .authorizationUrl(authServerUrl + "realms/" + realm + "/protocol/openid-connect/auth")
+                        .tokenUrl(authServerUrl + "realms/" + realm + "/protocol/openid-connect/token");
         }
 }
