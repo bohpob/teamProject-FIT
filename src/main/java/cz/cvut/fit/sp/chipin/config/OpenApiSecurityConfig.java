@@ -17,7 +17,7 @@ import org.springframework.context.annotation.Configuration;
         info = @Info(
                 title = "Chipin REST API",
                 description = "OpenApi documentation for the Chipin project",
-                version = "1.0"
+                version = "v1"
         ),
         servers = {
                 @Server(
