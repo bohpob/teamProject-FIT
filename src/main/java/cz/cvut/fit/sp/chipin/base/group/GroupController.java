@@ -1,6 +1,7 @@
 package cz.cvut.fit.sp.chipin.base.group;
 
 import cz.cvut.fit.sp.chipin.base.group.mapper.*;
+import cz.cvut.fit.sp.chipin.base.group.swagger.GroupSwaggerExamples;
 import cz.cvut.fit.sp.chipin.base.log.mapper.LogReadLogResponse;
 import cz.cvut.fit.sp.chipin.base.transaction.TransactionUpdateRequest;
 import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionCreateTransactionRequest;
@@ -8,6 +9,13 @@ import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionCreateTransactio
 import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionReadGroupTransactionResponse;
 import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionReadGroupTransactionsResponse;
 import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionUpdateTransactionResponse;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -168,7 +176,9 @@ public class GroupController {
 
     @GetMapping("/{groupId}/logs")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<Page<LogReadLogResponse>> readLogs(@PathVariable Long groupId, Pageable pageable) throws Exception {
+    public ResponseEntity<Page<LogReadLogResponse>> readLogs(
+            @Parameter(name = "Group ID") @PathVariable Long groupId,
+            @Parameter(hidden = true) Pageable pageable) throws Exception {
         try {
             return ResponseEntity.ok(groupService.readGroupLogs(groupId, pageable));
         } catch (Exception e) {
@@ -176,9 +186,19 @@ public class GroupController {
         }
     }
 
+    @Operation(summary = "Group name update")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Success",
+                    content = @Content(schema = @Schema(implementation = GroupUpdateGroupNameResponse.class),
+                            mediaType = "application/json", examples = @ExampleObject(
+                            value = GroupSwaggerExamples.EXAMPLE_GROUP_UPDATE_NAME))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - Invalid token", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Not found", content = @Content)})
+
     @PatchMapping("/{groupId}")
-    public ResponseEntity<GroupUpdateGroupNameResponse> updateGroupName(@PathVariable Long groupId,
-                                                                        @RequestParam @NotBlank String name) throws Exception {
+    public ResponseEntity<GroupUpdateGroupNameResponse> updateGroupName(
+            @Parameter(name = "Group ID") @PathVariable Long groupId,
+            @Parameter(name = "New group name") @RequestParam @NotBlank String name) throws Exception {
         try {
             return ResponseEntity.ok(groupService.updateGroupName(groupId, name));
         } catch (Exception e) {
