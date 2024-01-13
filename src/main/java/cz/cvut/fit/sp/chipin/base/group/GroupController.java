@@ -4,11 +4,7 @@ import cz.cvut.fit.sp.chipin.base.group.mapper.*;
 import cz.cvut.fit.sp.chipin.base.group.swagger.GroupSwaggerExamples;
 import cz.cvut.fit.sp.chipin.base.log.mapper.LogReadLogResponse;
 import cz.cvut.fit.sp.chipin.base.transaction.TransactionUpdateRequest;
-import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionCreateTransactionRequest;
-import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionCreateTransactionResponse;
-import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionReadGroupTransactionResponse;
-import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionReadGroupTransactionsResponse;
-import cz.cvut.fit.sp.chipin.base.transaction.mapper.TransactionUpdateTransactionResponse;
+import cz.cvut.fit.sp.chipin.base.transaction.mapper.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -36,6 +32,14 @@ import java.util.Optional;
 public class GroupController {
     private final GroupService groupService;
 
+    @Operation(summary = "Create a new group")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Success",
+                    content = @Content(schema = @Schema(implementation = GroupCreateGroupResponse.class),
+                            mediaType = "application/json", examples = @ExampleObject(
+                            value = GroupSwaggerExamples.EXAMPLE_CREATE_GROUP))),
+            @ApiResponse(responseCode = "400", description = "Bad request", content = @Content),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - Invalid token", content = @Content)})
     @PostMapping
     public ResponseEntity<GroupCreateGroupResponse> createGroup(@Valid @RequestBody GroupCreateGroupRequest request,
                                                                 Principal principal) throws Exception {
@@ -46,6 +50,14 @@ public class GroupController {
         }
     }
 
+    @Operation(summary = "Read a group by id")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Success",
+                    content = @Content(schema = @Schema(implementation = GroupReadGroupResponse.class),
+                            mediaType = "application/json", examples = @ExampleObject(
+                            value = GroupSwaggerExamples.EXAMPLE_READ_GROUP))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - Invalid token", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Not found", content = @Content)})
     @GetMapping("/{groupId}")
     public ResponseEntity<GroupReadGroupResponse> readGroup(@PathVariable Long groupId) throws Exception {
         try {
@@ -55,6 +67,14 @@ public class GroupController {
         }
     }
 
+    @Operation(summary = "Read group's hex code by id")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Success",
+                    content = @Content(schema = @Schema(implementation = String.class),
+                            mediaType = "application/json", examples = @ExampleObject(
+                            value = GroupSwaggerExamples.EXAMPLE_READ_HEX_CODE))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - Invalid token", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Not found", content = @Content)})
     @GetMapping("/{groupId}/hexCode")
     public ResponseEntity<String> readHexCode(@PathVariable Long groupId) throws Exception {
         try {
@@ -64,6 +84,14 @@ public class GroupController {
         }
     }
 
+    @Operation(summary = "Join group by hex code")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Success",
+                    content = @Content(schema = @Schema(implementation = String.class),
+                            mediaType = "application/json", examples = @ExampleObject(
+                            value = GroupSwaggerExamples.EXAMPLE_JOIN_GROUP))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - Invalid token", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Not found", content = @Content)})
     @PatchMapping("/join")
     public ResponseEntity<String> joinGroup(@RequestParam String hexCode, Principal principal) throws Exception {
         try {
@@ -73,6 +101,14 @@ public class GroupController {
         }
     }
 
+    @Operation(summary = "Read next payer's id")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Success",
+                    content = @Content(schema = @Schema(implementation = String.class),
+                            mediaType = "application/json", examples = @ExampleObject(
+                            value = GroupSwaggerExamples.EXAMPLE_READ_NEXT_PAYER_ID))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - Invalid token", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Not found", content = @Content)})
     @GetMapping("/{groupId}/next")
     public ResponseEntity<String> readNextPayerId(@PathVariable Long groupId) throws Exception {
         try {
@@ -82,6 +118,14 @@ public class GroupController {
         }
     }
 
+    @Operation(summary = "Update next payer strategy and checking")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Success",
+                    content = @Content(schema = @Schema(implementation = String.class),
+                            mediaType = "application/json", examples = @ExampleObject(
+                            value = GroupSwaggerExamples.EXAMPLE_UPDATE_NEXT_PAYER))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - Invalid token", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Not found", content = @Content)})
     @PatchMapping("/{groupId}/next")
     public ResponseEntity<String> updateNextPayer(
             @PathVariable Long groupId,
@@ -95,6 +139,14 @@ public class GroupController {
         }
     }
 
+    @Operation(summary = "Create new transaction")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Success",
+                    content = @Content(schema = @Schema(implementation = TransactionCreateTransactionResponse.class),
+                            mediaType = "application/json", examples = @ExampleObject(
+                            value = GroupSwaggerExamples.EXAMPLE_CREATE_TRANSACTION))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - Invalid token", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Not found", content = @Content)})
     @PostMapping("/{groupId}/transactions")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<TransactionCreateTransactionResponse> createTransaction(@Valid @RequestBody TransactionCreateTransactionRequest request,
