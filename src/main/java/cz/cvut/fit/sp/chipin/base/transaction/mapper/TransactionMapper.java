@@ -23,8 +23,6 @@ public interface TransactionMapper {
     TransactionUpdateTransactionResponse entityToUpdateTransactionResponse(Transaction transaction);
 
     @Mapping(expression = "java(AmountService.roundAmount(transaction.getAmount()))", target = "amount")
-    @Mapping(source = "payer.id", target = "payerId")
-    @Mapping(source = "payer.firstName", target = "payerName")
     @Mapping(target = "dateTime", dateFormat = DATETIME_FORMAT)
     TransactionReadGroupTransactionResponse entityToReadGroupTransactionResponse(Transaction transaction);
 
