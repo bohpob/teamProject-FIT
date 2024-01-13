@@ -18,7 +18,7 @@ import java.util.List;
 public interface GroupMapper {
     GroupCreateGroupResponse entityToCreateGroupResponse(Group group);
 
-    @Mapping(source = "nextPayer.id.userId", target = "nextPayerId")
+    @Mapping(source = "group.nextPayer.id.userId", target = "nextPayerId")
     GroupReadGroupResponse entityToReadGroupResponse(Group group, Float sumSpent);
 
     @Mapping(source = "group.transactions", target = "transactions")
