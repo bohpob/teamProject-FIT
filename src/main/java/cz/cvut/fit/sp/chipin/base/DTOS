@@ -1,0 +1,47 @@
+User
+    _Read User:
+        UserReadUserResponse
+                //_Read User Groups:
+                //    UserReadGroupsResponse
+                //        GroupReadGroupsResponse
+    _Read User Transactions:
+        UserReadUserTransactionsResponse
+            TransactionReadUserTransactionsResponse
+    _Read User Debts:
+        UserReadUserDebtsResponse
+            DebtsReadUserDebtsResponse
+    _Patch User Password:
+        UserPatchPasswordRequest
+        UserPatchPasswordResponse
+
+
+Group
+    _Create Group:
+        GroupCreateGroupRequest
+        GroupCreateGroupResponse
+
+    _Read Group:
+        GroupReadGroupResponse
+            UserReadGroupResponse
+            TransactionReadGroupResponse
+            DebtReadGroupResponse
+            LogReadGroupResponse
+
+    _Read User Groups:
+        UserReadGroupsResponse
+            GroupReadGroupsResponse
+
+    _Read Group Transactions:
+        GroupReadGroupTransactionsResponse
+            TransactionReadGroupTransactionsResponse
+
+    _Read Group Logs:
+        GroupReadGroupLogsResponse
+            LogReadGroupLogsResponse
+
+Transactions
+    _Create Transaction:
+        TransactionCreateTransactionRequest
+
+        TransactionCreateTransactionResponse
+

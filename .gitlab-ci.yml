@@ -1,0 +1,66 @@
+image: gradle:latest
+
+stages:
+  - build
+  - test
+  - check
+  - deploy
+
+variables:
+  GRADLE_USER_HOME: "$CI_PROJECT_DIR/.gradle"
+
+before_script:
+  - gradle --version
+
+build:
+  stage: build
+  only:
+    - master
+    - develop
+  script:
+    - gradle build
+  artifacts:
+    paths:
+      - build/libs/*.jar
+
+test:
+  stage: test
+  only:
+    - master
+    - develop
+  script:
+    - gradle test
+
+vulnerability_check:
+  stage: check
+  only:
+    - master
+    - develop
+  when: manual
+  allow_failure: true
+  script:
+    - chmod +x gradlew
+    - ./gradlew dependencyCheckAnalyze
+  artifacts:
+    paths:
+      - build/reports/*.html
+
+deploy:
+  stage: deploy
+  only:
+    - master
+  variables:
+    HOSTNAME: "157.230.116.219"
+  before_script:
+    - 'command -v ssh-agent >/dev/null || ( apk add --update openssh )'
+    - eval $(ssh-agent -s)
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - ssh-keyscan $HOSTNAME >> ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
+  script:
+    - ssh root@$HOSTNAME "cd ~/chipin && git pull && docker-compose down && docker-compose up --build -d"
+  artifacts:
+    paths:
+      - public
